@@ -1,0 +1,3 @@
+SUBDIRS = \
+	C \
+	FORTRAN 

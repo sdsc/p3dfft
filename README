@@ -1,0 +1,107 @@
+
+P3DFFT - Highly scalable parallel 3D Fast Fourier Transforms library
+
+Version 2.3
+
+Copyright (C) 2006-2008 Dmitry Pekurovsky
+San Diego Supercomputer Center/UC SanDiego
+
+Copyright (C) 2008 Jens Henrik Goebbert (ghost cell support)
+RWTH-Aachen, Germany
+
+------------
+Notice
+------------
+
+    P3DFFT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+------------
+Acknowledgements
+------------
+
+Prof. P.K.Yeung
+Dr. Diego Donzis
+Dr. Giri Chukkapalli
+Dr. Geert Brethouwer
+
+------------
+Features
+------------
+
+    * Parallel implementation of 3D FFT with 2D (a.k.a. pencils) data 
+decomposition, overcoming an important limitation to scalability of other 
+3D FFT libraries implementing 1D, or slab, decomposition.
+    * Optimized for parallel communication and single-CPU performance.
+    * Uses established libraries (FFTW, ESSL) for underlying local 1D FFT. 
+    * Fortran and C interfaces.
+    * Extra feature: ghost cells for nearest-neighbor communication 
+      support (halo send-receive).
+
+The 1D decomposition suffers from the limitation that the number
+of processors used cannot be greater than the maximum linear grid size of the 
+cubic domain to be processed. With the 2D domain decomposition scheme 
+the maximum number of processors is significantly higher, equal to the 
+square of the linear grid size. 
+
+This library is especially suited for large-data-volume applications on ultra-scale
+parallel platforms. 
+
+------------
+Machine requirements
+------------
+
+This library is built on top of an externally provided 1D FFT library. 
+Current choices are ESSL (for IBM systems) or FFTW. Either one of these 
+libraries must be installed on the system in order to use P3DFFT.
+The choice of the library is specified at compile time. 
+
+P3DFFT is written in Fortran 90 with MPI. Having an Fortran90/MPI compiler
+is essential to building the library on your system. C interface is 
+provided. 
+
+------------
+Directory structure
+------------
+
+build/
+  The library files are contained here. Building the library is required 
+  before it can be used. Enter this directory, create/modify 'makeinc'
+  suitable for your architecture, and type 'make'. For more instructions
+  on building the library see file install.txt
+sample/
+  This directory has example programs in both FORTRAN and C, in 
+  separate subdirectories. Enter this directory, modify 'makeinc'
+  and type 'make' to create test executables. Tests provided include
+  out-of-place and in-place transforms 3D FFT, with error checking. 
+  Also provided is an example of power spectrum calculation. 
+include/ 
+  The library is provided as a Fortran module. 
+  After installation this directory will have p3dfft.mod for Fortran interface
+  and p3dfft.h, the C wrapper/include file. Be sure to specify 
+  -I/your/p3dfft_root/include when compiling your programs. 
+lib/
+  The library archive libp3dfft.a will be installed here upon successful 
+  completion of the build. Be sure to specify -L/your/p3dfft_root/lib -lp3dfft
+  when linking your executable. 
+ 
+------------
+Feedback
+------------
+
+Please send your feedback, including bugs and suggestions, to 
+Dmitry Pekurovsky, dmitry@sdsc.edu
+
+
+

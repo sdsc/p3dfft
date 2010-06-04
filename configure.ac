@@ -1,0 +1,231 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(P3DFFT, 2.3.1, dmitry@sdsc.edu)
+AM_INIT_AUTOMAKE(no-dependencies)
+AC_CONFIG_SRCDIR([build/module.F90])
+AC_CONFIG_HEADER([config.h])
+
+# save arguments passed in as a string
+AC_DEFINE_UNQUOTED([CONFIGURE_ARGS],["$ac_configure_args"],[arguments passed to configure script])
+
+# check whether to compile using IBM
+AC_MSG_CHECKING([whether to use IBM compiler])
+AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM compiler])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DIBM")
+        AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
+fi
+
+# check whether to compile using PGI
+AC_MSG_CHECKING([whether to use PGI compiler])
+AC_ARG_ENABLE(pgi, [AC_HELP_STRING([--enable-pgi], [compile P3DFFT using PGI compiler])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DPGI")
+	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
+        AC_DEFINE(PGI, 1, [Define if you want to compile P3DFFT using PGI compiler])
+fi
+
+# check whether to compile using GCC
+AC_MSG_CHECKING([whether to use GCC compiler])
+AC_ARG_ENABLE(gcc, [AC_HELP_STRING([--enable-gcc], [compile P3DFFT using GCC compiler])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DGCC")
+        AC_DEFINE(GCC, 1, [Define if you want to compile P3DFFT using GCC compiler])
+fi
+
+# check whether to enable single precision
+AC_MSG_CHECKING([whether to enable single precision])
+AC_ARG_ENABLE(single, [AC_HELP_STRING([--enable-single], [compile P3DFFT in single precision (default is double precision)])], spval=$enableval, spval=no)
+AC_MSG_RESULT([$spval])
+if test "$spval" = "yes"; then
+	AC_SUBST(DFLAGS, "$DFLAGS -DSINGLE_PREC")
+	AC_DEFINE(SINGLE_PREC, 1, [Define if you want to compile P3DFFT in single precision])
+fi
+
+# check whether to enable 1D decomposition
+AC_MSG_CHECKING([whether to enable 1D decomposition])
+AC_ARG_ENABLE(oned, [AC_HELP_STRING([--enable-oned], [for 1D decomposition (default is 2D but it can be made 1D through setting up grid 1 x n when running the code) ])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DONED")
+        AC_DEFINE(ONED, 1, [Define if you want 1D decomposition])
+fi
+
+# check whether to enable estimation
+AC_MSG_CHECKING([whether to enable estimation])
+AC_ARG_ENABLE(estimate, [AC_HELP_STRING([--enable-estimate], [for initialization thoroughness in setting up FFTW calls (this option only goes with --enable-fftw) .])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DESTIMATE")
+        AC_DEFINE(ESTIMATE, 1, [Define whether you want to enable estimation])
+fi
+
+# check whether to enable the measure algorithm
+AC_MSG_CHECKING([whether to enable the measure algorithm])
+AC_ARG_ENABLE(measure, [AC_HELP_STRING([--enable-measure], [for search-once-for-the-fast-algorithm (takes more time on p3dfft_setup()).])], ok=$enableval, ok=yes)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DMEASURE")
+        AC_DEFINE(MEASURE, 1, [Define if you want to enable the measure algorithm])
+fi
+
+# check whether to enable the patient algorithm
+AC_MSG_CHECKING([whehter to enable the patient algorithm])
+AC_ARG_ENABLE(patient, [AC_HELP_STRING([--enable-patient], [for search-once-for-the-fastest-algorithm (takes much more time on p3dfft_setup()).])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DPATIENT")
+        AC_DEFINE(PATIENT, 1, [Define if you want to enable the patient algorithm])
+fi
+
+# check whether to enable C convention for processor dimensions
+AC_MSG_CHECKING([whether to enable C convention for processor dimensions])
+AC_ARG_ENABLE(dimsc, [AC_HELP_STRING([--enable-dimsc], [to assign processor rows and columns according to C convention, rather than "Fortran", which is default.])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DDIMS_C")
+        AC_DEFINE(DIMS_C, 1, [Define if you want to enable C convention for processor dimensions])
+fi
+
+# check whether to reverse processor dimensions
+# AC_MSG_CHECKING([whether to reverse processor dimensions])
+# AC_ARG_ENABLE(reversedims, [AC_HELP_STRING([--enable-reversedims], [to interchange processor rows and columns from default.])], ok=$enableval, ok=yes)
+# AC_MSG_RESULT([$ok])
+# if test "$ok" = "yes"; then
+#	AC_SUBST(DFLAGS, "$DFLAGS -DREVERSE_DIMS")
+#	AC_DEFINE(REVERSE, 1, [Define if you want to reverse processor dimensions])
+# fi
+
+# check whether to use MPI_Alltoall instead of MPI_Alltotallv
+AC_MSG_CHECKING([whether to use MPI_Alltoall instead of MPI_Alltotallv])
+AC_ARG_ENABLE(useeven, [AC_HELP_STRING([--enable-useeven], [for using MPI_Alltoall instead of MPI_Alltotallv. This method pads the send buffers with zeros to make them equal size. This options is not needed on most architectures.])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DUSE_EVEN")
+        AC_DEFINE(USE_EVEN, 1, [Define if you want to MPI_Alltoall instead of MPI_Alltotallv])
+fi
+
+# check whether to enable stride-1 data structures
+AC_MSG_CHECKING([whether to enable stride-1 data structures])
+AC_ARG_ENABLE(stride1, [AC_HELP_STRING([--enable-stride1], [to enable stride-1 data structures on output (this may in some cases give some advantage in performance). You can define loop blocking factors NBL_X and NBL_Y to experiment, otherwise they are set to default values.])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DSTRIDE1")
+        AC_DEFINE(STRIDE1, 1, [Define if you want to enable stride-1 data structures])
+fi
+
+# check whether to override default value of the NBL_X
+AC_MSG_CHECKING([whether to override default value of NBL_X])
+AC_ARG_ENABLE(nblx, [AC_HELP_STRING([--enable-nblx], [to define loop blocking factor NBL_X])], nblval=$enableval, nblval="")
+if test "$nblval" != ""; then
+        AC_MSG_RESULT([yes])
+        AC_SUBST(DFLAGS, "$DFLAGS -DNBL_X=$nblval")
+        AC_DEFINE(NBL_X, $nblval, [Define if you want to override the default value of NBL_X]) 
+else
+        AC_MSG_RESULT([no])
+fi
+
+# check whether to override default value of NBL_Y
+AC_MSG_CHECKING([whether to override the default value of NBL_Y])
+AC_ARG_ENABLE(nbly, [AC_HELP_STRING([--enable-nbly], [to define loop blocking factor NBL_Y])], nblval=$enableval, nblval="")
+if test "$nblval" != ""; then
+        AC_MSG_RESULT([yes])
+        AC_SUBST(DFLAGS, "$DFLAGS -DNBL_Y=$nblval")
+        AC_DEFINE(NBL_Y, $nblval, [Define if you want to override the default value of NBL_Y])
+else
+        AC_MSG_RESULT([no])
+fi
+
+# check whether to use FFTW
+AC_MSG_CHECKING([whether to use FFTW library])
+AC_ARG_ENABLE(essl, [AC_HELP_STRING([--enable-fftw], [for using the FFTW library (default)])], fftwval=$enableval, fftwval=yes)
+AC_MSG_RESULT([$fftwval])
+if test "$fftwval" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DFFTW")
+        AC_DEFINE(FFTW, 1, [Define if you want to use the FFTW library])
+fi
+
+# check whether to use ESSL
+AC_MSG_CHECKING([whether to use ESSL library])
+AC_ARG_ENABLE(essl, [AC_HELP_STRING([--enable-essl], [for using ESSL (on IBM) in 1D FFTs.])], esslval=$enableval, esslval=no)
+AC_MSG_RESULT([$esslval])
+if test "$esslval" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DESSL")
+        AC_DEFINE(ESSL, 1, [Define if you want to use the ESSL library instead of FFTW])
+fi
+
+# check to see if FFTW or ESSL has been selected
+if test "$fftwval" == "no" && test "$esslval" == "no"; then
+        AC_MSG_ERROR([You must choose to use either ESSL or FFTW!])
+fi
+
+# check to see if FFTW and ESSL have both been selected
+# if test "$fftwval" == "yes" && test "$esslval" == "yes"; then
+#        AC_MSG_ERROR([You must only choose either ESSL or FFTW!])
+# fi
+
+# check for fftw3
+AC_MSG_CHECKING([FFTW directory])
+AC_ARG_WITH(fftw, [AC_HELP_STRING([--with-fftw], [path to location of FFTW library])], withfftw=$withval, withfftw="")
+if test "$withfftw" != "yes" && test "$withfftw" != ""; then
+	AC_MSG_RESULT([$withfftw])
+	if test -e [$withfftw/lib/libfftw3.a ]; then
+		AC_SUBST(FFTW_INC, "$withfftw/include")
+		AC_SUBST(FFTW_LIB, "$withfftw/lib")
+	else
+		AC_MSG_ERROR([libfftw3.a was not found in given location!])
+	fi
+
+	if test "$spval" == "yes"; then
+		AC_SUBST(FFTWF, "$FFTW_LIB/libfftw3f.a")
+	fi
+else
+        AC_MSG_RESULT([none])
+	if test "$fftwval" == "yes"; then
+		AC_MSG_ERROR([location to FFTW was not given!])
+	fi
+fi
+
+# Custom strings
+AC_SUBST(SUCCESS, "Build successful!")
+
+# Checks for programs.
+AC_PROG_FC(mpif90)
+AC_CHECK_PROGS(CC, mpicc, $CC)
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([stdlib.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+
+AC_CONFIG_FILES([Makefile
+                 build/Makefile
+	 	 sample/Makefile
+	 	 sample/C/Makefile
+	 	 sample/FORTRAN/Makefile])
+
+AC_SUBST(TESTLIBS, $TESTLIBS)
+AC_OUTPUT()
+
+AC_MSG_NOTICE([creating new copy of p3dfft.h])
+cp include/p3dfft.h.original include/p3dfft.h
+
+AC_MSG_NOTICE([concatenating config.h to p3dfft.h])
+cat config.h >> include/p3dfft.h
+
+AC_MSG_NOTICE([configure script complete!])
+
