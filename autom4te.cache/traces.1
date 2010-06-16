@@ -214,9 +214,9 @@ m4trace:configure.ac:174: -1- _m4_warn([obsolete], [The macro `AC_HELP_STRING' i
 You should run autoupdate.], [autoconf/general.m4:219: AC_HELP_STRING is expanded from...
 autoconf/general.m4:1331: AC_ARG_WITH is expanded from...
 configure.ac:174: the top level])
-m4trace:configure.ac:178: -1- AC_SUBST([FFTW_INC], ["$withfftw/include"])
-m4trace:configure.ac:179: -1- AC_SUBST([FFTW_LIB], ["$withfftw/lib"])
-m4trace:configure.ac:185: -1- AC_SUBST([FFTWF], ["$FFTW_LIB/libfftw3f.a"])
+m4trace:configure.ac:178: -1- AC_SUBST([FFTW_INC], ["-I$withfftw/include"])
+m4trace:configure.ac:179: -1- AC_SUBST([FFTW_LIB], ["$withfftw/lib/libfftw3.a"])
+m4trace:configure.ac:185: -1- AC_SUBST([FFTWF], ["$withfftw/lib/libfftw3f.a"])
 m4trace:configure.ac:195: -1- AC_SUBST([SUCCESS], ["Build successful!"])
 m4trace:configure.ac:198: -1- AC_SUBST([FC])
 m4trace:configure.ac:198: -1- AC_SUBST([FCFLAGS])

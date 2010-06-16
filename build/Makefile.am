@@ -1,6 +1,6 @@
 AM_FCFLAGS = $(DFLAGS) # $(FCFLAGS)
-INCLUDES = -I$(FFTW_INC)
-LDADD = $(FFTW_LIB)/libfftw3.a 
+INCLUDES = $(FFTW_INC)
+LDADD = $(FFTW_LIB)
 
 lib_LIBRARIES = libp3dfft.a
 

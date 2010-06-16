@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 fsample_PROGRAMS = test_sine_f.x$(EXEEXT) \
 	test_sine_inplace_f.x$(EXEEXT) test_rand_f.x$(EXEEXT) \
-	test_spec_f.x$(EXEEXT)
+	test_spec_f.x$(EXEEXT) test_inverse_f.x$(EXEEXT)
 subdir = sample/FORTRAN
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -49,28 +49,33 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(fsampledir)"
 fsamplePROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(fsample_PROGRAMS)
+am_test_inverse_f_x_OBJECTS = driver_inverse.$(OBJEXT)
+test_inverse_f_x_OBJECTS = $(am_test_inverse_f_x_OBJECTS)
+test_inverse_f_x_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+test_inverse_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_rand_f_x_OBJECTS = driver_rand.$(OBJEXT)
 test_rand_f_x_OBJECTS = $(am_test_rand_f_x_OBJECTS)
 test_rand_f_x_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
 test_rand_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_f_x_OBJECTS = driver_sine.$(OBJEXT)
 test_sine_f_x_OBJECTS = $(am_test_sine_f_x_OBJECTS)
 test_sine_f_x_LDADD = $(LDADD)
 test_sine_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_inplace_f_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_f_x_OBJECTS = $(am_test_sine_inplace_f_x_OBJECTS)
 test_sine_inplace_f_x_LDADD = $(LDADD)
 test_sine_inplace_f_x_DEPENDENCIES =  \
-	$(top_builddir)/build/libp3dfft.a $(FFTW_LIB)/libfftw3.a \
+	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_spec_f_x_OBJECTS = driver_spec.$(OBJEXT)
 test_spec_f_x_OBJECTS = $(am_test_spec_f_x_OBJECTS)
 test_spec_f_x_LDADD = $(LDADD)
 test_spec_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -78,18 +83,20 @@ FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
 FCLD = $(FC)
 FCLINK = $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-SOURCES = $(test_rand_f_x_SOURCES) $(test_sine_f_x_SOURCES) \
-	$(test_sine_inplace_f_x_SOURCES) $(test_spec_f_x_SOURCES)
-DIST_SOURCES = $(test_rand_f_x_SOURCES) $(test_sine_f_x_SOURCES) \
-	$(test_sine_inplace_f_x_SOURCES) $(test_spec_f_x_SOURCES)
+SOURCES = $(test_inverse_f_x_SOURCES) $(test_rand_f_x_SOURCES) \
+	$(test_sine_f_x_SOURCES) $(test_sine_inplace_f_x_SOURCES) \
+	$(test_spec_f_x_SOURCES)
+DIST_SOURCES = $(test_inverse_f_x_SOURCES) $(test_rand_f_x_SOURCES) \
+	$(test_sine_f_x_SOURCES) $(test_sine_inplace_f_x_SOURCES) \
+	$(test_spec_f_x_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run aclocal-1.9
-AMTAR = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run tar
-AUTOCONF = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run automake-1.9
+ACLOCAL = ${SHELL} /home/d4park/svn/trunk/missing --run aclocal-1.9
+AMTAR = ${SHELL} /home/d4park/svn/trunk/missing --run tar
+AUTOCONF = ${SHELL} /home/d4park/svn/trunk/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/d4park/svn/trunk/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/d4park/svn/trunk/missing --run automake-1.9
 AWK = gawk
 CC = mpicc
 CFLAGS = -fastsse -tp barcelona-64
@@ -106,17 +113,17 @@ EXEEXT =
 FC = mpif90
 FCFLAGS = -fastsse -tp barcelona-64 -Mextend -byteswapio
 FFTWF = 
-FFTW_INC = /opt/fftw/3.2.1/pgi/include
-FFTW_LIB = /opt/fftw/3.2.1/pgi/lib
+FFTW_INC = -I/opt/fftw/3.2.1/pgi/include
+FFTW_LIB = /opt/fftw/3.2.1/pgi/lib/libfftw3.a
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s
-LDFLAGS = -lmpi_f90 -lmpi_f77 -pgf90libs -lmyriexpress -pgf90libs
+LDFLAGS = -lmpi_f90 -lmpi_f77 -lmyriexpress -pgf90libs
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/djchen/NEW/p3dfft-f90/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/d4park/svn/trunk/missing --run makeinfo
 OBJEXT = o
 PACKAGE = p3dfft
 PACKAGE_BUGREPORT = dmitry@sdsc.edu
@@ -146,7 +153,7 @@ exec_prefix = ${prefix}
 host_alias = 
 includedir = ${prefix}/include
 infodir = ${prefix}/info
-install_sh = /home/djchen/NEW/p3dfft-f90/install-sh
+install_sh = /home/d4park/svn/trunk/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localstatedir = ${prefix}/var
@@ -161,9 +168,10 @@ sysconfdir = ${prefix}/etc
 target_alias = 
 AM_FCFLAGS = $(DFLAGS) $(INCLUDES) # $(FCFLAGS)
 INCLUDES = -I$(top_builddir)/include/
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB)/libfftw3.a $(FFTWF) 
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) 
 fsampledir = $(datadir)/p3dfft_samples/
 test_sine_f_x_SOURCES = driver_sine.f90
+test_inverse_f_x_SOURCES = driver_inverse.f90
 test_sine_inplace_f_x_SOURCES = driver_sine_inplace.f90
 test_rand_f_x_SOURCES = driver_rand.f90
 test_spec_f_x_SOURCES = driver_spec.f90
@@ -223,6 +231,9 @@ uninstall-fsamplePROGRAMS:
 
 clean-fsamplePROGRAMS:
 	-test -z "$(fsample_PROGRAMS)" || rm -f $(fsample_PROGRAMS)
+test_inverse_f.x$(EXEEXT): $(test_inverse_f_x_OBJECTS) $(test_inverse_f_x_DEPENDENCIES) 
+	@rm -f test_inverse_f.x$(EXEEXT)
+	$(FCLINK) $(test_inverse_f_x_LDFLAGS) $(test_inverse_f_x_OBJECTS) $(test_inverse_f_x_LDADD) $(LIBS)
 test_rand_f.x$(EXEEXT): $(test_rand_f_x_OBJECTS) $(test_rand_f_x_DEPENDENCIES) 
 	@rm -f test_rand_f.x$(EXEEXT)
 	$(FCLINK) $(test_rand_f_x_LDFLAGS) $(test_rand_f_x_OBJECTS) $(test_rand_f_x_LDADD) $(LIBS)

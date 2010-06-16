@@ -148,8 +148,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_FCFLAGS = $(DFLAGS) # $(FCFLAGS)
-INCLUDES = -I$(FFTW_INC)
-LDADD = $(FFTW_LIB)/libfftw3.a 
+INCLUDES = $(FFTW_INC)
+LDADD = $(FFTW_LIB)
 lib_LIBRARIES = libp3dfft.a
 libp3dfft_a_SOURCES = fft_spec.F90 module.F90 fft_init.F90 fft_exec.F90 wrap.f90
 all: all-am

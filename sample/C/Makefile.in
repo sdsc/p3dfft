@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 csample_PROGRAMS = test_sine_c.x$(EXEEXT) \
 	test_sine_inplace_c.x$(EXEEXT) test_rand_c.x$(EXEEXT) \
-	test_spec_c.x$(EXEEXT)
+	test_spec_c.x$(EXEEXT) test_inverse_c.x$(EXEEXT)
 subdir = sample/C
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -49,28 +49,33 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(csampledir)"
 csamplePROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(csample_PROGRAMS)
+am_test_inverse_c_x_OBJECTS = driver_inverse.$(OBJEXT)
+test_inverse_c_x_OBJECTS = $(am_test_inverse_c_x_OBJECTS)
+test_inverse_c_x_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+test_inverse_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_rand_c_x_OBJECTS = driver_rand.$(OBJEXT)
 test_rand_c_x_OBJECTS = $(am_test_rand_c_x_OBJECTS)
 test_rand_c_x_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
 test_rand_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_c_x_OBJECTS = driver_sine.$(OBJEXT)
 test_sine_c_x_OBJECTS = $(am_test_sine_c_x_OBJECTS)
 test_sine_c_x_LDADD = $(LDADD)
 test_sine_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_inplace_c_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_c_x_OBJECTS = $(am_test_sine_inplace_c_x_OBJECTS)
 test_sine_inplace_c_x_LDADD = $(LDADD)
 test_sine_inplace_c_x_DEPENDENCIES =  \
-	$(top_builddir)/build/libp3dfft.a $(FFTW_LIB)/libfftw3.a \
+	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_spec_c_x_OBJECTS = driver_spec.$(OBJEXT)
 test_spec_c_x_OBJECTS = $(am_test_spec_c_x_OBJECTS)
 test_spec_c_x_LDADD = $(LDADD)
 test_spec_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(FFTW_LIB)/libfftw3.a $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -78,10 +83,12 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(test_rand_c_x_SOURCES) $(test_sine_c_x_SOURCES) \
-	$(test_sine_inplace_c_x_SOURCES) $(test_spec_c_x_SOURCES)
-DIST_SOURCES = $(test_rand_c_x_SOURCES) $(test_sine_c_x_SOURCES) \
-	$(test_sine_inplace_c_x_SOURCES) $(test_spec_c_x_SOURCES)
+SOURCES = $(test_inverse_c_x_SOURCES) $(test_rand_c_x_SOURCES) \
+	$(test_sine_c_x_SOURCES) $(test_sine_inplace_c_x_SOURCES) \
+	$(test_spec_c_x_SOURCES)
+DIST_SOURCES = $(test_inverse_c_x_SOURCES) $(test_rand_c_x_SOURCES) \
+	$(test_sine_c_x_SOURCES) $(test_sine_inplace_c_x_SOURCES) \
+	$(test_spec_c_x_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -161,9 +168,10 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CPPFLAGS = $(DFLAGS) 
 INCLUDES = -I$(top_builddir)/include/ 
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB)/libfftw3.a $(FFTWF)
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF)
 csampledir = $(datadir)/p3dfft_samples/
 test_sine_c_x_SOURCES = driver_sine.c
+test_inverse_c_x_SOURCES = driver_inverse.c
 test_sine_inplace_c_x_SOURCES = driver_sine_inplace.c
 test_rand_c_x_SOURCES = driver_rand.c
 test_spec_c_x_SOURCES = driver_spec.c
@@ -223,6 +231,9 @@ uninstall-csamplePROGRAMS:
 
 clean-csamplePROGRAMS:
 	-test -z "$(csample_PROGRAMS)" || rm -f $(csample_PROGRAMS)
+test_inverse_c.x$(EXEEXT): $(test_inverse_c_x_OBJECTS) $(test_inverse_c_x_DEPENDENCIES) 
+	@rm -f test_inverse_c.x$(EXEEXT)
+	$(LINK) $(test_inverse_c_x_LDFLAGS) $(test_inverse_c_x_OBJECTS) $(test_inverse_c_x_LDADD) $(LIBS)
 test_rand_c.x$(EXEEXT): $(test_rand_c_x_OBJECTS) $(test_rand_c_x_DEPENDENCIES) 
 	@rm -f test_rand_c.x$(EXEEXT)
 	$(LINK) $(test_rand_c_x_LDFLAGS) $(test_rand_c_x_OBJECTS) $(test_rand_c_x_LDADD) $(LIBS)

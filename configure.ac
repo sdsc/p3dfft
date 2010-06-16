@@ -143,7 +143,7 @@ fi
 
 # check whether to use FFTW
 AC_MSG_CHECKING([whether to use FFTW library])
-AC_ARG_ENABLE(essl, [AC_HELP_STRING([--enable-fftw], [for using the FFTW library (default)])], fftwval=$enableval, fftwval=yes)
+AC_ARG_ENABLE(fftw, [AC_HELP_STRING([--enable-fftw], [for using the FFTW library])], fftwval=$enableval, fftwval=no)
 AC_MSG_RESULT([$fftwval])
 if test "$fftwval" = "yes"; then
         AC_SUBST(DFLAGS, "$DFLAGS -DFFTW")
@@ -165,9 +165,9 @@ if test "$fftwval" == "no" && test "$esslval" == "no"; then
 fi
 
 # check to see if FFTW and ESSL have both been selected
-# if test "$fftwval" == "yes" && test "$esslval" == "yes"; then
-#        AC_MSG_ERROR([You must only choose either ESSL or FFTW!])
-# fi
+if test "$fftwval" == "yes" && test "$esslval" == "yes"; then
+        AC_MSG_ERROR([You must only choose either ESSL or FFTW!])
+fi
 
 # check for fftw3
 AC_MSG_CHECKING([FFTW directory])
@@ -175,14 +175,14 @@ AC_ARG_WITH(fftw, [AC_HELP_STRING([--with-fftw], [path to location of FFTW libra
 if test "$withfftw" != "yes" && test "$withfftw" != ""; then
 	AC_MSG_RESULT([$withfftw])
 	if test -e [$withfftw/lib/libfftw3.a ]; then
-		AC_SUBST(FFTW_INC, "$withfftw/include")
-		AC_SUBST(FFTW_LIB, "$withfftw/lib")
+		AC_SUBST(FFTW_INC, "-I$withfftw/include")
+		AC_SUBST(FFTW_LIB, "$withfftw/lib/libfftw3.a")
 	else
 		AC_MSG_ERROR([libfftw3.a was not found in given location!])
 	fi
 
 	if test "$spval" == "yes"; then
-		AC_SUBST(FFTWF, "$FFTW_LIB/libfftw3f.a")
+		AC_SUBST(FFTWF, "$withfftw/lib/libfftw3f.a")
 	fi
 else
         AC_MSG_RESULT([none])

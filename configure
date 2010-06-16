@@ -884,7 +884,7 @@ Optional Features:
                           set to default values.
   --enable-nblx           to define loop blocking factor NBL_X
   --enable-nbly           to define loop blocking factor NBL_Y
-  --enable-fftw           for using the FFTW library (default)
+  --enable-fftw           for using the FFTW library
   --enable-essl           for using ESSL (on IBM) in 1D FFTs.
 
 Optional Packages:
@@ -2106,12 +2106,12 @@ fi
 # check whether to use FFTW
 echo "$as_me:$LINENO: checking whether to use FFTW library" >&5
 echo $ECHO_N "checking whether to use FFTW library... $ECHO_C" >&6
-# Check whether --enable-essl or --disable-essl was given.
-if test "${enable_essl+set}" = set; then
-  enableval="$enable_essl"
+# Check whether --enable-fftw or --disable-fftw was given.
+if test "${enable_fftw+set}" = set; then
+  enableval="$enable_fftw"
   fftwval=$enableval
 else
-  fftwval=yes
+  fftwval=no
 fi;
 echo "$as_me:$LINENO: result: $fftwval" >&5
 echo "${ECHO_T}$fftwval" >&6
@@ -2155,9 +2155,11 @@ echo "$as_me: error: You must choose to use either ESSL or FFTW!" >&2;}
 fi
 
 # check to see if FFTW and ESSL have both been selected
-# if test "$fftwval" == "yes" && test "$esslval" == "yes"; then
-#        AC_MSG_ERROR([You must only choose either ESSL or FFTW!])
-# fi
+if test "$fftwval" == "yes" && test "$esslval" == "yes"; then
+        { { echo "$as_me:$LINENO: error: You must only choose either ESSL or FFTW!" >&5
+echo "$as_me: error: You must only choose either ESSL or FFTW!" >&2;}
+   { (exit 1); exit 1; }; }
+fi
 
 # check for fftw3
 echo "$as_me:$LINENO: checking FFTW directory" >&5
@@ -2174,9 +2176,9 @@ if test "$withfftw" != "yes" && test "$withfftw" != ""; then
 	echo "$as_me:$LINENO: result: $withfftw" >&5
 echo "${ECHO_T}$withfftw" >&6
 	if test -e $withfftw/lib/libfftw3.a ; then
-		FFTW_INC="$withfftw/include"
+		FFTW_INC="-I$withfftw/include"
 
-		FFTW_LIB="$withfftw/lib"
+		FFTW_LIB="$withfftw/lib/libfftw3.a"
 
 	else
 		{ { echo "$as_me:$LINENO: error: libfftw3.a was not found in given location!" >&5
@@ -2185,7 +2187,7 @@ echo "$as_me: error: libfftw3.a was not found in given location!" >&2;}
 	fi
 
 	if test "$spval" == "yes"; then
-		FFTWF="$FFTW_LIB/libfftw3f.a"
+		FFTWF="$withfftw/lib/libfftw3f.a"
 
 	fi
 else
@@ -2295,7 +2297,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2298:" \
+echo "$as_me:2300:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
