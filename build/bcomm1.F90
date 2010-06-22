@@ -14,7 +14,6 @@
       
 !     Pack the data for sending
 
-
 #ifdef USE_EVEN
 
       if(KfCntUneven) then

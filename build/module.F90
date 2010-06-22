@@ -43,7 +43,7 @@
 ! global variables
 
       integer, save,public :: padd,num_thr
-      real(8), save,public :: timers(10)
+      real(8), save,public :: timers(12)
 
       integer,save :: NX_fft,NY_fft,NZ_fft,numtasks,iproc,jproc
       integer,save :: ipid,jpid,taskid
@@ -113,11 +113,11 @@
       integer(kind=8),save :: gmem_rstart(6), gmem_cstart(6)
 
       public :: get_dims,p3dfft_setup,p3dfft_ftran_r2c,p3dfft_btran_c2r, &
-                 p3dfft_clean,print_buf
-!                 p3dfft_init_ghosts, update_rghosts,  &
-!                 update_cghosts, gr_ijk2i, &
-!                 proc_id2coords, proc_coords2id, &
-!                 gmem_rstart, gmem_cstart
+                 p3dfft_clean,print_buf,&
+                 p3dfft_init_ghosts, update_rghosts,  &
+                 update_cghosts, gr_ijk2i, &
+                 proc_id2coords, proc_coords2id, &
+                 gmem_rstart, gmem_cstart
 
 !-------------------
       contains
@@ -139,7 +139,7 @@
 #include "bcomm1.F90"
 #endif
 #include "bcomm2.F90"
-!#include "ghost_cell.F90"
+#include "ghost_cell.F90"
 
 !=====================================================
 ! Return array dimensions for either real-space (conf=1) or wavenumber-space(conf=2)
