@@ -3,7 +3,6 @@
 
       subroutine bcomm1 (source,dest,t,tc)
 !========================================================
-
       implicit none
 
       complex(mytype) source(iisize,jjsize,nz_fft)
