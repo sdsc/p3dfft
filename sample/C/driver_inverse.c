@@ -55,7 +55,7 @@ int main(int argc,char **argv)
    void init_wave1(double *,int *,int *,int,int,int);
    void init_wave2(double *,int *,int *,int,int,int);
 #else
-   void print_all(float *,int,long int),mult_array(float *,long int,double);
+   void print_all(float *,int,long int),mult_array(float *,long int,float);
    void print_all_init(float *,int,long int);
    void init_wave1(float *,int *,int *,int,int,int);
    void init_wave2(float *,int *,int *,int,int,int);
@@ -325,7 +325,7 @@ void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #ifndef SINGLE_PREC
 void mult_array(double *A,long int nar,double f)
 #else
-void mult_array(float *A,long int nar,double f)
+void mult_array(float *A,long int nar,float f)
 #endif
 {
   long int i;
