@@ -57,8 +57,8 @@ int main(int argc,char **argv)
 #else
    void print_all(float *,int,long int),mult_array(float *,long int,double);
    void print_all_init(float *,int,long int);
-   void init_wave1(double *,int *,int *,int,int,int);
-   void init_wave2(double *,int *,int *,int,int,int);
+   void init_wave1(float *,int *,int *,int,int,int);
+   void init_wave2(float *,int *,int *,int,int,int);
 #endif
 
    MPI_Init(&argc,&argv);
@@ -255,7 +255,7 @@ int main(int argc,char **argv)
 #ifndef SINGLE_PREC
 void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #else
-  void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
+void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #endif
   
   int x,y,z;
