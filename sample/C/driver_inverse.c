@@ -124,12 +124,12 @@ int main(int argc,char **argv)
       was compiled (stride1 option).
       Note : returns Fortran-style dimensions, i.e. starting with 1. */
    conf = 2;
-   p3dfft_get_dims(istart,iend,isize,conf);
+   get_dims(istart,iend,isize,conf);
    /* Get dimensions for input array - real numbers, X-pencil shape.
       Note that we are following the Fortran ordering, i.e. 
       the dimension  with stride-1 is X. */
    conf = 1;
-   p3dfft_get_dims(fstart,fend,fsize,conf);
+   get_dims(fstart,fend,fsize,conf);
 
    /* Allocate input and output arrays; note the extra factor of 2 for complex numbers*/
 #ifndef SINGLE_PREC
@@ -222,7 +222,7 @@ int main(int argc,char **argv)
   /* Gather timing statistics */
   MPI_Reduce(&rtime1,&rtime2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
-  /*
+
   MPI_Reduce(&FORTNAME(t1),&gt1,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
   MPI_Reduce(&FORTNAME(t2),&gt2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
   MPI_Reduce(&FORTNAME(t3),&gt3,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
@@ -237,7 +237,6 @@ int main(int argc,char **argv)
   gt4 = gt4 / ((double) n);
   gtp1 = gtp1 / ((double) n);
   gtcomm = gtcomm / ((double) n);
-  */
 
   if(proc_id == 0) {
      printf("Time per loop=%lg\n",rtime2/((double) n));
@@ -255,7 +254,7 @@ int main(int argc,char **argv)
 #ifndef SINGLE_PREC
 void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #else
-void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
+  void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #endif
   
   int x,y,z;
@@ -344,7 +343,7 @@ void print_all(float *A,int proc_id,long int Nglob)
   long int i,nar;
 
   conf = 1;
-  p3dfft_get_dims(Fstart,Fend,Fsize,conf);
+  get_dims(Fstart,Fend,Fsize,conf);
   nar = Fsize[0]*Fsize[1]*Fsize[2];
 
   for(i=0;i < nar;i++)
@@ -366,7 +365,7 @@ void print_all_init(float *A,int proc_id,long int Nglob)
   long int i,nar;
 
   conf = 2;
-  p3dfft_get_dims(Fstart,Fend,Fsize,conf);
+  get_dims(Fstart,Fend,Fsize,conf);
   nar = Fsize[0]*Fsize[1]*Fsize[2]*2;
 
   for(i=0;i < nar;i+=2)
