@@ -118,8 +118,8 @@
       endif
 
       call p3dfft_setup (dims,nx,ny,nz,.true.)
-      call get_dims(istart,iend,isize,1)
-      call get_dims(fstart,fend,fsize,2)
+      call p3dfft_get_dims(istart,iend,isize,1)
+      call p3dfft_get_dims(fstart,fend,fsize,2)
 
       allocate (sinx(nx))
       allocate (siny(ny))
@@ -305,7 +305,7 @@
       complex(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
-      call get_dims(Fstart,Fend,Fsize,2)
+      call p3dfft_get_dims(Fstart,Fend,Fsize,2)
       do i=1,Nar
          if(abs(Ar(1,1,i)) .gt. 1.25e-4) then
 ! Nglob
@@ -332,7 +332,7 @@
       real(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
-      call get_dims(Fstart,Fend,Fsize,1)
+      call p3dfft_get_dims(Fstart,Fend,Fsize,1)
       do i=1,Nar
          if(abs(Ar(1,1,i)) .gt. Nglob *1.25e-8) then
             z = (i-1)/(Fsize(1)*Fsize(2))

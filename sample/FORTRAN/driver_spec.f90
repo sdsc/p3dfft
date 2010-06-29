@@ -117,8 +117,8 @@
 
 ! Get dimensions for initial and outcoming arrays
 
-      call get_dims(istart,iend,isize,1)
-      call get_dims(fstart,fend,fsize,2)
+      call p3dfft_get_dims(istart,iend,isize,1)
+      call p3dfft_get_dims(fstart,fend,fsize,2)
 
 ! Allocate array for initial data
 

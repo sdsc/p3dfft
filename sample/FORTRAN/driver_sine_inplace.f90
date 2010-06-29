@@ -122,13 +122,13 @@
       call p3dfft_setup (dims,nx,ny,nz,.true.)
 
 ! Get dimensions for the original array of real numbers, X-pencils
-      call get_dims(istart,iend,isize,1)
+      call p3dfft_get_dims(istart,iend,isize,1)
 
 ! Get dimensions for the R2C-forward-transformed array of complex numbers
 !   Z-pencils (depending on how the library was compiled, the first 
 !   dimension could be either X or Z)
 ! 
-      call get_dims(fstart,fend,fsize,2)
+      call p3dfft_get_dims(fstart,fend,fsize,2)
 
 ! Initialize the array to be transformed
 !
@@ -330,7 +330,7 @@
       real(mytype), target :: Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
-      call get_dims(Fstart,Fend,Fsize,2)
+      call p3dfft_get_dims(Fstart,Fend,Fsize,2)
       do i=1,Nar*2,2
          if(abs(Ar(1,1,i)) + abs(Ar(1,1,i+1)) .gt. Nglob *1.25e-6) then
             z = (i-1)/(Fsize(1)*Fsize(2)*2)

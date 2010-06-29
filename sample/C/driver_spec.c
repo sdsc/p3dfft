@@ -126,9 +126,9 @@ int main(int argc,char **argv)
    p3dfft_setup(dims,nx,ny,nz,1);
    /* Get dimensions for input and output arrays */
    conf = 1;
-   get_dims(istart,iend,isize,conf);
+   p3dfft_get_dims(istart,iend,isize,conf);
    conf = 2;
-   get_dims(fstart,fend,fsize,conf);
+   p3dfft_get_dims(fstart,fend,fsize,conf);
 
 #ifndef SINGLE_PREC
    sinx = malloc(sizeof(double)*nx);

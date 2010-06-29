@@ -123,12 +123,12 @@ int main(int argc,char **argv)
       Note that we are following the Fortran ordering, i.e. 
       the dimension  with stride-1 is X. */
    conf = 1;
-   get_dims(istart,iend,isize,conf);
+   p3dfft_get_dims(istart,iend,isize,conf);
    /* Get dimensions for output array - complex numbers, Z-pencil shape.
       Stride-1 dimension could be X or Z, depending on how the library 
       was compiled (stride1 option) */
    conf = 2;
-   get_dims(fstart,fend,fsize,conf);
+   p3dfft_get_dims(fstart,fend,fsize,conf);
 
    sinx = malloc(sizeof(double)*nx);
    siny = malloc(sizeof(double)*ny);
@@ -278,7 +278,7 @@ void print_all(float *A,long int nar,int proc_id,long int Nglob)
   long int i;
 
   conf = 2;
-  get_dims(Fstart,Fend,Fsize,conf);
+  p3dfft_get_dims(Fstart,Fend,Fsize,conf);
   Fsize[0] *= 2;
   Fstart[0] = (Fstart[0]-1)*2;
   

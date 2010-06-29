@@ -3,7 +3,7 @@ INCLUDES = -I$(top_builddir)/include/
 LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF)
 
 csampledir = $(datadir)/p3dfft_samples/
-csample_PROGRAMS =  test_sine_c.x test_sine_inplace_c.x test_rand_c.x test_spec_c.x test_inverse_c.x
+csample_PROGRAMS = test_sine_c.x test_sine_inplace_c.x test_rand_c.x test_spec_c.x test_inverse_c.x
 
 test_sine_c_x_SOURCES = driver_sine.c
 

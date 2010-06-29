@@ -123,11 +123,11 @@
 
 ! Get dimensions for the original array of complex numbers, (X- or Z-pencils
 ! depending on how the library was compiled)
-      call get_dims(istart,iend,isize,2)
+      call p3dfft_get_dims(istart,iend,isize,2)
 
 ! Get dimensions for the C2R-transformed array of real numbers in X-pencils 
 ! 
-      call get_dims(fstart,fend,fsize,1)
+      call p3dfft_get_dims(fstart,fend,fsize,1)
 
 
 ! Allocate initial and output arrays
@@ -379,7 +379,7 @@
       real(mytype), target :: Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
-      call get_dims(Fstart,Fend,Fsize,1)
+      call p3dfft_get_dims(Fstart,Fend,Fsize,1)
       do i=1,Nar
          if(abs(Ar(1,1,i)) .gt. Nglob *1.25e-6) then
             z = (i-1)/(Fsize(1)*Fsize(2))
@@ -403,7 +403,7 @@
       integer Fstart(3),Fend(3),Fsize(3)
       real(8) Nglob
 
-      call get_dims(Fstart,Fend,Fsize,2)
+      call p3dfft_get_dims(Fstart,Fend,Fsize,2)
 
       do i=1,Nar
          if(abs(Ar(1,1,i)) .gt. Nglob *1.25e-4) then
