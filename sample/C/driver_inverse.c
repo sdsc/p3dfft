@@ -207,9 +207,9 @@ int main(int argc,char **argv)
 
   if(proc_id == 0) {
 #ifndef SINGLE_PREC
-    prec = 1e-14;
+    prec = 1.0e-14;
 #else
-    prec = 1e-5;
+    prec = 1.0e-5;
 #endif
     if(ccdiff > prec * nx*ny*nz*0.25)
       printf("Results are incorrect\n");
