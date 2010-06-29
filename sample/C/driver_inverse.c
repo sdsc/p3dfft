@@ -46,7 +46,11 @@ int main(int argc,char **argv)
    int iproc,jproc,ng[3],iex,conf,m,n;
    long int Nglob,Ntot;
    double rtime1,rtime2,gt1,gt2,gt3,gt4,gtp1,gtcomm,tcomm;
+#ifndef SINGLE_PREC
    double cdiff,ccdiff,prec;
+#else
+   float cdiff,ccdiff,prec;
+#endif
    FILE *fp;
 
 #ifndef SINGLE_PREC
