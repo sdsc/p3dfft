@@ -124,12 +124,12 @@ int main(int argc,char **argv)
       was compiled (stride1 option).
       Note : returns Fortran-style dimensions, i.e. starting with 1. */
    conf = 2;
-   get_dims(istart,iend,isize,conf);
+   p3dfft_get_dims(istart,iend,isize,conf);
    /* Get dimensions for input array - real numbers, X-pencil shape.
       Note that we are following the Fortran ordering, i.e. 
       the dimension  with stride-1 is X. */
    conf = 1;
-   get_dims(fstart,fend,fsize,conf);
+   p3dfft_get_dims(fstart,fend,fsize,conf);
 
    /* Allocate input and output arrays; note the extra factor of 2 for complex numbers*/
 #ifndef SINGLE_PREC
@@ -343,7 +343,7 @@ void print_all(float *A,int proc_id,long int Nglob)
   long int i,nar;
 
   conf = 1;
-  get_dims(Fstart,Fend,Fsize,conf);
+  p3dfft_get_dims(Fstart,Fend,Fsize,conf);
   nar = Fsize[0]*Fsize[1]*Fsize[2];
 
   for(i=0;i < nar;i++)
@@ -365,7 +365,7 @@ void print_all_init(float *A,int proc_id,long int Nglob)
   long int i,nar;
 
   conf = 2;
-  get_dims(Fstart,Fend,Fsize,conf);
+  p3dfft_get_dims(Fstart,Fend,Fsize,conf);
   nar = Fsize[0]*Fsize[1]*Fsize[2]*2;
 
   for(i=0;i < nar;i+=2)
