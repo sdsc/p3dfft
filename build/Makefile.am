@@ -10,7 +10,7 @@ module.o: setup.F90 init_plan.F90 ftran.F90 btran.F90 reorder.F90 fcomm1.F90 \
 fcomm2_trans.F90 bcomm1_trans.F90 fcomm2.F90 bcomm1.F90 bcomm2.F90 ghost_cell.F90
 
 all-local:
-	-mv -f p3dfft.mod ../include
+	-@[ -e "p3dfft.mod" ] && mv -f p3dfft.mod ../include
 
 clean-local:
 	-test -z "*.mod" || rm -f *.mod
