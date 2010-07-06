@@ -150,7 +150,7 @@ int main(int argc,char **argv)
 #endif
 
    if(A == NULL) 
-     printf("%d: Error allocating array A (%ld)\n",proc_id,nm);
+     printf("%d: Error allocating array A (%d)\n",proc_id,nm);
 
    p = A;
    for(z=0;z < isize[2];z++)

@@ -151,13 +151,13 @@ int main(int argc,char **argv)
 #endif
 
    if(A == NULL) 
-     printf("%d: Error allocating array A (%ld)\n",proc_id,isize[0]*isize[1]*isize[2]);
+     printf("%d: Error allocating array A (%d)\n",proc_id,isize[0]*isize[1]*isize[2]);
 
    if(B == NULL) 
-     printf("%d: Error allocating array B (%ld)\n",proc_id,fsize[0]*fsize[1]*fsize[2]*2);
+     printf("%d: Error allocating array B (%d)\n",proc_id,fsize[0]*fsize[1]*fsize[2]*2);
 
    if(C == NULL) 
-     printf("%d: Error allocating array C (%ld)\n",proc_id,isize[0]*isize[1]*isize[2]);
+     printf("%d: Error allocating array C (%d)\n",proc_id,isize[0]*isize[1]*isize[2]);
 
 
    p = A;

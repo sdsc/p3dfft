@@ -98,26 +98,26 @@
 #endif
 
 ! ghost-cell support using p3dfft_init_ghosts(), p3dfft_update_ghosts()
-      logical :: ghosts_set=.false.
-      integer,save, dimension(:),   allocatable :: proc_id2coords
-      integer,save, dimension(:,:), allocatable :: proc_coords2id
-      integer,save, dimension(:), allocatable :: gneighb_r,gneighb_c
-      real(kind=mytype),save, dimension(:), allocatable :: gbuf_snd,gbuf_recv
-      integer,save :: goverlap
-      integer,save :: gmess_rsize(3), gmess_csize(3)
-      integer,save :: gproc_rsize(3), gproc_csize(3)
-      integer,save :: gproc_rstart(3), gproc_cstart(3)
-      integer,save :: gproc_rend(3), gproc_cend(3)
-      integer,save :: gslab_rsize(3,3), gslab_rstart(3,6), gslab_rend(3,6)
-      integer,save :: gslab_csize(3,3), gslab_cstart(3,6), gslab_cend(3,6)
-      integer(kind=8),save :: gmem_rstart(6), gmem_cstart(6)
+!      logical :: ghosts_set=.false.
+!      integer,save, dimension(:),   allocatable :: proc_id2coords
+!      integer,save, dimension(:,:), allocatable :: proc_coords2id
+!      integer,save, dimension(:), allocatable :: gneighb_r,gneighb_c
+!      real(kind=mytype),save, dimension(:), allocatable :: gbuf_snd,gbuf_recv
+!      integer,save :: goverlap
+!      integer,save :: gmess_rsize(3), gmess_csize(3)
+!      integer,save :: gproc_rsize(3), gproc_csize(3)
+!      integer,save :: gproc_rstart(3), gproc_cstart(3)
+!      integer,save :: gproc_rend(3), gproc_cend(3)
+!      integer,save :: gslab_rsize(3,3), gslab_rstart(3,6), gslab_rend(3,6)
+!      integer,save :: gslab_csize(3,3), gslab_cstart(3,6), gslab_cend(3,6)
+!      integer(kind=8),save :: gmem_rstart(6), gmem_cstart(6)
 
-      public :: get_dims,p3dfft_setup,p3dfft_ftran_r2c,p3dfft_btran_c2r, &
-                 p3dfft_clean,print_buf,&
-                 p3dfft_init_ghosts, update_rghosts,  &
-                 update_cghosts, gr_ijk2i, &
-                 proc_id2coords, proc_coords2id, &
-                 gmem_rstart, gmem_cstart
+      public :: p3dfft_get_dims,p3dfft_setup,p3dfft_ftran_r2c,p3dfft_btran_c2r, &
+                 p3dfft_clean,print_buf
+!                 p3dfft_init_ghosts, update_rghosts,  &
+!                 update_cghosts, gr_ijk2i, &
+!                 proc_id2coords, proc_coords2id, &
+!                 gmem_rstart, gmem_cstart
 
 !-------------------
       contains
@@ -139,12 +139,12 @@
 #include "bcomm1.F90"
 #endif
 #include "bcomm2.F90"
-#include "ghost_cell.F90"
+!#include "ghost_cell.F90"
 
 !=====================================================
 ! Return array dimensions for either real-space (conf=1) or wavenumber-space(conf=2)
 ! 
-      subroutine get_dims(istart,iend,isize,conf)
+      subroutine p3dfft_get_dims(istart,iend,isize,conf)
 !=====================================================
 
       integer istart(3),iend(3),isize(3),conf
@@ -188,7 +188,7 @@
       endif
 
       endif
-      end subroutine get_dims
+      end subroutine p3dfft_get_dims
 
 
 !========================================================

@@ -1,13 +1,13 @@
 !========================================================
 
-      subroutine init_plan(A,B,n1)
+      subroutine init_plan(A,B,n2)
 
       use fft_spec
       implicit none
 
-      complex(mytype) A(n1)
-      real(mytype) B(n1*2)
-      integer(8) n1
+      integer(8) n2
+      complex(mytype) A(n2)
+      real(mytype) B(n2*2)
 
       
       call init_work(nx_fft,ny_fft,nz_fft)

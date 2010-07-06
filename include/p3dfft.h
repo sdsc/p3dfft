@@ -47,7 +47,7 @@
 #endif
 
 extern void FORT_MOD_NAME(p3dfft_setup)(int *dims,int *nx,int *ny,int *nz, int *ow);
-extern void FORT_MOD_NAME(get_dims)(int *,int *,int *,int *);
+extern void FORT_MOD_NAME(p3dfft_get_dims)(int *,int *,int *,int *);
 
 #ifndef SINGLE_PREC
 extern void FORT_MOD_NAME(p3dfft_ftran_r2c)(double *A,double *B);
@@ -61,7 +61,7 @@ extern void FORT_MOD_NAME(p3dfft_clean)();
 extern void FORTNAME(abort)();
 
 extern void p3dfft_setup(int *dims,int nx,int ny,int nz,int ovewrite);
-extern void get_dims(int *,int *,int *,int );
+extern void p3dfft_get_dims(int *,int *,int *,int );
 
 #ifndef SINGLE_PREC
 extern void p3dfft_ftran_r2c(double *A,double *B);
@@ -80,7 +80,7 @@ inline void p3dfft_setup(int *dims,int nx,int ny,int nz, int overwrite)
 
 inline void p3dfft_get_dims(int *start,int *end,int *size,int conf)
 {
-  FORT_MOD_NAME(get_dims)(start,end,size,&conf);
+  FORT_MOD_NAME(p3dfft_get_dims)(start,end,size,&conf);
 }
 
 #ifndef SINGLE_PREC

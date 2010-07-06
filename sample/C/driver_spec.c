@@ -176,6 +176,7 @@ int main(int argc,char **argv)
    */
 
    Ntot = fsize[0]*fsize[1]*fsize[2]*2;
+   factor = 1.0 / (nx*ny) / nz;
 
    MPI_Barrier(MPI_COMM_WORLD);
    /* Compute forward Fourier transform on A, store results in B */
