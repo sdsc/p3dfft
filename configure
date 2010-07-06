@@ -1838,7 +1838,6 @@ echo "${ECHO_T}$ok" >&6
 if test "$ok" = "yes"; then
         DFLAGS="$DFLAGS -DINTEL"
 
-	# AC_SUBST(DFLAGS, "$LDFLAGS -limf")
 
 cat >>confdefs.h <<\_ACEOF
 #define INTEL 1
@@ -2321,7 +2320,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2324:" \
+echo "$as_me:2323:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5

@@ -1838,7 +1838,6 @@ echo "${ECHO_T}$ok" >&6
 if test "$ok" = "yes"; then
         DFLAGS="$DFLAGS -DINTEL"
 
-	# AC_SUBST(DFLAGS, "$LDFLAGS -limf")
         
 cat >>confdefs.h <<\_ACEOF
 @%:@define INTEL 1

@@ -25,7 +25,6 @@ AC_ARG_ENABLE(intel, [AC_HELP_STRING([--enable-intel], [compile P3DFFT using Int
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
         AC_SUBST(DFLAGS, "$DFLAGS -DINTEL")
-	# AC_SUBST(DFLAGS, "$LDFLAGS -limf")
         AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
 fi
 
