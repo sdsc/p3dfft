@@ -52,6 +52,9 @@
 /* Define if you want to compile P3DFFT using IBM compiler */
 #undef IBM
 
+/* Define if you want to compile P3DFFT using Intel compiler */
+#undef INTEL
+
 /* Define if you want to enable the measure algorithm */
 #undef MEASURE
 

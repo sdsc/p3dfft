@@ -858,6 +858,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-ibm            compile P3DFFT using IBM compiler
+  --enable-intel          compile P3DFFT using Intel compiler
   --enable-pgi            compile P3DFFT using PGI compiler
   --enable-gcc            compile P3DFFT using GCC compiler
   --enable-single         compile P3DFFT in single precision (default is
@@ -1822,6 +1823,29 @@ _ACEOF
 
 fi
 
+# check whether to compile using Intel
+echo "$as_me:$LINENO: checking whether to use Intel compiler" >&5
+echo $ECHO_N "checking whether to use Intel compiler... $ECHO_C" >&6
+# Check whether --enable-intel or --disable-intel was given.
+if test "${enable_intel+set}" = set; then
+  enableval="$enable_intel"
+  ok=$enableval
+else
+  ok=no
+fi;
+echo "$as_me:$LINENO: result: $ok" >&5
+echo "${ECHO_T}$ok" >&6
+if test "$ok" = "yes"; then
+        DFLAGS="$DFLAGS -DINTEL"
+
+	# AC_SUBST(DFLAGS, "$LDFLAGS -limf")
+
+cat >>confdefs.h <<\_ACEOF
+#define INTEL 1
+_ACEOF
+
+fi
+
 # check whether to compile using PGI
 echo "$as_me:$LINENO: checking whether to use PGI compiler" >&5
 echo $ECHO_N "checking whether to use PGI compiler... $ECHO_C" >&6
@@ -2297,7 +2321,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2300:" \
+echo "$as_me:2324:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5

@@ -19,6 +19,16 @@ if test "$ok" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
 fi
 
+# check whether to compile using Intel
+AC_MSG_CHECKING([whether to use Intel compiler])
+AC_ARG_ENABLE(intel, [AC_HELP_STRING([--enable-intel], [compile P3DFFT using Intel compiler])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DINTEL")
+	# AC_SUBST(DFLAGS, "$LDFLAGS -limf")
+        AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
+fi
+
 # check whether to compile using PGI
 AC_MSG_CHECKING([whether to use PGI compiler])
 AC_ARG_ENABLE(pgi, [AC_HELP_STRING([--enable-pgi], [compile P3DFFT using PGI compiler])], ok=$enableval, ok=no)
