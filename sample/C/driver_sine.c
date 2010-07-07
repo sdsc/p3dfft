@@ -283,7 +283,11 @@ void print_all(float *A,long int nar,int proc_id,long int Nglob)
       z = i/(Fsize[0]*Fsize[1]);
       y = i/(Fsize[0]) - z*Fsize[1];
       x = i-z*Fsize[0]*Fsize[1] - y*Fsize[0];
+      #ifndef SINGLE_PREC
+      printf("(%d,%d,%d) %.16lg %lf\n",x+Fstart[0],y+Fstart[1],z+Fstart[2],A[i],A[i+1]);
+      #else
       printf("(%d,%d,%d) %.8lg %lf\n",x+Fstart[0],y+Fstart[1],z+Fstart[2],A[i],A[i+1]);
+      #endif
     }
 }
 
