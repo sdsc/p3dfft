@@ -885,6 +885,7 @@ Optional Features:
                           set to default values.
   --enable-nblx           to define loop blocking factor NBL_X
   --enable-nbly           to define loop blocking factor NBL_Y
+  --enable-openmp         for using the OpenMP library (disabled by default)
   --enable-fftw           for using the FFTW library
   --enable-essl           for using ESSL (on IBM) in 1D FFTs.
 
@@ -1814,7 +1815,7 @@ fi;
 echo "$as_me:$LINENO: result: $ok" >&5
 echo "${ECHO_T}$ok" >&6
 if test "$ok" = "yes"; then
-        DFLAGS="$DFLAGS -DIBM"
+        DFLAGS="$DFLAGS -WF -P -DIBM"
 
         
 cat >>confdefs.h <<\_ACEOF
@@ -2124,6 +2125,28 @@ _ACEOF
 else
         echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+fi
+
+# check whether to use OpenMP
+echo "$as_me:$LINENO: checking whether to use OpenMP library" >&5
+echo $ECHO_N "checking whether to use OpenMP library... $ECHO_C" >&6
+# Check whether --enable-openmp or --disable-openmp was given.
+if test "${enable_openmp+set}" = set; then
+  enableval="$enable_openmp"
+  ok=$enableval
+else
+  ok=no
+fi; 
+echo "$as_me:$LINENO: result: $ok" >&5
+echo "${ECHO_T}$ok" >&6
+if test "$ok" = "yes"; then
+        DFLAGS="$DFLAGS -DOPENMP"
+
+        
+cat >>confdefs.h <<\_ACEOF
+@%:@define OPENMP 1
+_ACEOF
+
 fi
 
 # check whether to use FFTW

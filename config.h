@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS "'--enable-intel' '--enable-fftw' '--enable-dstride1' '--with-fftw=/opt/fftw/3.2.1/intel' 'FCFLAGS=-O3 -xW -132 -fpp' 'CFLAGS=-O3 -xW' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress -limf'"
+#define CONFIGURE_ARGS "'--enable-pgi' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.1/pgi' 'FCFLAGS=-fastsse -tp barcelona-64 -Mextend -byteswapio' 'CFLAGS=-fastsse -tp barcelona-64' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress'"
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -54,7 +54,7 @@
 /* #undef IBM */
 
 /* Define if you want to compile P3DFFT using Intel compiler */
-#define INTEL 1
+/* #undef INTEL */
 
 /* Define if you want to enable the measure algorithm */
 #define MEASURE 1
@@ -67,6 +67,9 @@
 
 /* Define if you want 1D decomposition */
 /* #undef ONED */
+
+/* Define if you want to use the OpenMP library */
+/* #undef OPENMP */
 
 /* Name of package */
 #define PACKAGE "p3dfft"
@@ -90,7 +93,7 @@
 /* #undef PATIENT */
 
 /* Define if you want to compile P3DFFT using PGI compiler */
-/* #undef PGI */
+#define PGI 1
 
 /* Define if you want to compile P3DFFT in single precision */
 /* #undef SINGLE_PREC */

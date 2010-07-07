@@ -15,7 +15,7 @@ AC_MSG_CHECKING([whether to use IBM compiler])
 AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM compiler])], ok=$enableval, ok=no)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
-        AC_SUBST(DFLAGS, "$DFLAGS -DIBM")
+        AC_SUBST(DFLAGS, "$DFLAGS -WF -P -DIBM")
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
 fi
 
@@ -148,6 +148,15 @@ if test "$nblval" != ""; then
         AC_DEFINE(NBL_Y, $nblval, [Define if you want to override the default value of NBL_Y])
 else
         AC_MSG_RESULT([no])
+fi
+
+# check whether to use OpenMP
+AC_MSG_CHECKING([whether to use OpenMP library])
+AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+        AC_SUBST(DFLAGS, "$DFLAGS -DOPENMP")
+        AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
 fi
 
 # check whether to use FFTW
