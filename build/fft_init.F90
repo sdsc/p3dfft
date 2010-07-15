@@ -247,7 +247,7 @@
       call dfftw_plan_many_dft_r2c(plan1_frc,1,N,m, &
            X,NULL,1,dimx, Y,NULL,1,dimy,fftw_flag)
 #else
-      call sfftw_plan_many_dft_r2c(plan1_frc,1,N,ma, &
+      call sfftw_plan_many_dft_r2c(plan1_frc,1,N,m, &
            X,NULL,1,dimx, Y,NULL,1,dimy,fftw_flag)
 #endif
 #endif
