@@ -114,7 +114,7 @@
 !      integer(kind=8),save :: gmem_rstart(6), gmem_cstart(6)
 
       public :: p3dfft_get_dims,p3dfft_setup,p3dfft_ftran_r2c,p3dfft_btran_c2r, &
-                 p3dfft_clean,print_buf
+                 p3dfft_clean,print_buf, get_timers
 !                 p3dfft_init_ghosts, update_rghosts,  &
 !                 update_cghosts, gr_ijk2i, &
 !                 proc_id2coords, proc_coords2id, &
@@ -244,6 +244,27 @@
       return
       end subroutine
 
+!========================================================
+
+      subroutine get_timers(timer)
+         real(8) timer(12)
+         timer(1) = timers(1)
+         timer(2) = timers(2)
+         timer(3) = timers(3)
+         timer(4) = timers(4)
+         timer(5) = timers(5)
+         timer(6) = timers(6)
+         timer(7) = timers(7)
+         timer(8) = timers(8)
+         timer(9) = timers(9)
+         timer(10) = timers(10)
+         timer(11) = timers(11)
+         timer(12) = timers(12)
+      end subroutine
+
+      subroutine set_timers()
+         timers = 0
+      end subroutine
 
 
 !========================================================
@@ -268,24 +289,5 @@
       end module
 
 
-!========================================================
 
-      subroutine get_timers(timer)
-         real(8) timer(12)
-         timer(1) = timers(1)
-         timer(2) = timers(2)
-         timer(3) = timers(3)
-         timer(4) = timers(4)
-         timer(5) = timers(5)
-         timer(6) = timers(6)
-         timer(7) = timers(7)
-         timer(8) = timers(8)
-         timer(9) = timers(9)
-         timer(10) = timers(10)
-         timer(11) = timers(11)
-         timer(12) = timers(12)
-      end subroutine
 
-      subroutine set_timers()
-         timers = 0
-      end subroutine
