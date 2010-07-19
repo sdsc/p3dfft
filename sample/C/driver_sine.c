@@ -217,7 +217,7 @@ int main(int argc,char **argv)
         }
     }
 
-   if (proc_id == 0) get_timers(timers);
+   get_timers(timers);
 
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
