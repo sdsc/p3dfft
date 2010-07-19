@@ -44,6 +44,7 @@
 
       integer, save,public :: padd,num_thr
       real(8), save,public :: timers(12)
+      real(8), save :: timer(12)
 
       integer,save :: NX_fft,NY_fft,NZ_fft,numtasks,iproc,jproc
       integer,save :: ipid,jpid,taskid
@@ -267,3 +268,24 @@
       end module
 
 
+!========================================================
+
+      subroutine get_timers(timer)
+         real(8) timer(12)
+         timer(1) = timers(1)
+         timer(2) = timers(2)
+         timer(3) = timers(3)
+         timer(4) = timers(4)
+         timer(5) = timers(5)
+         timer(6) = timers(6)
+         timer(7) = timers(7)
+         timer(8) = timers(8)
+         timer(9) = timers(9)
+         timer(10) = timers(10)
+         timer(11) = timers(11)
+         timer(12) = timers(12)
+      end subroutine
+
+      subroutine set_timers()
+         timers = 0
+      end subroutine
