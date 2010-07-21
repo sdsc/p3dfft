@@ -253,7 +253,6 @@ if test "$enableibm" == "yes"; then
 		fi
 	done
 fi
-eval "echo Flags used: \$TMP"
 AC_SUBST(DFLAGS, $TMP)
 
 # Custom strings
