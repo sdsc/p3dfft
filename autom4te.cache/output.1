@@ -1795,6 +1795,8 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
           ac_config_headers="$ac_config_headers config.h"
 
 
+N="0"
+
 # save arguments passed in as a string
 
 cat >>confdefs.h <<_ACEOF
@@ -1808,13 +1810,13 @@ echo $ECHO_N "checking whether to use IBM compiler... $ECHO_C" >&6
 # Check whether --enable-ibm or --disable-ibm was given.
 if test "${enable_ibm+set}" = set; then
   enableval="$enable_ibm"
-  ok=$enableval
+  enableibm=$enableval
 else
-  ok=no
+  enableibm=no
 fi; 
-echo "$as_me:$LINENO: result: $ok" >&5
-echo "${ECHO_T}$ok" >&6
-if test "$ok" = "yes"; then
+echo "$as_me:$LINENO: result: $enableibm" >&5
+echo "${ECHO_T}$enableibm" >&6
+if test "$enableibm" = "yes"; then
         DFLAGS="$DFLAGS -WF -P -DIBM"
 
         
@@ -1822,6 +1824,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define IBM 1
 _ACEOF
 
+	eval "ARRAY${N}='-DPGI, -WP, P'"
+        N=`expr $N + 1`
 fi
 
 # check whether to compile using Intel
@@ -1868,6 +1872,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define PGI 1
 _ACEOF
 
+	eval "ARRAY${N}='-DPGI, -WP, P'"
+        N=`expr $N + 1`
 fi
 
 # check whether to compile using GCC
@@ -1912,6 +1918,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define SINGLE_PREC 1
 _ACEOF
 
+	eval "ARRAY${N}='-DSINGLE_PREC'"
+        N=`expr $N + 1`
 fi
 
 # check whether to enable 1D decomposition
@@ -1934,6 +1942,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define ONED 1
 _ACEOF
 
+	eval "ARRAY${N}='-DONED'"
+	N=`expr $N + 1`
 fi
 
 # check whether to enable estimation
@@ -1956,6 +1966,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define ESTIMATE 1
 _ACEOF
 
+	eval "ARRAY${N}='-DESTIMATE'"
+        N=`expr $N + 1`
 fi
 
 # check whether to enable the measure algorithm
@@ -1978,6 +1990,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define MEASURE 1
 _ACEOF
 
+	eval "ARRAY${N}='-DMEASURE'"
+        N=`expr $N + 1`
 fi
 
 # check whether to enable the patient algorithm
@@ -2000,6 +2014,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define PATIENT 1
 _ACEOF
 
+	eval "ARRAY${N}='-DPATIENT'"
+        N=`expr $N + 1`
 fi
 
 # check whether to enable C convention for processor dimensions
@@ -2022,6 +2038,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define DIMS_C 1
 _ACEOF
 
+	eval "ARRAY${N}='-DDIMS_C'"
+        N=`expr $N + 1`
 fi
 
 # check whether to reverse processor dimensions
@@ -2053,6 +2071,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define USE_EVEN 1
 _ACEOF
 
+	eval "ARRAY${N}='-DUSE_EVEN'"
+        N=`expr $N + 1`
 fi
 
 # check whether to enable stride-1 data structures
@@ -2075,6 +2095,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define STRIDE1 1
 _ACEOF
 
+	eval "ARRAY${N}='-DSTRIDE1'"
+        N=`expr $N + 1`
 fi
 
 # check whether to override default value of the NBL_X
@@ -2097,6 +2119,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define NBL_X $nblval
 _ACEOF
  
+	eval "ARRAY${N}='-DNBL_X=$nblval'"
+        N=`expr $N + 1`
 else
         echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
@@ -2122,6 +2146,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define NBL_Y $nblval
 _ACEOF
 
+	eval "ARRAY${N}='-DNBL_VAL=$nblval'"
+        N=`expr $N + 1`
 else
         echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
@@ -2147,6 +2173,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define OPENMP 1
 _ACEOF
 
+	eval "ARRAY${N}='-DOPENMP'"
+        N=`expr $N + 1`
 fi
 
 # check whether to use FFTW
@@ -2169,6 +2197,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define FFTW 1
 _ACEOF
 
+	eval "ARRAY${N}='-DFFTW'"
+        N=`expr $N + 1`
 fi
 
 # check whether to use ESSL
@@ -2191,6 +2221,8 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define ESSL 1
 _ACEOF
 
+	eval "ARRAY${N}='-DESSL'"
+        N=`expr $N + 1`
 fi
 
 # check to see if FFTW or ESSL has been selected
@@ -2245,6 +2277,22 @@ echo "$as_me: error: location to FFTW was not given!" >&2;}
    { (exit 1); exit 1; }; }
 	fi
 fi
+
+# for loop for constructing DFLAGS
+N=`expr $N - 1`
+if test "$enableibm" == "yes"; then
+	TMP=
+	for i in $(seq 0 $N)
+		do if test  $i = 0 ; then
+			eval TMP="\$ARRAY0"	
+		else
+			eval TMP="\$TMP', '\$ARRAY${i}"
+		fi
+	done
+fi
+eval "echo Flags used: \$TMP"
+DFLAGS=$TMP
+
 
 # Custom strings
 SUCCESS="Build successful!"
