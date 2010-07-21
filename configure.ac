@@ -7,7 +7,11 @@ AM_INIT_AUTOMAKE(no-dependencies)
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
 
+# initialize array index
 N="0"
+
+# set default concatenation separator
+eval "SEP=' '"
 
 # save arguments passed in as a string
 AC_DEFINE_UNQUOTED([CONFIGURE_ARGS],["$ac_configure_args"],[arguments passed to configure script])
@@ -19,7 +23,7 @@ AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_SUBST(DFLAGS, "$DFLAGS -WF -P -DIBM")
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
-	eval "ARRAY${N}='-DPGI, -WP, P'"
+	eval "ARRAY${N}='-WF, -P, -DIBM'"
         N=`expr $N + 1`
 fi
 
@@ -118,15 +122,6 @@ if test "$ok" = "yes"; then
 	eval "ARRAY${N}='-DDIMS_C'"
         N=`expr $N + 1`
 fi
-
-# check whether to reverse processor dimensions
-# AC_MSG_CHECKING([whether to reverse processor dimensions])
-# AC_ARG_ENABLE(reversedims, [AC_HELP_STRING([--enable-reversedims], [to interchange processor rows and columns from default.])], ok=$enableval, ok=yes)
-# AC_MSG_RESULT([$ok])
-# if test "$ok" = "yes"; then
-#	AC_SUBST(DFLAGS, "$DFLAGS -DREVERSE_DIMS")
-#	AC_DEFINE(REVERSE, 1, [Define if you want to reverse processor dimensions])
-# fi
 
 # check whether to use MPI_Alltoall instead of MPI_Alltotallv
 AC_MSG_CHECKING([whether to use MPI_Alltoall instead of MPI_Alltotallv])
