@@ -49,7 +49,7 @@ int main(int argc,char **argv)
    long int Ntot,Nglob;
    double pi,twopi,sinyz,cdiff,ccdiff,ans;
    double *sinx,*siny,*sinz,factor,r;
-   double rtime1,rtime2,gt1,gt2,gt3,gt4,gtp1,gtcomm,tcomm;
+   double rtime1,rtime2,gt[12],gt1[12],gt2[12],timers[12];
    FILE *fp;
 
 #ifndef SINGLE_PREC

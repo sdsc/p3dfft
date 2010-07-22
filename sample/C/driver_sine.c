@@ -63,7 +63,7 @@ int main(int argc,char **argv)
    twopi = 2.0*pi;
 
    for(i=0; i< 12; i++) {
-     gt[i]/*=*timers_[i]*/= gt1[i] = 0.0;
+     gt[i] = gt1[i] = 0.0;
      gt2[i] = 1E10;
    }
 
@@ -235,6 +235,8 @@ int main(int argc,char **argv)
      printf("Time per loop=%lg\n",rtime2/((double) n));
      for(i=0;i < 10;i++) {
        gt[i] = gt[i]/ ((double) n);
+       gt1[i] = gt1[i]/ ((double) n);
+       gt2[i] = gt2[i]/ ((double) n);
        printf("timer[%d] (avg/max/min): %lE %lE %lE\n",i+1,gt[i],gt1[i],gt2[i]);
      }
   }
