@@ -63,7 +63,8 @@ int main(int argc,char **argv)
    twopi = 2.0*pi;
 
    for(i=0; i< 12; i++) {
-     gt[i] = gt1[i] = 0.0;
+     gt[i] = 0.0;
+     gt1[i] = 0.0;
      gt2[i] = 1E10;
    }
 
@@ -222,7 +223,7 @@ int main(int argc,char **argv)
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
   if(proc_id == 0)
-    printf("max diff =%g\n",ccdiff);
+    printf("max diff = %g\n",ccdiff);
 
   /* Gather timing statistics */
   MPI_Reduce(&rtime1,&rtime2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
