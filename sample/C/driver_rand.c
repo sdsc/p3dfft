@@ -65,6 +65,11 @@ int main(int argc,char **argv)
    pi = atan(1.0)*4.0;
    twopi = 2.0*pi;
 
+   for(i=0; i< 12; i++) {
+     gt[i] = gt1[i] = 0.0;
+     gt2[i] = 1E10;
+   }
+
    set_timers();
  
    if(proc_id == 0) {
@@ -215,6 +220,8 @@ int main(int argc,char **argv)
           p1++;
           p2++;
         }
+
+   get_timers(timers);
 
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
