@@ -58,7 +58,6 @@ extern void FORT_MOD_NAME(p3dfft_btran_c2r)(float *A,float *B);
 #endif
 
 extern void FORT_MOD_NAME(p3dfft_clean)();
-extern void FORTNAME(abort)();
 
 extern void p3dfft_setup(int *dims,int nx,int ny,int nz,int ovewrite);
 extern void p3dfft_get_dims(int *,int *,int *,int );
@@ -122,9 +121,4 @@ inline void p3dfft_btran_c2r(float *A,float *B)
 inline void p3dfft_clean()
 {
   FORT_MOD_NAME(p3dfft_clean)();
-}
-
-inline void FORTNAME(abort)() 
-{
-  abort();
 }
