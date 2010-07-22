@@ -47,7 +47,7 @@ int main(int argc,char **argv)
    long int Ntot,Nglob;
    double pi,twopi,sinyz,cdiff,ccdiff,ans;
    double *sinx,*siny,*sinz,factor;
-   double rtime1,rtime2,gt1,gt2,gt3,gt4,gtp1,gtcomm,tcomm;
+   double rtime1,rtime2,gt[12],gt1[12],gt2[12],timers[12];
    FILE *fp;
 
 #ifndef SINGLE_PREC
@@ -63,9 +63,13 @@ int main(int argc,char **argv)
    pi = atan(1.0)*4.0;
    twopi = 2.0*pi;
 
-   gt1=gt2=gt3=gt4=gtp1=0.0;
+   for(i=0; i< 12; i++) {
+     gt[i] = gt1[i] = 0.0;
+     gt2[i] = 1E10;
+   }
+  
+   set_timers();
 
- 
    if(proc_id == 0) {
      if((fp=fopen("stdin", "r"))==NULL){
         printf("Cannot open file. Setting to default nx=ny=nz=128, ndim=2, n=1.\n");
@@ -211,35 +215,26 @@ int main(int argc,char **argv)
 
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
+  get_timers(timers);
+
   if(proc_id == 0)
     printf("max diff =%g\n",ccdiff);
 
   /* Gather timing statistics */
   MPI_Reduce(&rtime1,&rtime2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
-  /*
-  MPI_Reduce(&FORTNAME(t1),&gt1,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  MPI_Reduce(&FORTNAME(t2),&gt2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  MPI_Reduce(&FORTNAME(t3),&gt3,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  MPI_Reduce(&FORTNAME(t4),&gt4,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  MPI_Reduce(&FORTNAME(tp1),&gtp1,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  tcomm = FORTNAME(t1)+FORTNAME(t2)+FORTNAME(t3)+FORTNAME(t4);
-  MPI_Reduce(&tcomm,&gtcomm,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-
-  gt1 = gt1 / ((double) n);
-  gt2 = gt2 / ((double) n);
-  gt3 = gt3 / ((double) n);
-  gt4 = gt4 / ((double) n);
-  gtp1 = gtp1 / ((double) n);
-  gtcomm = gtcomm / ((double) n);
-*/
+  MPI_Reduce(&timers,&gt,10,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+  MPI_Reduce(&timers,&gt1,10,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+  MPI_Reduce(&timers,&gt2,10,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
 
   if(proc_id == 0) {
      printf("Time per loop=%lg\n",rtime2/((double) n));
-     /*
-     printf("Total comm: %g",gtcomm);
-     printf("t1=%lg, t2=%lg, t3=%lg, t4=%lg, tp1=%lg\n",gt1,gt2,gt3,gt4,gtp1);
-     */
+     for(i=0;i < 10;i++) {
+       gt[i] = gt[i]/ ((double) n);
+       gt1[i] = gt1[i]/ ((double) n);
+       gt2[i] = gt2[i]/ ((double) n);
+       printf("timer[%d] (avg/max/min): %lE %lE %lE\n",i+1,gt[i],gt1[i],gt2[i]);
+     }
   }
 
 
