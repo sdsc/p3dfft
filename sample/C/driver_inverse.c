@@ -235,9 +235,9 @@ int main(int argc,char **argv)
     timers[i] = timers[i] / ((double) n);
   }
 
-  MPI_Reduce(&timers,&gt,10,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-  MPI_Reduce(&timers,&gt1,10,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-  MPI_Reduce(&timers,&gt2,10,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
+  MPI_Reduce(&timers,&gt,12,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+  MPI_Reduce(&timers,&gt1,12,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+  MPI_Reduce(&timers,&gt2,12,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
 
   for (i=0;i < 12;i++) {
     gt[i] = gt[i]/ ((double) nproc);
@@ -245,7 +245,7 @@ int main(int argc,char **argv)
 
   if(proc_id == 0) { 
      printf("Time per loop=%lg\n",rtime2/((double) n));
-     for(i=0;i < 10;i++) {
+     for(i=0;i < 12;i++) {
        printf("timer[%d] (avg/max/min): %lE %lE %lE\n",i+1,gt[i],gt1[i],gt2[i]);
      }
   }
