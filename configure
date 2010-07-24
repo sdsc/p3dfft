@@ -1826,8 +1826,8 @@ cat >>confdefs.h <<\_ACEOF
 #define IBM 1
 _ACEOF
 
-	eval "SEP=', '"
-	eval "ARRAY${N}='-WF, -P, -DIBM'"
+	eval "SEP=','"
+	eval "ARRAY${N}='-WF,-P,-DIBM'"
         N=`expr $N + 1`
 fi
 
