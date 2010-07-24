@@ -230,7 +230,7 @@ TMP=
 eval TMP="\$ARRAY0"
 for i in $(seq 0 $N)
 do
-		eval TMP="\$TMP\$SEP\$ARRAY${i}"
+	eval TMP="\$TMP\$SEP\$ARRAY${i}"
 done
 
 AC_SUBST(DFLAGS, $TMP)
