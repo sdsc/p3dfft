@@ -2247,12 +2247,10 @@ fi
 # for loop for constructing DFLAGS
 N=`expr $N - 1`
 TMP=
+eval TMP="\$ARRAY0"
 for i in $(seq 0 $N)
-	do if test  $i = 0 ; then
-		eval TMP="\$ARRAY0"
-	else
+do
 		eval TMP="\$TMP\$SEP\$ARRAY${i}"
-	fi
 done
 
 DFLAGS=$TMP
@@ -2355,7 +2353,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2358:" \
+echo "$as_me:2356:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
