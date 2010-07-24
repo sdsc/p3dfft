@@ -22,8 +22,8 @@ AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM com
 AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
-	eval "SEP=', '"
-	eval "ARRAY${N}='-WF, -P, -DIBM'"
+	eval "SEP=','"
+	eval "ARRAY${N}='-WF,-P,-DIBM'"
         N=`expr $N + 1`
 fi
 
