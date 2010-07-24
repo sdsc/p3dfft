@@ -228,7 +228,7 @@ fi
 N=`expr $N - 1`
 TMP=
 eval TMP="\$ARRAY0"
-for i in $(seq 0 $N)
+for i in $(seq 1 $N)
 do
 	eval TMP="\$TMP\$SEP\$ARRAY${i}"
 done
