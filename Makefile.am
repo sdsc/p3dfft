@@ -1,6 +1,6 @@
 EXTRA_DIST = NEWS README AUTHORS ChangeLog include
 
-include_HEADERS = include/p3dfft.h.original include/p3dfft.mod
+include_HEADERS = include/config.h include/p3dfft.h include/p3dfft.mod
 
 SUBDIRS = \
 	build \

@@ -264,12 +264,6 @@ AC_CONFIG_FILES([Makefile
 
 AC_SUBST(TESTLIBS, $TESTLIBS)
 AC_OUTPUT()
-
-AC_MSG_NOTICE([creating new copy of p3dfft.h])
-cp include/p3dfft.h.original include/p3dfft.h
-
-AC_MSG_NOTICE([concatenating config.h to p3dfft.h])
-cat config.h >> include/p3dfft.h
-
+cp config.h include/config.h
 AC_MSG_NOTICE([configure script complete!])
 

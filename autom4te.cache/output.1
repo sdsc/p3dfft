@@ -5691,15 +5691,7 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
-
-{ echo "$as_me:$LINENO: creating new copy of p3dfft.h" >&5
-echo "$as_me: creating new copy of p3dfft.h" >&6;}
-cp include/p3dfft.h.original include/p3dfft.h
-
-{ echo "$as_me:$LINENO: concatenating config.h to p3dfft.h" >&5
-echo "$as_me: concatenating config.h to p3dfft.h" >&6;}
-cat config.h >> include/p3dfft.h
-
+cp config.h include/config.h
 { echo "$as_me:$LINENO: configure script complete!" >&5
 echo "$as_me: configure script complete!" >&6;}
 
