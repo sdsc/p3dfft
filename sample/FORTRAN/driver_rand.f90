@@ -232,7 +232,14 @@
       call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
         MPI_COMM_WORLD,ierr)
 
-      if (proc_id.eq.0) write (6,*) 'max diff =',ccdiff
+      if (proc_id.eq.0)
+        if(ccdiff .gt. prec * Nx*Ny*Nz*0.25) then
+          print *,'Results are incorrect'
+        else
+          print *,'Results are correct'
+        endif
+        write (6,*) 'max diff =',ccdiff
+      endif
 
 ! Process timing statistics
 
