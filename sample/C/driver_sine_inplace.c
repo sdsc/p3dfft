@@ -218,8 +218,19 @@ int main(int argc,char **argv)
 
   get_timers(timers);
 
-  if(proc_id == 0)
+  if(proc_id == 0) {
+#ifndef SINGLE_PREC
+    prec = 1.0e-14;
+#else
+    prec = 1.0e-5;
+#endif
+    if(ccdiff > prec * nx*ny*nz*0.25)
+      printf("Results are incorrect\n");
+    else
+      printf("Results are correct\n");
+
     printf("max diff =%g\n",ccdiff);
+  }
 
   /* Gather timing statistics */
   MPI_Reduce(&rtime1,&rtime2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
