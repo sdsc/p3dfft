@@ -36,11 +36,11 @@
       complex(mytype), dimension(:,:,:),  allocatable :: AEND
       real(mytype) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
 
-      integer(8) Ntot
+      integer(i8) Ntot
       real(mytype) factor
       real(mytype),dimension(:),allocatable:: sinx,siny,sinz
-      real(8) rtime1,rtime2,Nglob,prec
-      real(8) gt(10,3),gtcomm(3),tc
+      real(r8) rtime1,rtime2,Nglob,prec
+      real(r8) gt(10,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
       integer fstart(3),fend(3),fsize(3)
@@ -293,7 +293,7 @@
       
       use p3dfft
 
-      integer(8) nar,i
+      integer(i8) nar,i
       complex(mytype) X(nar)
       real(mytype) f
 
@@ -313,7 +313,7 @@
       use p3dfft
 
       integer x,y,z,proc_id
-      integer(8) i,Nar,Nglob
+      integer(i8) i,Nar,Nglob
       complex(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
@@ -340,7 +340,7 @@
       use p3dfft
 
       integer x,y,z,proc_id
-      integer(8) i,Nar,Nglob
+      integer(i8) i,Nar,Nglob
       real(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
