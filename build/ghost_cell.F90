@@ -301,16 +301,16 @@
       	real(mytype) ,TARGET :: XYZ(*)
       	integer, intent(in) :: gneighb(*)
       	integer, intent(in) :: gproc_size(*)
-      	integer(kind=8), intent(in) :: gmem_start(*)
+      	integer(i8), intent(in) :: gmem_start(*)
       	integer, intent(in) :: gslab_start(3,6)
       	integer, intent(in) :: gslab_end(3,6)
 
 !     !	usual stuff
      	integer,save :: d,mp, dmp, pmd
      	integer,save :: send_neighb, recv_neighb
-     	integer(kind=8),save :: i,j,k,jk
+     	integer(i8),save :: i,j,k,jk
      	integer,save :: g, buf_size
-     	integer(kind=8),save :: jpos,kpos
+     	integer(i8),save :: jpos,kpos
      	integer, save :: request, status(mpi_status_size), ierr
 
 !     !	exchange ghost-cells sides of pencil/slide
@@ -393,7 +393,7 @@
 
 !     	function args
       	integer, intent(in) :: i,j,k
-      	integer(kind=8) :: gr_ijk2i
+      	integer(i8) :: gr_ijk2i
 
       	if(.not. ghosts_set) then
       		print *,'P3DFFT error: call p3dfft_init_ghosts before'

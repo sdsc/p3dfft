@@ -13,9 +13,9 @@
       complex(mytype) buf3(nz_fft,jjsize)
       complex(mytype) dest(ny_fft,iisize,kjsize)
 
-      real(8) t,tc
+      real(r8) t,tc
       integer x,y,z,i,ierr,xs,ys,iy,y2,z2,ix,x2,n,iz
-      integer(8) position,pos1,pos0
+      integer(i8) position,pos1,pos0
 
 
 !     Pack the data for sending

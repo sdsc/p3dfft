@@ -5,7 +5,7 @@
       use fft_spec
       implicit none
 
-      integer(8) n2
+      integer(i8) n2
       complex(mytype) A(n2)
       real(mytype) B(n2*2)
 

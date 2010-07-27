@@ -11,7 +11,7 @@
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nz_fft)
 #endif
       integer x,y,z,i,err,nx,ny,nz,ithr,OMP_GET_THREAD_NUM,ierr,id
-      integer(8) Nl
+      integer(i8) Nl
       
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'

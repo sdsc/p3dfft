@@ -12,9 +12,9 @@
 #else
       complex(mytype) source(iisize,ny_fft,kjsize)
 #endif
-      real(8) t,tc
+      real(r8) t,tc
       integer x,y,z,i,ierr,ix,iy,x2,y2,l
-      integer(8) position,pos1,pos0,pos2
+      integer(i8) position,pos1,pos0,pos2
 
       tc = tc - MPI_Wtime()
 

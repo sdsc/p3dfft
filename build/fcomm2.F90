@@ -10,9 +10,9 @@
       complex(mytype) source(iisize,ny_fft,kjsize)
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
-      real(8) t,tc
+      real(r8) t,tc
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz
-      integer(8) position,pos1
+      integer(i8) position,pos1
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entring fcomm2'

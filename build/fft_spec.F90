@@ -24,8 +24,8 @@
 
 #ifdef FFTW
       include "fftw3.f"
-      integer(8) plan1_frc,plan1_bcr,plan1_fc,plan2_fc,plan1_bc,plan2_bc      
-!      integer(8) plan1,plan2,plan3      
+      integer(SELECTED_INT_KIND(16)) plan1_frc,plan1_bcr,plan1_fc,plan2_fc,plan1_bc,plan2_bc
+!      integer(i8) plan1,plan2,plan3      
       integer fftw_flag,NULL
 #ifdef ESTIMATE
       parameter(fftw_flag = FFTW_ESTIMATE,NULL=0)
@@ -39,8 +39,8 @@
 
 #ifdef ESSL
       integer :: cnaux,rnaux1,rnaux2
-      real(8),save,allocatable :: caux1(:),caux2(:),raux1(:),raux2(:)
-      real(8),save :: raux3(1)
+      real(r8),save,allocatable :: caux1(:),caux2(:),raux1(:),raux2(:)
+      real(r8),save :: raux3(1)
 #endif         
       
       end module

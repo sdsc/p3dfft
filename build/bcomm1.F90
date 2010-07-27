@@ -7,9 +7,9 @@
 
       complex(mytype) source(iisize,jjsize,nz_fft)
       complex(mytype) dest(iisize,ny_fft,kjsize)
-      real(8) t,tc
+      real(r8) t,tc
       integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2
-      integer(8) position,pos1
+      integer(i8) position,pos1
       
 !     Pack the data for sending
 

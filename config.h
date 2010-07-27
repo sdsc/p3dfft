@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS "'--prefix=/home/d4park/tmp' '--enable-pgi' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.1/pgi' 'FCFLAGS=-fastsse -tp barcelona-64 -Mextend -Mpreprocess -byteswapio' 'CFLAGS=-fastsse -tp barcelona-64' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress'"
+#define CONFIGURE_ARGS "'--enable-pgi' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.1/pgi' 'FCFLAGS=-fastsse -tp barcelona-64 -Mextend -Mpreprocess -byteswapio' 'CFLAGS=-fastsse -tp barcelona-64' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress'"
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -81,13 +81,13 @@
 #define PACKAGE_NAME "P3DFFT"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "P3DFFT 2.3.1"
+#define PACKAGE_STRING "P3DFFT 2.4"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "p3dfft"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.3.1"
+#define PACKAGE_VERSION "2.4"
 
 /* Define if you want to enable the patient algorithm */
 /* #undef PATIENT */
@@ -108,7 +108,7 @@
 /* #undef USE_EVEN */
 
 /* Version number of package */
-#define VERSION "2.3.1"
+#define VERSION "2.4"
 
 /* Define to rpl_malloc if the replacement function should be used. */
 /* #undef malloc */

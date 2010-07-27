@@ -13,9 +13,9 @@
 !      complex(mytype) buf(nz_fft*iisize*jjsize)
       complex(mytype) dest(nz_fft,jjsize,iisize)
 
-      real(8) t,tc
+      real(r8) t,tc
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l
-      integer*8 position,pos1,pos0
+      integer(i8) position,pos1,pos0
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entring fcomm2_trans'

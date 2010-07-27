@@ -13,9 +13,9 @@
       complex(mytype) dest(iisize,ny_fft,kjsize)
 #endif
 
-      real(8) t,tc
+      real(r8) t,tc
       integer x,y,i,ierr,z,xs,j,n,ix,iy,y2,x2,l
-      integer(8) position,pos1,pos0,pos2
+      integer(i8) position,pos1,pos0,pos2
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entering fcomm1'

@@ -79,10 +79,12 @@ test_spec_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
-FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
+PPFCCOMPILE = $(FC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
 FCLD = $(FC)
 FCLINK = $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
+FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
 SOURCES = $(test_inverse_f_x_SOURCES) $(test_rand_f_x_SOURCES) \
 	$(test_sine_f_x_SOURCES) $(test_sine_inplace_f_x_SOURCES) \
 	$(test_spec_f_x_SOURCES)
@@ -170,7 +172,7 @@ AM_FCFLAGS = $(DFLAGS) $(INCLUDES) # $(FCFLAGS)
 INCLUDES = -I$(top_builddir)/include/
 LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) 
 fsampledir = $(datadir)/p3dfft_samples/
-test_sine_f_x_SOURCES = driver_sine.f90
+test_sine_f_x_SOURCES = driver_sine.F90
 test_inverse_f_x_SOURCES = driver_inverse.f90
 test_sine_inplace_f_x_SOURCES = driver_sine_inplace.f90
 test_rand_f_x_SOURCES = driver_rand.f90
@@ -178,7 +180,7 @@ test_spec_f_x_SOURCES = driver_spec.f90
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .f90 .o .obj
+.SUFFIXES: .F90 .f90 .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -252,6 +254,12 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
+
+.F90.o:
+	$(PPFCCOMPILE) -c -o $@ $<
+
+.F90.obj:
+	$(PPFCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .f90.o:
 	$(FCCOMPILE) -c -o $@ $<

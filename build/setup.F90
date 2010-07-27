@@ -8,7 +8,7 @@
       integer ierr, dims(2),  cartid(2)
       logical periodic(2),remain_dims(2),overwrite
       integer impid, ippid, jmpid, jppid
-      integer(8) nm,n1,n2
+      integer(i8) nm,n1,n2
       real(mytype), allocatable :: R(:)
 
       if(nx .le. 0 .or. ny .le. 0 .or. nz .le. 0) then

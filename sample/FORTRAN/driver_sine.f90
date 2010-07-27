@@ -36,11 +36,11 @@
       complex(mytype), dimension(:,:,:),  allocatable :: AEND
       real(mytype) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
 
-      integer(8) Ntot
+      integer(i8) Ntot
       real(mytype) factor
       real(mytype),dimension(:),allocatable:: sinx,siny,sinz
-      real(8) rtime1,rtime2,Nglob,prec
-      real(8) gt(10,3),gtcomm(3),tc
+      real(i8) rtime1,rtime2,Nglob
+      real(i8) gt(10,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
       integer fstart(3),fend(3),fsize(3)
@@ -238,19 +238,7 @@
       call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
         MPI_COMM_WORLD,ierr)
 
-      if(proc_id .eq. 0) then
-         if(mytype .eq. 8) then
-            prec = 1e-14
-         else
-            prec = 1e-5
-         endif
-         if(ccdiff .gt. prec * Nx*Ny*Nz*0.25) then
-            print *,'Results are incorrect'
-         else
-            print *,'Results are correct'
-         endif
-         write (6,*) 'max diff =',ccdiff
-      endif
+      if (proc_id.eq.0) write (6,*) 'max diff =',ccdiff
 
 ! Gather timing statistics
       call MPI_Reduce(rtime1,rtime2,1,mpi_real8,MPI_MAX,0, &
@@ -298,7 +286,7 @@
 
       use p3dfft
 
-      integer(8) nar,i
+      integer(i8) nar,i
       complex(mytype) X(nar)
       real(mytype) f
 
@@ -319,10 +307,10 @@
       use p3dfft
 
       integer x,y,z,proc_id
-      integer(8) i,Nar
+      integer(i8) i,Nar
       complex(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
-      real(8) Nglob
+      real(r8) Nglob
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,2)
 

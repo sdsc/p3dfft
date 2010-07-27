@@ -31,20 +31,22 @@
 ! Set precision
 
 #ifndef SINGLE_PREC
-       integer, parameter,public :: mytype=8
+       integer, parameter,public :: mytype=SELECTED_REAL_KIND(8)
        integer, parameter,public:: mpireal = MPI_DOUBLE_PRECISION
        integer,parameter,public:: mpicomplex = MPI_DOUBLE_COMPLEX
 #else
-       integer, parameter,public :: mytype=4
+       integer, parameter,public :: mytype=SELECTED_REAL_KIND(4)
        integer, parameter,public:: mpireal = MPI_REAL
        integer,parameter,public:: mpicomplex = MPI_COMPLEX
 #endif
 
 ! global variables
 
+      integer, parameter, public :: r8 = SELECTED_REAL_KIND(8)
+      integer, parameter, public :: i8 = SELECTED_INT_KIND(16)
       integer, save,public :: padd,num_thr
-      real(8), save,public :: timers(12)
-      real(8), save :: timer(12)
+      real(r8), save,public :: timers(12)
+      real(r8), save :: timer(12)
 
       integer,save :: NX_fft,NY_fft,NZ_fft,numtasks,iproc,jproc
       integer,save :: ipid,jpid,taskid
@@ -76,7 +78,7 @@
       complex(mytype), save, allocatable :: buf(:),buf1(:),buf2(:)
       logical :: OW = .false.
 #ifdef USE_EVEN
-      integer(8),save :: IfCntMax,KfCntMax
+      integer(i8),save :: IfCntMax,KfCntMax
       logical KfCntUneven
 #endif
 
@@ -103,7 +105,7 @@
 !      integer,save, dimension(:),   allocatable :: proc_id2coords
 !      integer,save, dimension(:,:), allocatable :: proc_coords2id
 !      integer,save, dimension(:), allocatable :: gneighb_r,gneighb_c
-!      real(kind=mytype),save, dimension(:), allocatable :: gbuf_snd,gbuf_recv
+!      real(mytype),save, dimension(:), allocatable :: gbuf_snd,gbuf_recv
 !      integer,save :: goverlap
 !      integer,save :: gmess_rsize(3), gmess_csize(3)
 !      integer,save :: gproc_rsize(3), gproc_csize(3)
@@ -111,7 +113,7 @@
 !      integer,save :: gproc_rend(3), gproc_cend(3)
 !      integer,save :: gslab_rsize(3,3), gslab_rstart(3,6), gslab_rend(3,6)
 !      integer,save :: gslab_csize(3,3), gslab_cstart(3,6), gslab_cend(3,6)
-!      integer(kind=8),save :: gmem_rstart(6), gmem_cstart(6)
+!      integer(i8),save :: gmem_rstart(6), gmem_cstart(6)
 
       public :: p3dfft_get_dims,p3dfft_setup,p3dfft_ftran_r2c,p3dfft_btran_c2r, &
                  p3dfft_clean,print_buf, get_timers
@@ -234,7 +236,7 @@
 !========================================================
       subroutine ar_copy(A,B,nar)
 
-      integer(8) nar,i
+      integer(i8) nar,i
       complex(mytype) A(nar,1,1),B(nar,1,1)
 
       do i=1,nar
@@ -243,6 +245,7 @@
 
       return
       end subroutine
+
 
 !========================================================
 
@@ -266,7 +269,6 @@
          timers = 0
       end subroutine
 
-
 !========================================================
       subroutine print_buf(A,lx,ly,lz)
 
@@ -287,7 +289,5 @@
 
 
       end module
-
-
 
 

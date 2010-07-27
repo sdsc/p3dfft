@@ -12,7 +12,7 @@
 #endif
 
       integer x,y,z,i,k,nx,ny,nz
-      integer(8) Nl
+      integer(i8) Nl
 
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'
