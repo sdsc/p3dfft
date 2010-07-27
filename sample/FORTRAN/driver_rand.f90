@@ -39,7 +39,7 @@
       integer(8) Ntot
       real(mytype) factor
       real(mytype),dimension(:),allocatable:: sinx,siny,sinz
-      real(8) rtime1,rtime2,Nglob
+      real(8) rtime1,rtime2,Nglob,prec
       real(8) gt(10,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
