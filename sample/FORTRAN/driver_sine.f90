@@ -53,8 +53,11 @@
 
       print *,'Mytype=',mytype
 
+#ifndef SINGLE_PREC
       twopi=atan(1.0d0)*8.0d0
-
+#else
+      twopi=atan(1.0)*8.0
+#endif
       timers = 0.0
       gt=0.0
       gtcomm=0.0

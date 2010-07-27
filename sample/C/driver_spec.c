@@ -200,10 +200,15 @@ int main(int argc,char **argv)
    E = malloc(sizeof(float) * (kmax+1));
 #endif
 
+#ifdef STRIDE1
+   ng[0] = nz;	  
+   ng[1] = ny;
+   ng[2] = nx;
+#else
    ng[0] = nx;	  
    ng[1] = ny;
    ng[2] = nz;
-
+#endif
    /* Compute power spectrum, store results in E */
    compute_spectrum(B,fstart,fsize,fend,ng,E,kmax,0);
 
@@ -283,6 +288,36 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
       el[ik]=E[ik]=0.0;
 
     /* Compute local spectrum */
+#ifdef STRIDE1
+    for(x=0;x < sz[2]*2;x++) {
+
+	  /* Array B is floats storing complex numbers, so two elements 
+	     share one kx */
+      kx = x/2 + (st[2]-1);
+      
+      for(y=0;y < sz[1];y++) {
+	ky = y +st[1]-1;
+	if(ky > ng[1]/2)
+	  ky = ng[1] - ky;
+	
+	for(z=0;z < sz[0];z++) {
+	  kz = z +st[0]-1;
+	  if(kz > ng[0]/2)
+	    kz = ng[0] - kz;
+    
+	  k2 = kx *kx +ky *ky + kz*kz;
+#ifndef SINGLE_PREC
+	  ik = sqrt((double) k2)+0.5;
+#else
+          ik = sqrt((float) k2)+0.5;
+#endif
+	  el[ik] += k2 * (*p) * (*p);
+	  p++;
+	}
+      }
+    }
+
+#else
     for(z=0;z < sz[2];z++) {
       kz = z +st[2]-1;
       if(kz > ng[2]/2)
@@ -310,7 +345,7 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
 	}
       }
     }
-
+#endif
     /* Add up results among processors */
     MPI_Reduce(el,E,kmax+1,MPI_FLOAT,MPI_SUM,root,MPI_COMM_WORLD);
 

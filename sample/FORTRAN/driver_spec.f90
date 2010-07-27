@@ -163,15 +163,22 @@
       call p3dfft_ftran_r2c (BEG,AEND)
          
       rtime1 = rtime1 + MPI_wtime()
+
          
 ! Normalize
       call mult_array(AEND, Ntot,factor)
 
       kmax = sqrt(real(nx)*nx + ny*ny + nz*nz)*0.5 + 0.5
       allocate(E(0:kmax))
+#ifdef STRIDE1
+      ng(1) = nz
+      ng(2) = ny
+      ng(3) = nx
+#else
       ng(1) = nx
       ng(2) = ny
       ng(3) = nz
+#endif
 
 ! Compute power spectrum
       call compute_spectrum(AEND,fstart,fsize,fend,ng,E,kmax,0)
@@ -245,6 +252,35 @@
          E(ik) = 0.0
       enddo
 
+#ifdef STRIDE1 
+            do x=st(3),en(3)
+               kx = x-1
+
+               do y=st(2),en(2)
+                  if(y .gt. ng(2)/2) then
+                     ky = ng(2) - y +1
+                  else
+                     ky = y-1
+                  endif
+
+                  do z=st(1),en(1)
+                     if(z .gt. ng(1)/2) then
+                        kz = ng(1) - z +1
+                     else
+                        kz = z-1
+                     endif
+                     
+               k2 = kx**2 + ky**2 + kz**2
+               ik = sqrt(k2) + 0.5
+
+               el(ik) = el(ik) + k2 * real(B(z-st(1)+1,y-st(2)+1,x-st(3)+1) * &
+                   conjg(B(z-st(1)+1,y-st(2)+1,x-st(3)+1))) 
+
+            enddo
+         enddo
+      enddo
+#else
+
       do z=st(3),en(3)
          if(z .gt. ng(3)/2) then
             kz = ng(3) - z +1
@@ -270,6 +306,7 @@
             enddo
          enddo
       enddo
+#endif
 
       call mpi_reduce(el,E,kmax+1,mpireal,MPI_SUM,root,MPI_COMM_WORLD,ierr)
 
