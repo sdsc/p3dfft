@@ -51,8 +51,6 @@
       call MPI_COMM_SIZE (MPI_COMM_WORLD,nproc,ierr)
       call MPI_COMM_RANK (MPI_COMM_WORLD,proc_id,ierr)
 
-      print *,'Mytype=',mytype
-
 #ifndef SINGLE_PREC
       twopi=atan(1.0d0)*8.0d0
 #else
