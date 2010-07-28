@@ -240,7 +240,7 @@ else
 	eval TMP1="\$ARRAY0"
 	for i in $(seq 1 $N)
 	do
-		eval TMP1="\$TMP1', '\$ARRAY${i}"
+		eval TMP1="\$TMP1','\$ARRAY${i}"
 	done
 	AC_SUBST(FDFLAGS, $TMP1)
 fi
