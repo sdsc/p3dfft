@@ -19,7 +19,7 @@ AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM com
 AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
-	eval "ARRAY${N}='-WF,-P,-DIBM'"
+	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 fi
 
@@ -237,8 +237,8 @@ if test "$enableibm" != "yes"; then
 	AC_SUBST(FDFLAGS, $TMP0)
 else
 	TMP1=
-	eval TMP1="\$ARRAY0"
-	for i in $(seq 1 $N)
+	eval TMP1="-WF,-P"
+	for i in $(seq 0 $N)
 	do
 		eval TMP1="\$TMP1','\$ARRAY${i}"
 	done
