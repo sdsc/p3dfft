@@ -47,7 +47,7 @@ int main(int argc,char **argv)
    double *sinx,*siny,*sinz,factor;
    double rtime1,rtime2,gt[12],gt1[12],gt2[12],timers[12];
    double tcomm,gtcomm[3];
-   double cdiff,ccdiff,ans;
+   double cdiff,ccdiff,ans,prec;
    FILE *fp;
 
 #ifndef SINGLE_PREC

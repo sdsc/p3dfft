@@ -47,7 +47,7 @@ int main(int argc,char **argv)
    int fstart[3],fsize[3],fend[3];
    int iproc,jproc,ng[3],kmax,iex,conf,m,n;
    long int Ntot,Nglob;
-   double pi,twopi,sinyz,cdiff,ccdiff,ans;
+   double pi,twopi,sinyz,cdiff,ccdiff,ans,prec;
    double *sinx,*siny,*sinz,factor,r;
    double rtime1,rtime2,gt[12],gt1[12],gt2[12],timers[12];
    FILE *fp;
