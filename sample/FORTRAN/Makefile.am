@@ -1,4 +1,4 @@
-AM_FCFLAGS = $(DFLAGS) $(INCLUDES) # $(FCFLAGS)
+AM_FCFLAGS = $(FDFLAGS) $(INCLUDES) 
 INCLUDES = -I$(top_builddir)/include/
 LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) 
 

@@ -10,9 +10,6 @@ AC_CONFIG_HEADER([config.h])
 # initialize array index
 N="0"
 
-# set default concatenation separator
-eval "SEP=' '"
-
 # save arguments passed in as a string
 AC_DEFINE_UNQUOTED([CONFIGURE_ARGS],["$ac_configure_args"],[arguments passed to configure script])
 
@@ -22,7 +19,6 @@ AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM com
 AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
-	eval "SEP=','"
 	eval "ARRAY${N}='-WF,-P,-DIBM'"
         N=`expr $N + 1`
 fi
@@ -224,16 +220,30 @@ else
 	fi
 fi
 
-# for loop for constructing DFLAGS
+# construct compiler flags
 N=`expr $N - 1`
-TMP=
-eval TMP="\$ARRAY0"
+TMP0=
+eval TMP0="\$ARRAY0"
 for i in $(seq 1 $N)
 do
-	eval TMP="\$TMP\$SEP\$ARRAY${i}"
+	eval TMP0="\$TMP0' '\$ARRAY${i}"
 done
 
-AC_SUBST(DFLAGS, $TMP)
+# set C compiler flags
+AC_SUBST(CDFLAGS, $TMP0)
+
+# create a new set of flags if compiler is IBM
+if test "$enableibm" != "yes"; then
+	AC_SUBST(FDFLAGS, $TMP0)
+else
+	TMP1=
+	eval TMP1="\$ARRAY0"
+	for i in $(seq 1 $N)
+	do
+		eval TMP1="\$TMP1', '\$ARRAY${i}"
+	done
+	AC_SUBST(FDFLAGS, $TMP1)
+fi
 
 # Custom strings
 AC_SUBST(SUCCESS, "Build successful!")

@@ -500,7 +500,8 @@ s,@LDFLAGS@,-lmpi_f90 -lmpi_f77 -lmyriexpress -pgf90libs,;t t
 s,@FFTW_INC@,-I/opt/fftw/3.2.1/pgi/include,;t t
 s,@FFTW_LIB@,/opt/fftw/3.2.1/pgi/lib/libfftw3.a,;t t
 s,@FFTWF@,,;t t
-s,@DFLAGS@,-DPGI -DMEASURE -DFFTW,;t t
+s,@CDFLAGS@,-DPGI -DMEASURE -DFFTW,;t t
+s,@FDFLAGS@,-DPGI -DMEASURE -DFFTW,;t t
 s,@SUCCESS@,Build successful!,;t t
 s,@FC@,mpif90,;t t
 s,@FCFLAGS@,-fastsse -tp barcelona-64 -Mextend -Mpreprocess -byteswapio,;t t

@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar LDFLAGS FFTW_INC FFTW_LIB FFTWF DFLAGS SUCCESS FC FCFLAGS ac_ct_FC EXEEXT OBJEXT CC RANLIB ac_ct_RANLIB CFLAGS CPPFLAGS ac_ct_CC CPP EGREP LIB@&t@OBJS TESTLIBS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar LDFLAGS FFTW_INC FFTW_LIB FFTWF CDFLAGS FDFLAGS SUCCESS FC FCFLAGS ac_ct_FC EXEEXT OBJEXT CC RANLIB ac_ct_RANLIB CFLAGS CPPFLAGS ac_ct_CC CPP EGREP LIB@&t@OBJS TESTLIBS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1798,9 +1798,6 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 # initialize array index
 N="0"
 
-# set default concatenation separator
-eval "SEP=' '"
-
 # save arguments passed in as a string
 
 cat >>confdefs.h <<_ACEOF
@@ -1826,7 +1823,6 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define IBM 1
 _ACEOF
 
-	eval "SEP=','"
 	eval "ARRAY${N}='-WF,-P,-DIBM'"
         N=`expr $N + 1`
 fi
@@ -2244,17 +2240,33 @@ echo "$as_me: error: location to FFTW was not given!" >&2;}
 	fi
 fi
 
-# for loop for constructing DFLAGS
+# construct compiler flags
 N=`expr $N - 1`
-TMP=
-eval TMP="\$ARRAY0"
+TMP0=
+eval TMP0="\$ARRAY0"
 for i in $(seq 1 $N)
 do
-	eval TMP="\$TMP\$SEP\$ARRAY${i}"
+	eval TMP0="\$TMP0' '\$ARRAY${i}"
 done
 
-DFLAGS=$TMP
+# set C compiler flags
+CDFLAGS=$TMP0
 
+
+# create a new set of flags if compiler is IBM
+if test "$enableibm" != "yes"; then
+	FDFLAGS=$TMP0
+
+else
+	TMP1=
+	eval TMP1="\$ARRAY0"
+	for i in $(seq 1 $N)
+	do
+		eval TMP1="\$TMP1', '\$ARRAY${i}"
+	done
+	FDFLAGS=$TMP1
+
+fi
 
 # Custom strings
 SUCCESS="Build successful!"
@@ -5160,7 +5172,8 @@ s,@LDFLAGS@,$LDFLAGS,;t t
 s,@FFTW_INC@,$FFTW_INC,;t t
 s,@FFTW_LIB@,$FFTW_LIB,;t t
 s,@FFTWF@,$FFTWF,;t t
-s,@DFLAGS@,$DFLAGS,;t t
+s,@CDFLAGS@,$CDFLAGS,;t t
+s,@FDFLAGS@,$FDFLAGS,;t t
 s,@SUCCESS@,$SUCCESS,;t t
 s,@FC@,$FC,;t t
 s,@FCFLAGS@,$FCFLAGS,;t t
