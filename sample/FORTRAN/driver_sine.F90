@@ -39,7 +39,7 @@
       integer(i8) Ntot
       real(mytype) factor
       real(mytype),dimension(:),allocatable:: sinx,siny,sinz
-      real(i8) rtime1,rtime2,Nglob
+      real(i8) rtime1,rtime2,Nglob,prec
       real(i8) gt(10,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
@@ -238,7 +238,20 @@
       call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
         MPI_COMM_WORLD,ierr)
 
-      if (proc_id.eq.0) write (6,*) 'max diff =',ccdiff
+      if(proc_id .eq. 0) then
+         if(mytype .eq. 8) then
+            prec = 1e-14
+         else
+            prec = 1e-5
+         endif
+         if(ccdiff .gt. prec * Nx*Ny*Nz*0.25) then
+            print *,'Results are incorrect'
+         else
+            print *,'Results are correct'
+         endif
+         write (6,*) 'max diff =',ccdiff
+      endif
+
 
 ! Gather timing statistics
       call MPI_Reduce(rtime1,rtime2,1,mpi_real8,MPI_MAX,0, &
