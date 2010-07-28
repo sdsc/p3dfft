@@ -77,11 +77,11 @@
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
-      call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0,
-     1        caux1,cnaux,caux2,cnaux)       
+      call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
+              caux1,cnaux,caux2,cnaux)       
 #else
-      call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0,
-     1        caux1,cnaux,caux2,cnaux)       
+      call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
+              caux1,cnaux,caux2,cnaux)       
 #endif
 
 #else
@@ -109,11 +109,11 @@
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
-      call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0,
-     1        caux1,cnaux,caux2,cnaux)       
+      call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
+              caux1,cnaux,caux2,cnaux)       
 #else
-      call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0,
-     1        caux1,cnaux,caux2,cnaux)       
+      call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
+              caux1,cnaux,caux2,cnaux)       
 #endif
 
 #else
@@ -179,11 +179,11 @@
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
-      call dcft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0d0, 
-     1        caux1,cnaux,caux2,cnaux)
+      call dcft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0d0,&
+              caux1,cnaux,caux2,cnaux)
 #else
-      call scft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0, 
-     1        caux1,cnaux,caux2,cnaux)
+      call scft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0,  &
+              caux1,cnaux,caux2,cnaux)
 #endif
 #else
       Error: undefined FFT library 
@@ -211,11 +211,11 @@
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
-      call dcft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0d0, 
-     1        caux1,cnaux,caux2,cnaux)
+      call dcft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0d0, &
+              caux1,cnaux,caux2,cnaux)
 #else
-      call scft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0, 
-     1        caux1,cnaux,caux2,cnaux)
+      call scft(0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,1,1.0,  &
+              caux1,cnaux,caux2,cnaux)
 #endif
 #else
       Error: undefined FFT library 
