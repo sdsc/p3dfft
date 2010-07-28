@@ -67,7 +67,6 @@ PPFCCOMPILE = $(FC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 FCLD = $(FC)
 FCLINK = $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
 SOURCES = $(libp3dfft_a_SOURCES)
 DIST_SOURCES = $(libp3dfft_a_SOURCES)
 ETAGS = etags
@@ -151,11 +150,11 @@ AM_FCFLAGS = $(DFLAGS) # $(FCFLAGS)
 INCLUDES = $(FFTW_INC)
 LDADD = $(FFTW_LIB)
 lib_LIBRARIES = libp3dfft.a
-libp3dfft_a_SOURCES = fft_spec.F90 module.F90 fft_init.F90 fft_exec.F90 wrap.f90
+libp3dfft_a_SOURCES = fft_spec.F90 module.F90 fft_init.F90 fft_exec.F90 wrap.F90
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .F90 .f90 .o .obj
+.SUFFIXES: .F90 .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -230,12 +229,6 @@ distclean-compile:
 
 .F90.obj:
 	$(PPFCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.f90.o:
-	$(FCCOMPILE) -c -o $@ $<
-
-.f90.obj:
-	$(FCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

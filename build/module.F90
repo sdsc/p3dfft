@@ -250,7 +250,7 @@
 !========================================================
 
       subroutine get_timers(timer)
-         real(8) timer(12)
+         real(r8) timer(12)
          timer(1) = timers(1)
          timer(2) = timers(2)
          timer(3) = timers(3)
