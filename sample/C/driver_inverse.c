@@ -162,7 +162,7 @@ int main(int argc,char **argv)
    Nglob = nx * ny;
    Nglob *= nz;
 
-   /*
+  /*
    if(proc_id == 0) printf("Initial array:\n");
    print_all_init(A,proc_id,Nglob);
    */
@@ -317,9 +317,10 @@ void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
    for(z=0;z < isize[2];z++)
      for(y=0;y < isize[1];y++) {
        sinyz = siny[y]*sinz[z];
-       for(x=0;x < isize[0];x++)
+       for(x=0;x < isize[0];x++) {
           *A++ = cosx[x]*sinyz;
           *A++ = sinx[x]*sinyz;
+       }
      }
 
 }
