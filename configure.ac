@@ -184,6 +184,7 @@ AC_ARG_ENABLE(essl, [AC_HELP_STRING([--enable-essl], [for using ESSL (on IBM) in
 AC_MSG_RESULT([$esslval])
 if test "$esslval" = "yes"; then
         AC_DEFINE(ESSL, 1, [Define if you want to use the ESSL library instead of FFTW])
+	AC_SUBST(LDFLAGS,"$LDFLAGS -lessl")
 	eval "ARRAY${N}='-DESSL'"
         N=`expr $N + 1`
 fi
