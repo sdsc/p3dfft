@@ -1,10 +1,37 @@
 /*
+! This file is part of P3DFFT library
+!
+!    P3DFFT
+!
+!    Software Framework for Scalable Fourier Transforms in Three Dimensions
+!
+!    Copyright (C) 2006-2010 Dmitry Pekurovsky
+!    Copyright (C) 2006-2010 University of California
+!
+!    This program is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    This program is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU General Public License for more details.
+!
+!    You should have received a copy of the GNU General Public License
+!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+!
+!
+!----------------------------------------------------------------------------
+*/
+
+/*
 ! This sample program illustrates the
 ! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
 ! This program initializes a 3D array with random numbers, then
 ! performs forward 3D Fourier transform, then backward transform,
-  and checks that
+! and checks that
 ! the results are correct, namely the same as in the start except
 ! for a normalization factor. It can be used both as a correctness
 ! test and for timing the library functions.

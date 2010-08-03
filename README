@@ -1,12 +1,12 @@
 
 P3DFFT - Highly scalable parallel 3D Fast Fourier Transforms library
 
-Version 2.3
+Version 2.4
 
-Copyright (C) 2006-2008 Dmitry Pekurovsky
+Copyright (C) 2006-2010 Dmitry Pekurovsky
 San Diego Supercomputer Center/UC SanDiego
 
-Copyright (C) 2008 Jens Henrik Goebbert (ghost cell support)
+Copyright (C) 2010 Jens Henrik Goebbert (ghost cell support)
 RWTH-Aachen, Germany
 
 ------------
@@ -71,13 +71,19 @@ P3DFFT is written in Fortran 90 with MPI. Having an Fortran90/MPI compiler
 is essential to building the library on your system. C interface is 
 provided. 
 
+P3DFFT currently supports compilation by PGI, Intel, GCC and IBM 
+compilers.  
+
+
 ------------
 Directory structure
 ------------
 
 build/
   The library files are contained here. Building the library is required 
-  before it can be used. Enter this directory, create/modify 'makeinc'
+  before it can be used. In order to build the library, you must run 
+  ./configure from the 
+Enter this directory, create/modify 'makeinc'
   suitable for your architecture, and type 'make'. For more instructions
   on building the library see file install.txt
 sample/

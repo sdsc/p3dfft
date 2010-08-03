@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* overriding mpicc to link C programs (only for IBM) */
+#undef CC
+
 /* arguments passed to configure script */
 #undef CONFIGURE_ARGS
 

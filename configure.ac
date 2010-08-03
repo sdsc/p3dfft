@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE(no-dependencies)
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
 
+# check compilers
+
 # initialize array index
 N="0"
 
@@ -19,6 +21,8 @@ AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM com
 AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
+	AC_DEFINE(CC, "mpfort", [overriding mpicc to link C programs (only for IBM)])
+	CC="mpfort"
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 fi

@@ -1795,6 +1795,8 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
           ac_config_headers="$ac_config_headers config.h"
 
 
+# check compilers
+
 # initialize array index
 N="0"
 
@@ -1823,6 +1825,12 @@ cat >>confdefs.h <<\_ACEOF
 #define IBM 1
 _ACEOF
 
+
+cat >>confdefs.h <<\_ACEOF
+#define CC "mpfort"
+_ACEOF
+
+	CC="mpfort"
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 fi
@@ -2183,6 +2191,8 @@ cat >>confdefs.h <<\_ACEOF
 #define ESSL 1
 _ACEOF
 
+	LDFLAGS="$LDFLAGS -lessl"
+
 	eval "ARRAY${N}='-DESSL'"
         N=`expr $N + 1`
 fi
@@ -2365,7 +2375,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2368:" \
+echo "$as_me:2378:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
