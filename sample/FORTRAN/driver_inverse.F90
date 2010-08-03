@@ -51,8 +51,6 @@
       call MPI_COMM_SIZE (MPI_COMM_WORLD,nproc,ierr)
       call MPI_COMM_RANK (MPI_COMM_WORLD,proc_id,ierr)
 
-      print *,'Mytype=',mytype
-
       twopi=atan(1.0d0)*8.0d0
 
       timers = 0.0
@@ -203,19 +201,19 @@
 
 ! Check results: we expect four non-zero values
 
-      cdiff = 0.0;
+      cdiff = 0.0
       do z=fstart(3),fend(3)
          do y=fstart(2),fend(2)
             do x=fstart(1),fend(1)
                if(x .eq. Nx) then
                   if(y .eq. 3 .and. z .eq. 4) then
-                     cdiff = max(abs(FIN(x,y,z)+Nx*Ny*Nz*0.25d0),cdiff)
+                     cdiff = max(abs(FIN(x,y,z)+Nglob*0.25d0),cdiff)
                   else if(y .eq. 3 .and. z .eq. Nz-2) then
-                     cdiff = max(abs(FIN(x,y,z)-Nx*Ny*Nz*0.25d0),cdiff)
+                     cdiff = max(abs(FIN(x,y,z)-Nglob*0.25d0),cdiff)
                   else if(y .eq. Ny-1 .and. z .eq. 4) then
-                     cdiff = max(abs(FIN(x,y,z)-Nx*Ny*Nz*0.25d0),cdiff)
+                     cdiff = max(abs(FIN(x,y,z)-Nglob*0.25d0),cdiff)
                   else if(y .eq. Ny-1 .and. z .eq. Nz-2) then
-                     cdiff = max(abs(FIN(x,y,z)+Nx*Ny*Nz*0.25d0),cdiff)
+                     cdiff = max(abs(FIN(x,y,z)+Nglob*0.25d0),cdiff)
                   else
                      cdiff = max(abs(FIN(x,y,z)),cdiff)
                   endif
@@ -236,7 +234,7 @@
          else
             prec = 1e-5
          endif
-         if(ccdiff .gt. prec * Nx*Ny*Nz*0.25) then
+         if(ccdiff .gt. prec * Nglob*0.25) then
             print *,'Results are incorrect'
          else
             print *,'Results are correct'

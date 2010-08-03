@@ -195,13 +195,13 @@ int main(int argc,char **argv)
       for(x=0;x < fsize[0];x++) {
 	 if(x +fstart[0] == nx) 
 	   if(y +fstart[1] == 3 && z+fstart[2] == 4) 
-	     cdiff = max(fabs((*p) + nx*ny*nz*0.25),cdiff);
+	     cdiff = max(fabs((*p) + Nglob*0.25),cdiff);
 	   else if(y +fstart[1]== 3 && z+fstart[2] == nz-2)
-	     cdiff = max(fabs((*p) - nx*ny*nz*0.25),cdiff);
+	     cdiff = max(fabs((*p) - Nglob*0.25),cdiff);
 	   else if(y +fstart[1]== ny-1 && z+fstart[2] == 4)
-	     cdiff = max(fabs((*p) - nx*ny*nz*0.25),cdiff);
+	     cdiff = max(fabs((*p) - Nglob*0.25),cdiff);
 	   else if(y +fstart[1]== ny-1 && z+fstart[2] == nz-2)
-	     cdiff = max(fabs((*p) + nx*ny*nz*0.25),cdiff);
+	     cdiff = max(fabs((*p) + Nglob*0.25),cdiff);
 	   else
 	     cdiff = max(fabs(*p),cdiff);
 	 else
@@ -218,7 +218,7 @@ int main(int argc,char **argv)
 #else
     prec = 1.0e-5;
 #endif
-    if(ccdiff > prec * nx*ny*nz*0.25)
+    if(ccdiff > prec * Nglob*0.25)
       printf("Results are incorrect\n");
     else
       printf("Results are correct\n");

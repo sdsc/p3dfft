@@ -232,7 +232,7 @@ int main(int argc,char **argv)
 #else
     prec = 1.0e-5;
 #endif
-    if(ccdiff > prec * nx*ny*nz*0.25)
+    if(ccdiff > prec * Nglob*0.25)
       printf("Results are incorrect\n");
     else
       printf("Results are correct\n");

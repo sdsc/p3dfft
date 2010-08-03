@@ -262,7 +262,7 @@
          else
             prec = 1e-5
          endif
-         if(ccdiff .gt. prec * Nx*Ny*Nz*0.25) then
+         if(ccdiff .gt. prec * Nglob*0.25) then
             print *,'Results are incorrect'
          else
             print *,'Results are correct'
