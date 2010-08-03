@@ -294,14 +294,19 @@ void print_all(float *A,long int nar,int proc_id,long int Nglob)
 
   conf = 2;
   p3dfft_get_dims(Fstart,Fend,Fsize,conf);
+  /*
   Fsize[0] *= 2;
   Fstart[0] = (Fstart[0]-1)*2;
-  
+  */
   for(i=0;i < nar;i+=2)
     if(fabs(A[i]) + fabs(A[i+1]) > Nglob *1e-2) {
-      z = i/(Fsize[0]*Fsize[1]);
-      y = i/(Fsize[0]) - z*Fsize[1];
-      x = i-z*Fsize[0]*Fsize[1] - y*Fsize[0];
-      printf("(%d,%d,%d) %lf %lf\n",x+Fstart[0],y+Fstart[1],z+Fstart[2],A[i],A[i+1]);
+      z = i/(2*Fsize[0]*Fsize[1]);
+      y = i/(2*Fsize[0]) - z*Fsize[1];
+      x = i/2-z*Fsize[0]*Fsize[1] - y*Fsize[0];
+#ifndef SINGLE_PREC
+      printf("(%d,%d,%d) %.16lg %.16lg\n",x+Fstart[0],y+Fstart[1],z+Fstart[2],A[i],A[i+1]);
+#else
+      printf("(%d,%d,%d) %.8lg %.16lg\n",x+Fstart[0],y+Fstart[1],z+Fstart[2],A[i],A[i+1]);
+#endif
     }
 }
