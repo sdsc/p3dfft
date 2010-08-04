@@ -7,8 +7,6 @@ AM_INIT_AUTOMAKE(no-dependencies)
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
 
-# check compilers
-
 # initialize array index
 N="0"
 
@@ -22,7 +20,6 @@ AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
         AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
 	AC_DEFINE(CC, "mpfort", [overriding mpicc to link C programs (only for IBM)])
-	CC="mpfort"
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 fi
@@ -248,7 +245,6 @@ else
 		eval TMP1="\$TMP1','\$ARRAY${i}"
 	done
 	AC_SUBST(FDFLAGS, $TMP1)
-	AC_SUBST(CDFLAGS, $TMP1)
 fi
 
 # Custom strings
