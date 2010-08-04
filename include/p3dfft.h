@@ -57,6 +57,8 @@ extern void FORT_MOD_NAME(p3dfft_ftran_r2c)(float *A,float *B);
 extern void FORT_MOD_NAME(p3dfft_btran_c2r)(float *A,float *B);
 #endif
 
+extern void FORT_MOD_NAME(p3dfft_clean)();
+
 extern void p3dfft_setup(int *dims,int nx,int ny,int nz,int ovewrite);
 extern void p3dfft_get_dims(int *,int *,int *,int );
 
@@ -67,6 +69,8 @@ extern void p3dfft_btran_c2r(double *A,double *B);
 extern void p3dfft_ftran_r2c(float *A,float *B);
 extern void p3dfft_btran_c2r(float *A,float *B);
 #endif
+
+extern void p3dfft_clean();
 
 extern void get_timers(double *timers);
 extern void set_timers();
@@ -113,3 +117,8 @@ inline void p3dfft_btran_c2r(float *A,float *B)
   FORT_MOD_NAME(p3dfft_btran_c2r)(A,B);
 }
 #endif
+
+inline void p3dfft_clean()		
+{		
+  FORT_MOD_NAME(p3dfft_clean)();		
+}
