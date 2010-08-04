@@ -2276,6 +2276,8 @@ else
 	done
 	FDFLAGS=$TMP1
 
+	CDFLAGS=$TMP1
+
 fi
 
 # Custom strings
@@ -2375,7 +2377,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2378:" \
+echo "$as_me:2380:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5

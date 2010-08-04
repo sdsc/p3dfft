@@ -2,10 +2,10 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* overriding mpicc to link C programs (only for IBM) */
-#define CC "mpfort"
+/* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS "'--enable-ibm' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.1/pgi' 'FCFLAGS=-fastsse -tp barcelona-64 -Mextend -Mpreprocess -byteswapio' 'CFLAGS=-fastsse -tp barcelona-64' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress'"
+#define CONFIGURE_ARGS "'--enable-pgi' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.1/pgi' 'FCFLAGS=-fastsse -tp barcelona-64 -Mextend -Mpreprocess -byteswapio' 'CFLAGS=-fastsse -tp barcelona-64' 'LDFLAGS=-lmpi_f90 -lmpi_f77 -lmyriexpress'"
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -23,38 +23,38 @@
 /* #undef GCC */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-/* #undef HAVE_INTTYPES_H */
+#define HAVE_INTTYPES_H 1
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
-#define HAVE_MALLOC 0
+#define HAVE_MALLOC 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-/* #undef HAVE_MEMORY_H */
+#define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
-/* #undef HAVE_STDINT_H */
+#define HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-/* #undef HAVE_STDLIB_H */
+#define HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-/* #undef HAVE_STRINGS_H */
+#define HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-/* #undef HAVE_STRING_H */
+#define HAVE_STRING_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-/* #undef HAVE_SYS_STAT_H */
+#define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-/* #undef HAVE_SYS_TYPES_H */
+#define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-/* #undef HAVE_UNISTD_H */
+#define HAVE_UNISTD_H 1
 
 /* Define if you want to compile P3DFFT using IBM compiler */
-#define IBM 1
+/* #undef IBM */
 
 /* Define if you want to compile P3DFFT using Intel compiler */
 /* #undef INTEL */
@@ -96,13 +96,13 @@
 /* #undef PATIENT */
 
 /* Define if you want to compile P3DFFT using PGI compiler */
-/* #undef PGI */
+#define PGI 1
 
 /* Define if you want to compile P3DFFT in single precision */
 /* #undef SINGLE_PREC */
 
 /* Define to 1 if you have the ANSI C header files. */
-/* #undef STDC_HEADERS */
+#define STDC_HEADERS 1
 
 /* Define if you want to enable stride-1 data structures */
 /* #undef STRIDE1 */
@@ -114,4 +114,4 @@
 #define VERSION "2.4"
 
 /* Define to rpl_malloc if the replacement function should be used. */
-#define malloc rpl_malloc
+/* #undef malloc */
