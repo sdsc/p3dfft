@@ -248,6 +248,7 @@ else
 		eval TMP1="\$TMP1','\$ARRAY${i}"
 	done
 	AC_SUBST(FDFLAGS, $TMP1)
+	AC_SUBST(CDFLAGS, $TMP1)
 fi
 
 # Custom strings
