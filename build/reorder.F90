@@ -30,45 +30,47 @@
 
       use fft_spec
 
-      complex(mytype) B(iisize,ny_fft,nz_fft)
-      complex(mytype) A(nz_fft,iisize,ny_fft)
-      complex(mytype) C(nz_fft,iisize,NBy2*iisize*nz_fft)
+      complex(mytype) B(ny_fft,iisize,nz_fft)
+      complex(mytype) A(nz_fft,ny_fft,iisize)
+      complex(mytype) C(nz_fft,ny_fft)
       integer x,y,z,iy,iz,y2,z2
 
       if(OW) then
-         do y=1,ny_fft,nby2
-            y2 = min(y+nby2-1,ny_fft)
-            call exec_b_c2(A(1,1,y),1,nz_fft,A(1,1,y),1,nz_fft,nz_fft,nby2*iisize)
-            do z=1,nz_fft,nbz
-               z2 = min(z+nbz-1,nz_fft)
-               do iz=z,z2
-                  do iy=y,y2
-                     do x=1,iisize
-                        B(x,iy,iz) = A(iz,x,iy)
-                     enddo
-                  enddo
-               enddo
-               
-            enddo                  
-         enddo
 
-      else
-         do y=1,ny_fft,nby2
-            y2 = min(y+nby2-1,ny_fft)
-            call exec_b_c2(A(1,1,y),1,nz_fft,C(1,1,y),1,nz_fft,nz_fft,nby2*iisize)
-            do z=1,nz_fft,nbz
-               z2 = min(z+nbz-1,nz_fft)
-               do iz=z,z2
-                  do iy=y,y2
-                     do x=1,iisize
-                        B(x,iy,iz) = C(iz,x,iy)
+         do x=1,iisize
+
+            call exec_b_c2(A(1,1,x),1,nz_fft,A(1,1,x),1,nz_fft, nz_fft,ny_fft)            
+            do y=1,ny_fft,NBy2
+               y2 = min(y+NBy2-1,ny_fft)
+   	       do z=1,nz_fft,NBz
+	          z2 = min(z+NBz-1,nz_fft)
+                    do iy=y,y2
+                        do iz=z,z2
+			   B(iy,x,iz) = A(iz,iy,x)
+                        enddo
                      enddo
                   enddo
-               enddo
-               
-            enddo                  
-         enddo
-         
+             enddo 
+
+          enddo
+
+	else
+
+         do x=1,iisize
+
+            call exec_f_c2(A(1,1,x),1,nz_fft,C,1,nz_fft, nz_fft,ny_fft)            
+            do y=1,ny_fft,NBy2
+               y2 = min(y+NBy2-1,ny_fft)
+   	       do z=1,nz_fft,NBz
+	          z2 = min(z+NBz-1,nz_fft)
+                    do iy=y,y2
+                        do iz=z,z2
+			   B(iy,x,iz) = C(iz,iy)
+                        enddo
+                     enddo
+                enddo
+              enddo 
+          enddo
       endif
 
       return
@@ -126,7 +128,7 @@
       integer x,y,z,iy,x2,ix,y2
       complex(mytype), allocatable :: tmp(:,:)
 
-      allocate(tmp(ny_fft-1,nxhp))
+      allocate(tmp(0:ny_fft-1,nxhp))
 
 
       do z=1,kjsize
@@ -162,23 +164,27 @@
       use fft_spec
       implicit none
 
-      complex(mytype) A(iisize,ny_fft,nz_fft)
-      complex(mytype) B(nz_fft,iisize,ny_fft)
+      complex(mytype) A(ny_fft,iisize,nz_fft)
+      complex(mytype) B(nz_fft,ny_fft,iisize)
       integer x,y,z,iy,iz,y2,z2
 
-      do y=1,ny_fft,nby2
-         y2 = min(y+nby2-1,ny_fft)
-         do z=1,nz_fft,nbz
-            z2 = min(z+nbz-1,nz_fft)
-            do iz=z,z2
-               do iy=y,y2
-                  do x=1,iisize
-                     B(iz,x,iy) = A(x,iy,iz)
+
+      do x=1,iisize
+         do z=1,nz_fft,NBz
+	    z2 = min(z+NBz-1,nz_fft)
+            
+            do y=1,ny_fft,NBy2
+               y2 = min(y+NBy2-1,ny_fft)
+
+                  do iz=z,z2
+                     do iy=y,y2
+			B(iz,iy,x) = A(iy,x,iz)
+                     enddo
                   enddo
                enddo
-            enddo
-         enddo                  
-         call exec_f_c2(B(1,1,y),1,nz_fft,B(1,1,y),1,nz_fft,nz_fft,nby2*iisize)
+           enddo 
+
+         call exec_f_c2(B(1,1,x),1,nz_fft,B(1,1,x),1,nz_fft, nz_fft,ny_fft)
       enddo
 
       return
