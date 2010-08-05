@@ -34,19 +34,20 @@
 ! Set precision
 
 #ifndef SINGLE_PREC
-       integer, parameter,public :: mytype=SELECTED_REAL_KIND(8)
-       integer, parameter,public:: mpireal = MPI_DOUBLE_PRECISION
-       integer,parameter,public:: mpicomplex = MPI_DOUBLE_COMPLEX
+      integer, parameter,public :: mytype=KIND(1.0d0)
+      integer, parameter,public:: mpireal = MPI_DOUBLE_PRECISION
+      integer,parameter,public:: mpicomplex = MPI_DOUBLE_COMPLEX
 #else
-       integer, parameter,public :: mytype=SELECTED_REAL_KIND(4)
-       integer, parameter,public:: mpireal = MPI_REAL
-       integer,parameter,public:: mpicomplex = MPI_COMPLEX
+      integer, parameter,public :: mytype=KIND(1.0)
+      integer, parameter,public:: mpireal = MPI_REAL
+      integer,parameter,public:: mpicomplex = MPI_COMPLEX
 #endif
 
 ! global variables
 
-      integer, parameter, public :: r8 = SELECTED_REAL_KIND(8)
-      integer, parameter, public :: i8 = SELECTED_INT_KIND(16)
+      integer, parameter, public :: r8 = KIND(1.0d0)
+      integer, parameter, public :: i8 = SELECTED_INT_KIND(18)
+
       integer, save,public :: padd,num_thr
       real(r8), save,public :: timers(12)
       real(r8), save :: timer(12)
