@@ -56,7 +56,7 @@ is essential to building the library on your system. C interface is
 provided. 
 
 P3DFFT currently supports compilation by PGI, Intel, GCC and IBM 
-compilers.  
+compilers. Additional support for other compilers will be added in the future.
 
 
 ------------
