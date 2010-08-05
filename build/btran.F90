@@ -90,6 +90,9 @@
 
 
       else
+
+            timers(9) = timers(9) - MPI_Wtime()
+
 #ifdef STRIDE1
          call reorder_trans_b1(XYZg,buf,buf2)
 #else
@@ -103,6 +106,9 @@
             call exec_b_c2(XYZg, iisize*jjsize, 1, buf, iisize*jjsize, 1,nz,iisize*jjsize)
          endif
 #endif
+
+            timers(9) = timers(9) + MPI_Wtime()
+
       endif
 
 ! Exhange in columns if needed

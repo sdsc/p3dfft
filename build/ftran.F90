@@ -147,6 +147,8 @@
 
       else
 
+         timers(8) = timers(8) - MPI_Wtime()	
+
 #ifdef STRIDE1
          call reorder_trans_f2(buf,XYZg)
 #else
@@ -155,6 +157,9 @@
          call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
          call exec_f_c2(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
 #endif
+
+         timers(8) = timers(8) + MPI_Wtime()
+
       endif
 
 
