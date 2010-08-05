@@ -82,9 +82,6 @@ include/
   The library is provided as a Fortran module. 
   After installation this directory will have p3dfft.mod for Fortran interface
   and p3dfft.h, the C wrapper/include file. 
-lib/
-  The library archive libp3dfft.a will be installed here upon successful 
-  completion of the build. 
  
 ------------
 Feedback
