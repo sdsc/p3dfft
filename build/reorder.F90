@@ -58,7 +58,7 @@
 
          do x=1,iisize
 
-            call exec_f_c2(A(1,1,x),1,nz_fft,C,1,nz_fft, nz_fft,ny_fft)            
+            call exec_b_c2(A(1,1,x),1,nz_fft,C,1,nz_fft, nz_fft,ny_fft)            
             do y=1,ny_fft,NBy2
                y2 = min(y+NBy2-1,ny_fft)
    	       do z=1,nz_fft,NBz

@@ -146,9 +146,6 @@
       call p3dfft_get_dims(istart,iend,isize,1)
       call p3dfft_get_dims(fstart,fend,fsize,2)
 
-      allocate (sinx(nx))
-      allocate (siny(ny))
-      allocate (sinz(nz))
 !
 ! initialize
 !
@@ -231,7 +228,7 @@
 
 !         if(proc_id .eq. 0) then
 !            print *,'Result of backward transform:'
-!            call print_all_real(FIN,NI,proc_id,Nglob)
+!            call print_all_real(FIN,Ntot,proc_id,Nglob)
 !         endif
          
       end do
@@ -338,7 +335,8 @@
       use p3dfft
 
       integer x,y,z,proc_id
-      integer(i8) i,Nar,Nglob
+      integer(i8) i,Nar
+      real(r8) Nglob	
       complex(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
@@ -365,7 +363,8 @@
       use p3dfft
 
       integer x,y,z,proc_id
-      integer(i8) i,Nar,Nglob
+      integer(i8) i,Nar
+      real(r8) Nglob	
       real(mytype) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 

@@ -162,17 +162,6 @@ int main(int argc,char **argv)
    conf = 2;
    p3dfft_get_dims(fstart,fend,fsize,conf);
 
-   sinx = malloc(sizeof(double)*nx);
-   siny = malloc(sizeof(double)*ny);
-   sinz = malloc(sizeof(double)*nz);
-
-   for(z=0;z < isize[2];z++)
-     sinz[z] = sin((z+istart[2]-1)*twopi/nz);
-   for(y=0;y < isize[1];y++)
-     siny[y] = sin((y+istart[1]-1)*twopi/ny);
-   for(x=0;x < isize[0];x++)
-     sinx[x] = sin((x+istart[0]-1)*twopi/nx);
-
    /* Allocate and initialize */
 #ifndef SINGLE_PREC
    A = (double *) malloc(sizeof(double) * isize[0]*isize[1]*isize[2]);
@@ -243,8 +232,10 @@ int main(int argc,char **argv)
   for(z=0;z < isize[2];z++)
     for(y=0;y < isize[1];y++)  
        for(x=0;x < isize[0];x++) {
-          if(cdiff < fabs(*p2 - *p1))
+	 if(cdiff < fabs(*p2 - *p1)) {
            cdiff = fabs(*p2 - *p1);
+	   printf("x,y,z=%d %d %d,cdiff,p1,p2=%f %f %f\n",x,y,z,cdiff,*p1,*p2);
+	 }
           p1++;
           p2++;
         }
