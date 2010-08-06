@@ -1795,8 +1795,6 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
           ac_config_headers="$ac_config_headers config.h"
 
 
-# check compilers
-
 # initialize array index
 N="0"
 
@@ -1830,7 +1828,6 @@ cat >>confdefs.h <<\_ACEOF
 #define CC "mpfort"
 _ACEOF
 
-	CC="mpfort"
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 fi
@@ -2276,8 +2273,6 @@ else
 	done
 	FDFLAGS=$TMP1
 
-	CDFLAGS=$TMP1
-
 fi
 
 # Custom strings
@@ -2377,7 +2372,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2380:" \
+echo "$as_me:2375:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
