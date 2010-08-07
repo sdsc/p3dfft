@@ -77,7 +77,7 @@ fi
 
 # check whether to enable estimation
 AC_MSG_CHECKING([whether to enable estimation])
-AC_ARG_ENABLE(estimate, [AC_HELP_STRING([--enable-estimate], [for initialization thoroughness in setting up FFTW calls (this option only goes with --enable-fftw) .])], ok=$enableval, ok=no)
+AC_ARG_ENABLE(estimate, [AC_HELP_STRING([--enable-estimate], [If this argument is passed, the FFTW library will not use run-time tuning to select the fastest algorithm for computing FFTs (this option only goes with --enable-fftw) .])], ok=$enableval, ok=no)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
         AC_DEFINE(ESTIMATE, 1, [Define whether you want to enable estimation])
@@ -87,7 +87,7 @@ fi
 
 # check whether to enable the measure algorithm
 AC_MSG_CHECKING([whether to enable the measure algorithm])
-AC_ARG_ENABLE(measure, [AC_HELP_STRING([--enable-measure], [for search-once-for-the-fast-algorithm (takes more time on p3dfft_setup()).])], ok=$enableval, ok=yes)
+AC_ARG_ENABLE(measure, [AC_HELP_STRING([--enable-measure], [for search-once-for-the-fast-algorithm (takes more time on p3dfft_setup()); this option only goes with --enable-fftw.])], ok=$enableval, ok=yes)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
         AC_DEFINE(MEASURE, 1, [Define if you want to enable the measure algorithm])
@@ -97,7 +97,7 @@ fi
 
 # check whether to enable the patient algorithm
 AC_MSG_CHECKING([whehter to enable the patient algorithm])
-AC_ARG_ENABLE(patient, [AC_HELP_STRING([--enable-patient], [for search-once-for-the-fastest-algorithm (takes much more time on p3dfft_setup()).])], ok=$enableval, ok=no)
+AC_ARG_ENABLE(patient, [AC_HELP_STRING([--enable-patient], [for search-once-for-the-fastest-algorithm (takes much more time on p3dfft_setup()); this option only goes with --enable-fftw.])], ok=$enableval, ok=no)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
         AC_DEFINE(PATIENT, 1, [Define if you want to enable the patient algorithm])
@@ -160,14 +160,14 @@ else
 fi
 
 # check whether to use OpenMP
-AC_MSG_CHECKING([whether to use OpenMP library])
-AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-        AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
-	eval "ARRAY${N}='-DOPENMP'"
-        N=`expr $N + 1`
-fi
+# AC_MSG_CHECKING([whether to use OpenMP library])
+# AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
+# AC_MSG_RESULT([$ok])
+# if test "$ok" = "yes"; then
+#       AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
+#       eval "ARRAY${N}='-DOPENMP'"
+#       N=`expr $N + 1`
+# fi
 
 # check whether to use FFTW
 AC_MSG_CHECKING([whether to use FFTW library])

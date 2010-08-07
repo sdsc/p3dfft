@@ -866,12 +866,16 @@ Optional Features:
   --enable-oned           for 1D decomposition (default is 2D but it can be
                           made 1D through setting up grid 1 x n when running
                           the code)
-  --enable-estimate       for initialization thoroughness in setting up FFTW
-                          calls (this option only goes with --enable-fftw) .
+  --enable-estimate       If this argument is passed, the FFTW library will
+                          not use run-time tuning to select the fastest
+                          algorithm for computing FFTs (this option only goes
+                          with --enable-fftw) .
   --enable-measure        for search-once-for-the-fast-algorithm (takes more
-                          time on p3dfft_setup()).
+                          time on p3dfft_setup()); this option only goes with
+                          --enable-fftw.
   --enable-patient        for search-once-for-the-fastest-algorithm (takes
-                          much more time on p3dfft_setup()).
+                          much more time on p3dfft_setup()); this option only
+                          goes with --enable-fftw.
   --enable-dimsc          to assign processor rows and columns according to C
                           convention, rather than "Fortran", which is default.
   --enable-useeven        for using MPI_Alltoall instead of MPI_Alltotallv.
@@ -885,7 +889,6 @@ Optional Features:
                           set to default values.
   --enable-nblx           to define loop blocking factor NBL_X
   --enable-nbly           to define loop blocking factor NBL_Y
-  --enable-openmp         for using the OpenMP library (disabled by default)
   --enable-fftw           for using the FFTW library
   --enable-essl           for using ESSL (on IBM) in 1D FFTs.
 
@@ -2127,26 +2130,14 @@ echo "${ECHO_T}no" >&6
 fi
 
 # check whether to use OpenMP
-echo "$as_me:$LINENO: checking whether to use OpenMP library" >&5
-echo $ECHO_N "checking whether to use OpenMP library... $ECHO_C" >&6
-# Check whether --enable-openmp or --disable-openmp was given.
-if test "${enable_openmp+set}" = set; then
-  enableval="$enable_openmp"
-  ok=$enableval
-else
-  ok=no
-fi;
-echo "$as_me:$LINENO: result: $ok" >&5
-echo "${ECHO_T}$ok" >&6
-if test "$ok" = "yes"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define OPENMP 1
-_ACEOF
-
-	eval "ARRAY${N}='-DOPENMP'"
-        N=`expr $N + 1`
-fi
+# AC_MSG_CHECKING([whether to use OpenMP library])
+# AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
+# AC_MSG_RESULT([$ok])
+# if test "$ok" = "yes"; then
+#       AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
+#       eval "ARRAY${N}='-DOPENMP'"
+#       N=`expr $N + 1`
+# fi
 
 # check whether to use FFTW
 echo "$as_me:$LINENO: checking whether to use FFTW library" >&5
@@ -2372,7 +2363,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:2375:" \
+echo "$as_me:2366:" \
      "checking for Fortran compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5

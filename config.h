@@ -71,9 +71,6 @@
 /* Define if you want 1D decomposition */
 /* #undef ONED */
 
-/* Define if you want to use the OpenMP library */
-/* #undef OPENMP */
-
 /* Name of package */
 #define PACKAGE "p3dfft"
 
