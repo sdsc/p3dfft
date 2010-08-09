@@ -206,10 +206,10 @@
          
          rtime1 = rtime1 + MPI_wtime()
 
-!         if(proc_id .eq. 0) then
-!            print *,'Result of forward transform:'
-!            call print_all(AEND,Ntot,proc_id,Nglob)
-!         endif
+         if(proc_id .eq. 0) then
+            print *,'Result of forward transform:'
+            call print_all(AEND,Ntot,proc_id,Nglob)
+         endif
 
 ! Normalize
          call mult_array(AEND, Ntot,factor)
@@ -243,9 +243,7 @@
       ccdiff = 0.0d0
       do 20 z=istart(3),iend(3)
          do 20 y=istart(2),iend(2)
-            sinyz=siny(y)*sinz(z)
             do 20 x=istart(1),iend(1)
-            ans=sinx(x)*sinyz
             if(cdiff .lt. abs(CP(x,y,z)-FIN(x,y,z))) then
                cdiff = abs(CP(x,y,z)-FIN(x,y,z))
 !               print *,'x,y,z,cdiff=',x,y,z,cdiff
@@ -342,8 +340,7 @@
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,2)
       do i=1,Nar
-         if(abs(Ar(1,1,i)) .gt. 1.25e-4) then
-! Nglob
+         if(abs(Ar(1,1,i)) .gt. 1.25e-2 * Nglob) then
             z = (i-1)/(Fsize(1)*Fsize(2))
             y = (i-1 - z * Fsize(1)*Fsize(2))/Fsize(1)
             x = i-1-z*Fsize(1)*Fsize(2) - y*Fsize(1)
