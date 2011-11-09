@@ -32,6 +32,8 @@ if test "$ok" = "yes"; then
         AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
+	AC_SUBST(FORTRAN_LIB,"-lmpi_f90 -limf -lifcore")
+#        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi
 
 # check whether to compile using PGI
@@ -39,10 +41,11 @@ AC_MSG_CHECKING([whether to use PGI compiler])
 AC_ARG_ENABLE(pgi, [AC_HELP_STRING([--enable-pgi], [compile P3DFFT using PGI compiler])], ok=$enableval, ok=no)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
-	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
+#	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
         AC_DEFINE(PGI, 1, [Define if you want to compile P3DFFT using PGI compiler])
 	eval "ARRAY${N}='-DPGI'"
         N=`expr $N + 1`
+        AC_SUBST(FORTRAN_LIB,"-pgf90libs")
 fi
 
 # check whether to compile using GNU
@@ -53,6 +56,7 @@ if test "$ok" = "yes"; then
         AC_DEFINE(GNU, 1, [Define if you want to compile P3DFFT using GNU compiler])
 	eval "ARRAY${N}='-DGNU'"
         N=`expr $N + 1`
+        AC_SUBST(FORTRAN_LIB,"-lgfortran")
 fi
 
 # check whether to enable single precision

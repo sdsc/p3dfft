@@ -4,7 +4,7 @@ EXTRA_DIST = NEWS README AUTHORS ChangeLog P3DFFT_USER_GUIDE_2.4.pdf \
 		build/fcomm2_trans.F90 build/ftran.F90 build/ghosts.F90 \
 		build/init_plan.F90 build/reorder.F90 build/setup.F90 
 
-include_HEADERS = include/p3dfft.h 
+include_HEADERS = include/p3dfft.h include/p3dfft.mod
 
 SUBDIRS = \
 	build \
