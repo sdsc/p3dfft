@@ -80,6 +80,7 @@ FDFLAGS = @FDFLAGS@
 FFTWF = @FFTWF@
 FFTW_INC = @FFTW_INC@
 FFTW_LIB = @FFTW_LIB@
+FORTRAN_LIB = @FORTRAN_LIB@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -132,8 +133,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 SUBDIRS = \
-	FORTRAN \
-	C
+	C \
+	FORTRAN 
 
 all: all-recursive
 

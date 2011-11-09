@@ -5,7 +5,7 @@
 /* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS " '--enable-fftw' '--enable-stride1' '--enable-useeven' '--enable-intel' '--with-fftw=/opt/fftw/3.2.2.1' 'FC=ftn' 'FCFLAGS=-O3 -msse3 -132 -fpp' 'CC=cc'"
+#define CONFIGURE_ARGS " '--enable-intel' '--enable-stride1' '--enable-fftw' '--with-fftw=/opt/apps/intel10_1/fftw3/3.1.2' 'FCFLAGS=-O3 -xW -132 -fpp' '--prefix=/share/home/00545/dmitry/p3dfft-trunk/install'"
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -111,7 +111,7 @@
 #define STRIDE1 1
 
 /* Define if you want to MPI_Alltoall instead of MPI_Alltotallv */
-#define USE_EVEN 1
+/* #undef USE_EVEN */
 
 /* Version number of package */
 #define VERSION "2.4"

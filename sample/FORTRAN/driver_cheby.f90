@@ -200,10 +200,10 @@
 !     !	function args
       	real(mytype), dimension(istart(1):iend(1), &
                                istart(2):iend(2), &
-                               istart(3):iend(3)), target	::	rmem
+                               istart(3):iend(3)) ::	rmem
       	complex(mytype), dimension(fstart(1):fend(1), &
                                fstart(2):fend(2),  &
-                              fstart(3):fend(3)), target	::	cmem
+                              fstart(3):fend(3)) ::	cmem
       	real(mytype), intent(in) :: coordX(nx), coordY(ny), coordZ(nz)
 
       	double precision  :: delta,prec

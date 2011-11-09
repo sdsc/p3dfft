@@ -659,6 +659,7 @@ CDFLAGS
 FFTWF
 FFTW_LIB
 FFTW_INC
+FORTRAN_LIB
 LDFLAGS
 am__untar
 am__tar
@@ -2411,6 +2412,7 @@ _ACEOF
 
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
+        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi
 
 # check whether to compile using PGI
@@ -2426,8 +2428,8 @@ fi
 { $as_echo "$as_me:$LINENO: result: $ok" >&5
 $as_echo "$ok" >&6; }
 if test "$ok" = "yes"; then
-	LDFLAGS="$LDFLAGS -pgf90libs"
-
+#	LDFLAGS="$LDFLAGS -pgf90libs"
+        FORTRAN_LIB="-pgf90libs"
 
 cat >>confdefs.h <<\_ACEOF
 #define PGI 1
@@ -2457,6 +2459,7 @@ _ACEOF
 
 	eval "ARRAY${N}='-DGNU'"
         N=`expr $N + 1`
+	FORTRAN_LIB="-lgfortran"
 fi
 
 # check whether to enable single precision

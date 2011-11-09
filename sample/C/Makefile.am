@@ -1,6 +1,6 @@
 AM_CPPFLAGS = $(CDFLAGS) -g 
 INCLUDES = -I$(top_builddir)/include/ 
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) -L$(IFC_LIB) -lmpi_f90 -limf -lifcore
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) -L$(IFC_LIB) $(FORTRAN_LIB)
 
 csampledir = $(datadir)/p3dfft-samples/
 csample_PROGRAMS = test_sine_c.x test_sine_inplace_c.x test_rand_c.x test_spec_c.x test_inverse_c.x
