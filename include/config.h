@@ -5,7 +5,7 @@
 /* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS "'--enable-intel' '--enable-stride1' '--enable-fftw' '--with-fftw=/opt/apps/intel10_1/fftw3/3.1.2' 'FCFLAGS=-O3 -xW -132 -fpp' '--prefix=/share/home/00545/dmitry/p3dfft-trunk/install'"
+#define CONFIGURE_ARGS "'--enable-pgi' '--enable-stride1' '--enable-fftw' '--with-fftw=/opt/apps/pgi7_2/fftw3/3.1.2' 'FCFLAGS=-fast -Mextend' '--prefix=/share/home/00545/dmitry/p3dfft-trunk/install'"
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -57,7 +57,7 @@
 /* #undef IBM */
 
 /* Define if you want to compile P3DFFT using Intel compiler */
-#define INTEL 1
+/* #undef INTEL */
 
 /* Define if you want to enable the measure algorithm */
 #define MEASURE 1
@@ -99,7 +99,7 @@
 /* #undef PATIENT */
 
 /* Define if you want to compile P3DFFT using PGI compiler */
-/* #undef PGI */
+#define PGI 1
 
 /* Define if you want to compile P3DFFT in single precision */
 /* #undef SINGLE_PREC */

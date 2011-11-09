@@ -15,7 +15,7 @@ test_rand_f_x_SOURCES = driver_rand.F90
 
 test_spec_f_x_SOURCES = driver_spec.F90
 
-test_cheby_f_x_SOURCES = driver_cheby.f90
+test_cheby_f_x_SOURCES = driver_cheby.F90
 
 test_noop_f_x_SOURCES = driver_noop.F90
 
