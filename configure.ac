@@ -56,7 +56,7 @@ if test "$ok" = "yes"; then
         AC_DEFINE(GNU, 1, [Define if you want to compile P3DFFT using GNU compiler])
 	eval "ARRAY${N}='-DGNU'"
         N=`expr $N + 1`
-        AC_SUBST(FORTRAN_LIB,"-lgfortran")
+        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpi_f90 -lmpi_f77")
 fi
 
 # check whether to enable single precision

@@ -240,7 +240,7 @@
 #ifdef NBL_Z
       NBz=NBL_Z
 #else
-      NBz = CB*(numtasks/(2*mytype*Nx*Ny))
+      NBz = (CB/Nx)*(numtasks/(2*mytype*Ny))
 #endif
 
       if(NBx .eq. 0) then

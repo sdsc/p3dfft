@@ -1907,7 +1907,7 @@ _ACEOF
 
 	eval "ARRAY${N}='-DGNU'"
         N=`expr $N + 1`
-        FORTRAN_LIB="-lgfortran"
+        FORTRAN_LIB="-lgfortran -lmpi_f90 -lmpi_f77"
 
 fi
 
