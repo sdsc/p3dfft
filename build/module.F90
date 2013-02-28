@@ -48,7 +48,7 @@
 
       integer, parameter, public :: r8 = KIND(1.0d0)
       integer, parameter, public :: i8 = SELECTED_INT_KIND(18)
-      integer, save,public :: padd,num_thr
+      integer, save,public :: padd,maxmem,num_thr
       real(r8), save,public :: timers(12)
       real(r8), save :: timer(12)
        integer, public :: real_size,complex_size
@@ -153,10 +153,11 @@
 !=====================================================
 ! Return array dimensions for either real-space (conf=1) or wavenumber-space(conf=2)
 ! 
-      subroutine p3dfft_get_dims(istart,iend,isize,conf)
+      subroutine p3dfft_get_dims(istart,iend,isize,conf,user_padd)
 !=====================================================
 
-      integer istart(3),iend(3),isize(3),conf
+      integer istart(3),iend(3),isize(3),conf,m,tmp
+      integer, optional :: user_padd
       
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'
@@ -200,7 +201,18 @@
           isize = (/ maxisize, maxjsize, maxksize /)
       endif
 
+	 if(present(user_padd)) then
+	    tmp = isize(1)*isize(2)*conf/2	 
+            m = maxmem - tmp * isize(3)
+            if(mod(m,tmp) .eq. 0) then
+               user_padd = m / tmp
+            else
+               user_padd = m / tmp + 1
+	    endif
+         endif
+
       endif
+
       end subroutine p3dfft_get_dims
 
 ! --------------------------------------

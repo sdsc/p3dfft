@@ -267,6 +267,7 @@
       padd = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize) - nxhp*jisize*kjsize
       if(padd .le. 0) then 
          padd=0
+
       else
          if(mod(padd,nxhp*jisize) .eq. 0) then
             padd = padd / (nxhp*jisize)
@@ -276,7 +277,9 @@
 
       endif
 
-!      print *,taskid,': padd=',padd
+      maxmem = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize,nxh*jisize*kjsize)
+
+!      print *,taskid,': padd,maxmem=',padd,maxmem
 ! Initialize FFTW and allocate buffers for communication
       nm = nxhp * jisize * (kjsize+padd) 
       if(nm .gt. 0) then       

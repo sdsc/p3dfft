@@ -133,8 +133,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 SUBDIRS = \
-	C \
-	FORTRAN 
+	FORTRAN \
+	C 
 
 all: all-recursive
 
