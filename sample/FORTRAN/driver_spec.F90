@@ -139,7 +139,7 @@
 
 ! Initialize P3DFFT
 
-      call p3dfft_setup (dims,nx,ny,nz,.false.,memsize)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nx,ny,nz,.false.)
 
 ! Get dimensions for initial and outcoming arrays
 

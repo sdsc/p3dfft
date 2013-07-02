@@ -36,32 +36,72 @@
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
       real(r8) t,tc
-      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz
-      integer(i8) position,pos1
+      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,dny
+      integer(i8) position,pos1,pos0
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entring fcomm2'
 !        endif	
 !	call print_buf(source,iisize,ny_fft,kjsize)
 
+      dny = ny_fft-nyc
 
 ! Pack send buffers for exchanging y and z for all x at once 
 
       position = 1
- 
       do i=0,jproc-1
-         do z=1,kjsize
-            do y=jjst(i),jjen(i)
-               do x=1,iisize
-                  buf1(position) = source(x,y,z)
-                  position = position+1
-               enddo
-            enddo
-         enddo
-
 #ifdef USE_EVEN
-         position = position + (KfCntMax/(mytype*2) - jjsz(i)*iisize*kjsize)
+         pos0 = i*KfCntMax/(mytype*2)  + 1 
+#else
+         pos0 = KfSndStrt(i)/(mytype*2)+ 1 
 #endif
+
+! If clearly in the first half of ny
+
+         if(jjen(i) .le. nyhc) then
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do y=jjst(i),jjen(i)
+   		  do x=1,iisize
+                     buf1(position) = source(x,y,z)
+                     position = position+1
+                  enddo
+               enddo	
+            enddo
+
+! If clearly in the second half of ny
+         else if (jjst(i) .ge. nyhc+1) then
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do y=jjst(i)+dny,jjen(i)+dny
+                  do x=1,iisize
+                     buf1(position) = source(x,y,z)
+                     position = position+1
+                  enddo
+               enddo	
+            enddo
+
+
+
+! If spanning the first and second half of ny (e.g. iproc is odd)
+         else
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do y=jjst(i),nyhc
+                  do x=1,iisize
+                     buf1(position) = source(x,y,z)
+                     position = position+1
+                  enddo
+	       enddo	
+               do y=ny_fft-nyhc+1,jjen(i)+dny
+                  do x=1,iisize
+                     buf1(position) = source(x,y,z)
+                     position = position+1
+                  enddo
+               enddo	
+            enddo
+         endif
+
       enddo
       
 ! Exchange y-z buffers in columns of processors

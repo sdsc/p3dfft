@@ -52,7 +52,7 @@
       return
       end
 
-      subroutine plan_b_c2(X,stride_x1,stride_x2,Y,stride_y1, &
+      subroutine plan_b_c2_same(X,stride_x1,stride_x2,Y,stride_y1, &
           stride_y2,N,m)
 
       use p3dfft
@@ -65,10 +65,33 @@
 #ifdef FFTW
 
 #ifndef SINGLE_PREC
-      call dfftw_plan_many_dft(plan2_bc,1,N,m,X,NULL,stride_x1,stride_x2, &
+      call dfftw_plan_many_dft(plan2_bc_same,1,N,m,X,NULL,stride_x1,stride_x2, &
            Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag) 
 #else
-      call sfftw_plan_many_dft(plan2_bc,1,N,m,X,NULL,stride_x1,stride_x2, &
+      call sfftw_plan_many_dft(plan2_bc_same,1,N,m,X,NULL,stride_x1,stride_x2, &
+           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag )
+#endif
+#endif
+      return
+      end
+
+      subroutine plan_b_c2_dif(X,stride_x1,stride_x2,Y,stride_y1, &
+          stride_y2,N,m)
+
+      use p3dfft
+      use fft_spec
+      implicit none
+
+      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,fflag
+      complex(mytype) X(N*m),Y(N*m)
+
+#ifdef FFTW
+
+#ifndef SINGLE_PREC
+      call dfftw_plan_many_dft(plan2_bc_dif,1,N,m,X,NULL,stride_x1,stride_x2, &
+           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag) 
+#else
+      call sfftw_plan_many_dft(plan2_bc_dif,1,N,m,X,NULL,stride_x1,stride_x2, &
            Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag )
 #endif
 #endif
@@ -183,7 +206,7 @@
       end
 
 
-      subroutine plan_f_c2(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
+      subroutine plan_f_c2_same(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
       
       use p3dfft
       use fft_spec
@@ -197,10 +220,34 @@
       fflag = fftw_flag
 
 #ifndef SINGLE_PREC
-      call dfftw_plan_many_dft(plan2_fc,1,N,m, X,NULL,stride_x1,stride_x2, &
+      call dfftw_plan_many_dft(plan2_fc_same,1,N,m, X,NULL,stride_x1,stride_x2, &
         Y,NULL,stride_y1,stride_y2,FFTW_FORWARD,fflag)
 #else
-      call sfftw_plan_many_dft(plan2_fc,1,N,m, X,NULL,stride_x1,stride_x2, &
+      call sfftw_plan_many_dft(plan2_fc_same,1,N,m, X,NULL,stride_x1,stride_x2, &
+        Y,NULL,stride_y1,stride_y2,FFTW_FORWARD,fflag)
+#endif
+#endif
+      return
+      end
+
+      subroutine plan_f_c2_dif(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
+      
+      use p3dfft
+      use fft_spec
+      implicit none
+
+      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,fflag
+      complex(mytype) X(N*m),Y(N*m)
+
+#ifdef FFTW
+
+      fflag = fftw_flag
+
+#ifndef SINGLE_PREC
+      call dfftw_plan_many_dft(plan2_fc_dif,1,N,m, X,NULL,stride_x1,stride_x2, &
+        Y,NULL,stride_y1,stride_y2,FFTW_FORWARD,fflag)
+#else
+      call sfftw_plan_many_dft(plan2_fc_dif,1,N,m, X,NULL,stride_x1,stride_x2, &
         Y,NULL,stride_y1,stride_y2,FFTW_FORWARD,fflag)
 #endif
 #endif
@@ -453,12 +500,13 @@ subroutine init_ctrans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
     return
 end
 
+
 ! --------------------------------------
 !
 !  plan_ctrans_r2(..)
 !
 ! --------------------------------------
-subroutine plan_ctrans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
+subroutine plan_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
     use p3dfft
     use fft_spec
     implicit none
@@ -469,11 +517,34 @@ subroutine plan_ctrans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
 #ifdef FFTW
  
 #ifndef SINGLE_PREC
-    call dfftw_plan_many_r2r (plan_ctrans, 1, N, m, &
+    call dfftw_plan_many_r2r (plan_ctrans_same, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
                               Y, NULL, stride_y1, stride_y2, FFTW_REDFT00, fftw_flag)
 #else
-    call sfftw_plan_many_r2r (plan_ctrans, 1, N, m, &
+    call sfftw_plan_many_r2r (plan_ctrans_same, 1, N, m, &
+                              X, NULL, stride_x1, stride_x2, &
+                              Y, NULL, stride_y1, stride_y2, FFTW_REDFT00, fftw_flag)
+#endif
+#endif
+    return
+end
+
+subroutine plan_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
+    use p3dfft
+    use fft_spec
+    implicit none
+ 
+    integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
+    real (mytype) :: X (N*m), Y (N*m)
+ 
+#ifdef FFTW
+ 
+#ifndef SINGLE_PREC
+    call dfftw_plan_many_r2r (plan_ctrans_dif, 1, N, m, &
+                              X, NULL, stride_x1, stride_x2, &
+                              Y, NULL, stride_y1, stride_y2, FFTW_REDFT00, fftw_flag)
+#else
+    call sfftw_plan_many_r2r (plan_ctrans_dif, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
                               Y, NULL, stride_y1, stride_y2, FFTW_REDFT00, fftw_flag)
 #endif
@@ -517,7 +588,7 @@ end
 !  plan_strans_r2(..)
 !
 ! --------------------------------------
-subroutine plan_strans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
+subroutine plan_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
     use p3dfft
     use fft_spec
     implicit none
@@ -529,11 +600,35 @@ subroutine plan_strans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
  
 #ifndef SINGLE_PREC
 !! ccccccc http://www.fftw.org/doc/1d-Real_002dodd-DFTs-_0028DSTs_0029.html
-    call dfftw_plan_many_r2r (plan_strans, 1, N, m, &
+    call dfftw_plan_many_r2r (plan_strans_same, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
                               Y, NULL, stride_y1, stride_y2, FFTW_RODFT00, fftw_flag)
 #else
-    call sfftw_plan_many_r2r (plan_strans, 1, N, m, &
+    call sfftw_plan_many_r2r (plan_strans_same, 1, N, m, &
+                              X, NULL, stride_x1, stride_x2, &
+                              Y, NULL, stride_y1, stride_y2, FFTW_RODFT00, fftw_flag)
+#endif
+#endif
+    return
+end
+
+subroutine plan_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, m)
+    use p3dfft
+    use fft_spec
+    implicit none
+ 
+    integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
+    real (mytype) :: X (N*m), Y (N*m)
+ 
+#ifdef FFTW
+ 
+#ifndef SINGLE_PREC
+!! ccccccc http://www.fftw.org/doc/1d-Real_002dodd-DFTs-_0028DSTs_0029.html
+    call dfftw_plan_many_r2r (plan_strans_dif, 1, N, m, &
+                              X, NULL, stride_x1, stride_x2, &
+                              Y, NULL, stride_y1, stride_y2, FFTW_RODFT00, fftw_flag)
+#else
+    call sfftw_plan_many_r2r (plan_strans_dif, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
                               Y, NULL, stride_y1, stride_y2, FFTW_RODFT00, fftw_flag)
 #endif

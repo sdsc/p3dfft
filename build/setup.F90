@@ -25,18 +25,20 @@
 !----------------------------------------------------------------------------
 
 ! =========================================================
-      subroutine p3dfft_setup(dims,nx,ny,nz,overwrite,memsize)
+      subroutine p3dfft_setup(dims,nx,ny,nz,mpi_comm_in,nxcut,nycut,nzcut,overwrite,memsize)
 !========================================================
 
       implicit none
 
-      integer i,j,k,nx,ny,nz,err
+      integer i,j,k,nx,ny,nz,err,mpi_comm_in
       integer ierr, dims(2),  cartid(2)
-      logical periodic(2),remain_dims(2),overwrite
+      logical periodic(2),remain_dims(2)
       integer impid, ippid, jmpid, jppid
-      integer(i8) nm,n1,n2
+      integer(i8) nm,n1,n2,pad1
       real(mytype), allocatable :: R(:)
       integer, optional, intent (out) :: memsize (3)
+      integer, optional, intent (in) :: nxcut,nycut,nzcut
+      logical, optional, intent(in) :: overwrite
 
       integer my_start (3), my_end (3), my_size (3)
       integer my_proc_dims (2, 9)
@@ -53,19 +55,49 @@
          call MPI_ABORT(MPI_COMM_WORLD, 0)
       endif
 
-      OW = overwrite
+      if(present(overwrite)) then
+         OW = overwrite	     
+      else
+         OW = .true.
+      endif
+      
 
       timers = 0.0
 
       mpi_set = .true.
+      mpicomm = mpi_comm_in
       nx_fft = nx
       ny_fft = ny
       nz_fft = nz
+      if(present(nxcut)) then
+	nxc = nxcut
+      else
+        nxc = nx
+      endif	
+      if(present(nycut)) then
+	nyc = nycut
+      else
+        nyc = ny
+      endif	
+      if(present(nzcut)) then
+	nzc = nzcut
+      else
+        nzc = nz
+      endif	
+
       nxh=nx/2
       nxhp=nxh+1
+	nxhc = nxc/2
+	nxhpc = nxhc + 1
+	nyh = ny/2
+	nzh = nz/2
+	nyhc = nyc / 2
+	nzhc = nzc / 2
+	nyhcp = nyhc + 1
+	nzhcp = nzhc + 1
 
-      call MPI_COMM_SIZE (MPI_COMM_WORLD,numtasks,ierr)
-      call MPI_COMM_RANK (MPI_COMM_WORLD,taskid,ierr)
+      call MPI_COMM_SIZE (mpicomm,numtasks,ierr)
+      call MPI_COMM_RANK (mpicomm,taskid,ierr)
 
       if(dims(1) .le. 0 .or. dims(2) .le. 0 .or.  dims(1)*dims(2) .ne. numtasks) then
          print *,'Invalid processor geometry: ',dims,' for ',numtasks, 'tasks'
@@ -90,7 +122,7 @@
       periodic(1) = .false.
       periodic(2) = .false.
 ! creating cartesian processor grid
-      call MPI_Cart_create(MPI_COMM_WORLD,2,dims,periodic,.false.,mpi_comm_cart,ierr)
+      call MPI_Cart_create(mpicomm,2,dims,periodic,.false.,mpi_comm_cart,ierr)
 ! Obtaining process ids with in the cartesian grid
       call MPI_Cart_coords(mpi_comm_cart,taskid,2,cartid,ierr)
 ! process with a linear id of 5 may have cartid of (3,1)
@@ -161,9 +193,9 @@
 !Mapping 3-D data arrays onto 2-D process grid
 ! (nx+2,ny,nz) => (iproc,jproc)      
 ! 
-      call MapDataToProc(nxhp,iproc,iist,iien,iisz)
+      call MapDataToProc(nxhpc,iproc,iist,iien,iisz)
       call MapDataToProc(ny,iproc,jist,jien,jisz)
-      call MapDataToProc(ny,jproc,jjst,jjen,jjsz)
+      call MapDataToProc(nyc,jproc,jjst,jjen,jjsz)
       call MapDataToProc(nz,jproc,kjst,kjen,kjsz)
 
 ! These are local array indices for each processor
@@ -267,7 +299,6 @@
       padd = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize) - nxhp*jisize*kjsize
       if(padd .le. 0) then 
          padd=0
-
       else
          if(mod(padd,nxhp*jisize) .eq. 0) then
             padd = padd / (nxhp*jisize)
@@ -277,9 +308,7 @@
 
       endif
 
-      maxmem = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize,nxh*jisize*kjsize)
-
-!      print *,taskid,': padd,maxmem=',padd,maxmem
+!      print *,taskid,': padd=',padd
 ! Initialize FFTW and allocate buffers for communication
       nm = nxhp * jisize * (kjsize+padd) 
       if(nm .gt. 0) then       
@@ -304,6 +333,7 @@
         call init_plan(buf1,R,buf2,nm)
 
         deallocate(R)
+
      endif
 
 #ifdef USE_EVEN
@@ -323,9 +353,22 @@
 !     initialize buf to avoid "floating point invalid" errors in debug mode
     buf = 0.d0
     if (err /= 0) then
-      print *, 'Error ', err, ' allocating array XYgZ'
+      print *, 'Error ', err, ' allocating array buf'
     end if
 
+!#ifdef USE_EVEN
+!       
+!     n1 = IfCntMax * iproc / (mytype*2)
+!     n2 = KfCntMax * jproc / (mytype*2)
+!     allocate(buf_x(n1))
+!     allocate(buf_z(n2))
+!     n1 = max(n1,n2)
+!     allocate(buf_y(n1))
+!#else
+!     allocate(buf_x(nxhp*jisize*kjsize))
+!     allocate(buf_y(ny*iisize*kjsize))
+!     allocate(buf_z(nz*iisize*jjsize))
+!#endif
 
 ! Displacements and buffer counts for mpi_alltoallv
 
@@ -450,9 +493,23 @@
     proc_parts = - 1
 
 !     calc max. needed memory (attention: cast to integer8 included)
-	maxisize = 2 * nxhp
+      pad1 = 2* max(nz*jjsize*iisize,ny*kjsize*iisize) - nx*jisize*kjsize
+!      print *,taskid,': pad1=',pad1
+
+      if(pad1 .le. 0) then
+        pad1 = 0
+      endif  
+
+      if(mod(pad1,nx*jisize) .ne. 0) then
+         pad1 = pad1 / (nx*jisize) + 1
+      else
+         pad1 = pad1 / (nx*jisize)
+      endif   
+
+
+	maxisize = nx
 	maxjsize = jisize
-	maxksize = kjsize + padd
+	maxksize = kjsize + pad1
 
 	if(present(memsize)) then
 	  memsize(1) = maxisize

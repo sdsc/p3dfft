@@ -121,6 +121,13 @@
             pos0 = pos0 + iisz(i)*jisize
          enddo
       enddo
+      do z=1,kjsize
+         do y=1,jisize
+	    do x=nxhpc+1,nxhp
+	       dest(x,y,z) = 0.
+	    enddo
+	 enddo	
+      enddo
 
       tc = tc + MPI_Wtime() 
       

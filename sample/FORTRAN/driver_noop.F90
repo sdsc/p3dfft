@@ -146,7 +146,7 @@
       endif
 
 ! Set up work structures for P3DFFT
-      call p3dfft_setup (dims,nx,ny,nz,.true.,memsize)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD)
 
 ! Get dimensions for the original array of real numbers, X-pencils
       call p3dfft_get_dims(istart,iend,isize,1)

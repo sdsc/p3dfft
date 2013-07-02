@@ -59,30 +59,32 @@
 #ifdef DEBUG
 	print *,taskid, ': doing plan_f_c1'
 #endif
-      call plan_f_c1(A,1,ny_fft,C,1,ny_fft,ny_fft,iisize*kjsize)
+      call plan_f_c1(A,1,ny_fft,A,1,ny_fft,ny_fft,iisize*kjsize)
 #ifdef DEBUG
 	print *,taskid,': doing plan_b_c1'
 #endif
-      call plan_b_c1(A,1,ny_fft,C,1,ny_fft,ny_fft,iisize*kjsize)
+      call plan_b_c1(A,1,ny_fft,A,1,ny_fft,ny_fft,iisize*kjsize)
 
      endif	
 
      if(jjsize .gt. 0) then
 #ifdef DEBUG
-	print *,taskid,': doing plan_f_c2'
+	print *,taskid,': doing plan_f_c2 & plan_b_c2'
 #endif
-        call plan_f_c2(A,1,nz_fft, C,1,nz_fft,nz_fft,jjsize)
-#ifdef DEBUG
-	print *,taskid,': doing plan_b_c2'
-#endif
-       call plan_b_c2(A,1,nz_fft,C,1,nz_fft,nz_fft,jjsize)
 
-!cccccccccccccccccccccc added chebyshev cccccccccccccccccccccccccccccccc
-    call plan_ctrans_r2 (A, 2,2*nz_fft, &
+        call plan_b_c2_same(A,1,nz_fft,A,1,nz_fft,nz_fft,jjsize)
+        call plan_b_c2_dif(A,1,nz_fft,C,1,nz_fft,nz_fft,jjsize)
+        call plan_f_c2_same(A,1,nz_fft, A,1,nz_fft,nz_fft,jjsize)
+        call plan_f_c2_dif(A,1,nz_fft, C,1,nz_fft,nz_fft,jjsize)
+        call plan_ctrans_r2_same (A, 2,2*nz_fft, &
+                         A, 2,2*nz_fft, NZ_fft, jjsize)
+        call plan_strans_r2_same (A, 2,2*nz_fft, &
+                         A, 2,2*nz_fft, NZ_fft, jjsize)
+        call plan_ctrans_r2_dif (A, 2,2*nz_fft, &
                          C, 2,2*nz_fft, NZ_fft, jjsize)
-    call plan_strans_r2 (A, 2,2*nz_fft, &
+        call plan_strans_r2_dif (A, 2,2*nz_fft, &
                          C, 2,2*nz_fft, NZ_fft, jjsize)
-!ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
      endif
 #else
      if(iisize .gt. 0) then
@@ -100,22 +102,18 @@
 #ifdef DEBUG
           print *,taskid,': doing plan_f_c2'
 #endif
-          call plan_f_c2(A,iisize*jjsize, 1, A,iisize*jjsize, 1,nz_fft,iisize*jjsize)
+          call plan_f_c2_same(A,iisize*jjsize, 1, A,iisize*jjsize, 1,nz_fft,iisize*jjsize)
 #ifdef DEBUG
           print *,taskid,': doing plan_b_c2'
 #endif
-         if(OW) then
-            call plan_b_c2(A,iisize*jjsize, 1, A,iisize*jjsize, 1,nz_fft,iisize*jjsize)
-         else
-            call plan_b_c2(A,iisize*jjsize, 1, B,iisize*jjsize, 1,nz_fft,iisize*jjsize)
-         endif
+        call plan_b_c2_same(A,iisize*jjsize, 1, A,iisize*jjsize, 1,nz_fft,iisize*jjsize)
 
        endif
 
 !cccccccccccccccccccccc added chebyshev cccccccccccccccccccccccccccccccc
-    call plan_ctrans_r2 (A, 2*iisize*jjsize, 1, &
+    call plan_ctrans_r2_same (A, 2*iisize*jjsize, 1, &
                          A, 2 * iisize * jjsize, 1, NZ_fft, 2 * iisize * jjsize)
-    call plan_strans_r2 (A, 2*iisize*jjsize, 1, &
+    call plan_strans_r2_same (A, 2*iisize*jjsize, 1, &
                          A, 2 * iisize * jjsize, 1, NZ_fft, 2 * iisize * jjsize)
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      endif

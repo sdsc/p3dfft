@@ -69,7 +69,7 @@
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
       integer fstart(3),fend(3),fsize(3)
-      integer iproc,jproc
+      integer iproc,jproc,nxc,nyc,nzc
       logical iex
 	integer memsize(3)
 
@@ -143,7 +143,11 @@
          print *,'Using processor grid ',iproc,' x ',jproc
       endif
 
-      call p3dfft_setup (dims,nx,ny,nz,.true.,memsize)
+      nxc = nx
+      nyc = ny
+      nzc = nz
+
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nxc,nyc,nzc,.true.)
       call p3dfft_get_dims(istart,iend,isize,1)
       call p3dfft_get_dims(fstart,fend,fsize,2)
 
@@ -176,7 +180,8 @@
          do y=istart(2),iend(2)
             do x=istart(1),iend(1)
                call random_number(BEG(x,y,z))
-            enddo
+!		BEG(x,y,z) = (x-1)+2*(y-1)+3*(z-1) 
+           enddo
          enddo
       enddo
 
@@ -189,10 +194,17 @@
 ! (XiYjZg to XgYiZj)
 !
 
+
+
       Nglob = nx * ny 
       Nglob = Nglob * nz
       factor = 1.0d0/Nglob
       Ntot = fsize(1)*fsize(2)*fsize(3)
+!      if(proc_id .eq. 0) then
+!         print *,'Initial data: '
+!         call print_all_real(BEG,Ntot,proc_id,Nglob)
+!      endif
+
       rtime1 = 0.0               
       do  m=1,n
          if(proc_id .eq. 0) then
@@ -215,11 +227,6 @@
 ! Normalize
          call mult_array(AEND, Ntot,factor)
          
-!        if(proc_id .eq. 0) then
-!            print *,'Result of forward transform:'
-!       call print_all(AEND,Ntot,proc_id,Nglob)
-!    endif
-
 ! Barrier for correct timing
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
 ! Backward transform
@@ -340,8 +347,11 @@
       integer Fstart(3),Fend(3),Fsize(3)
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,2)
+      if(proc_id .eq. 0) then
+         print *,'Dimensions:', Fsize
+      endif
       do i=1,Nar
-         if(abs(Ar(1,1,i)) .gt. 1.25e-2 * Nglob) then
+         if(abs(Ar(1,1,i)) .gt. 1.25e-3 * Nglob) then
             z = (i-1)/(Fsize(1)*Fsize(2))
             y = (i-1 - z * Fsize(1)*Fsize(2))/Fsize(1)
             x = i-1-z*Fsize(1)*Fsize(2) - y*Fsize(1)

@@ -34,7 +34,7 @@
       complex(mytype) source(iisize,jjsize,nz_fft)
       complex(mytype) dest(iisize,ny_fft,kjsize)
       real(r8) t,tc
-      integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2
+      integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2,dny
       integer(i8) position,pos1
       
 !     Pack the data for sending
@@ -80,24 +80,56 @@
 ! Unpack receive buffers into dest
 
       position=1
+      dny = ny_fft - nyc
       do i=0,jproc-1
-         do z=1,kjsize
-#ifdef STRIDE12
-            do x=1,iisize
+! If clearly in the first half of ny
+         if(jjen(i) .le. nyhc) then
+            do z=1,kjsize
                do y=jjst(i),jjen(i)
-                  dest(y,x,z) = buf2(position)
-                  position = position+1
+                  do x=1,iisize
+                     dest(x,y,z) = buf2(position)
+                     position = position+1
+                  enddo
+               enddo
+	    enddo
+! If clearly in the second half of ny
+         else if (jjst(i) .ge. nyhc+1) then
+            do z=1,kjsize
+               do y=jjst(i)+dny,jjen(i)+dny
+                  do x=1,iisize
+                     dest(x,y,z) = buf2(position)
+                     position = position +1
+                  enddo
+               enddo
+            enddo         
+
+! If spanning the first and second half of nz (i.e. jproc is odd)  
+         else
+	    do z=1,kjsize
+               do y=jjst(i),nyhc
+                  do x=1,iisize
+                     dest(x,y,z) = buf2(position)
+                     position = position +1
+                  enddo
+		enddo
+                do y=ny_fft-nyhc+1,jjen(i)+dny
+                  do x=1,iisize
+                     dest(x,y,z) = buf2(position)
+                     position = position +1
+                  enddo
                enddo
             enddo
-#else
-            do y=jjst(i),jjen(i)
+         endif
+
+! Fill center with zeros
+         do z=1,kjsize
+            do y=nyhc+1,ny_fft-nyhc
                do x=1,iisize
-                  dest(x,y,z) = buf2(position)
-                  position = position+1
+	          dest(x,y,z) = 0.0
                enddo
             enddo
-#endif
          enddo
+
 #ifdef USE_EVEN
          position = (i+1)*KfCntMax/(mytype*2)+1
 #endif
@@ -106,3 +138,4 @@
       
       return
       end subroutine
+

@@ -143,7 +143,7 @@
       endif
 
 ! Set up work structures for P3DFFT
-      call p3dfft_setup (dims,nx,ny,nz,.false.,memsize)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nx,ny,nz,.false.,memsize)
 
 ! Get dimensions for the original array of complex numbers, (X- or Z-pencils
 ! depending on how the library was compiled)

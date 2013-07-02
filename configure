@@ -1857,7 +1857,7 @@ _ACEOF
 
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
-	FORTRAN_LIB="-L$(IFC_LIB) -lmpi_f90 -limf -lifcore"
+	FORTRAN_LIB="-L$(IFC_LIB) -lmpichf90 -limf -lifcore"
 
 #        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi

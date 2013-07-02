@@ -48,25 +48,25 @@
 
       integer, parameter, public :: r8 = KIND(1.0d0)
       integer, parameter, public :: i8 = SELECTED_INT_KIND(18)
-      integer, save,public :: padd,maxmem,num_thr
+      integer, save,public :: padd,num_thr
       real(r8), save,public :: timers(12)
       real(r8), save :: timer(12)
        integer, public :: real_size,complex_size
 
-      integer,save :: NX_fft,NY_fft,NZ_fft,numtasks,iproc,jproc
-      integer,save :: ipid,jpid,taskid
+      integer,save :: NX_fft,NY_fft,NZ_fft,nxh,nxhp
+      integer,save :: nxc,nyc,nzc,nxhc,nxhpc,nyh,nzh,nyhc,nzhc,nyhcp,nzhcp	
+      integer,save :: ipid,jpid,taskid,numtasks,iproc,jproc
       integer,save :: iistart,iiend,iisize,jjstart,jjsize,jjend
       integer,save ::jistart,kjstart,jisize,kjsize,jiend,kjend
     integer, save :: ijstart, ijsize, ijend, iiistart, iiisize, iiiend
 
-      integer,save ::  nxh,nxhp
     integer, save :: maxisize, maxjsize, maxksize
 
 
 ! mpi process info
 !
       logical :: mpi_set=.false.
-      integer, save :: mpi_comm_cart      
+      integer, save :: mpi_comm_cart,mpicomm      
       integer, save :: mpi_comm_row, mpi_comm_col
       integer,save, dimension(:), allocatable :: iist,iien,iisz
       integer,save, dimension(:), allocatable :: jist,jien,jisz
@@ -153,11 +153,10 @@
 !=====================================================
 ! Return array dimensions for either real-space (conf=1) or wavenumber-space(conf=2)
 ! 
-      subroutine p3dfft_get_dims(istart,iend,isize,conf,user_padd)
+      subroutine p3dfft_get_dims(istart,iend,isize,conf)
 !=====================================================
 
-      integer istart(3),iend(3),isize(3),conf,m,tmp
-      integer, optional :: user_padd
+      integer istart(3),iend(3),isize(3),conf
       
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'
@@ -182,8 +181,8 @@
          iend(2) = jjend
          isize(2) = jjsize
          istart(1) = 1
-         iend(1) = NZ_fft
-         isize(1) = NZ_fft
+         iend(1) = NZc
+         isize(1) = NZc
 #else
          istart(1) = iistart
          iend(1) = iiend
@@ -192,8 +191,8 @@
          iend(2) = jjend
          isize(2) = jjsize
          istart(3) = 1
-         iend(3) = NZ_fft
-         isize(3) = NZ_fft
+         iend(3) = NZc
+         isize(3) = NZc
 #endif
         else if (conf == 3) then
           istart = (/ 0, 0, 0 /)
@@ -201,18 +200,7 @@
           isize = (/ maxisize, maxjsize, maxksize /)
       endif
 
-	 if(present(user_padd)) then
-	    tmp = isize(1)*isize(2)*conf/2	 
-            m = maxmem - tmp * isize(3)
-            if(mod(m,tmp) .eq. 0) then
-               user_padd = m / tmp
-            else
-               user_padd = m / tmp + 1
-	    endif
-         endif
-
       endif
-
       end subroutine p3dfft_get_dims
 
 ! --------------------------------------
@@ -252,16 +240,28 @@
       call dfftw_destroy_plan(plan1_frc)      
       call dfftw_destroy_plan(plan1_bcr)      
       call dfftw_destroy_plan(plan1_fc)      
-      call dfftw_destroy_plan(plan2_fc)      
+      call dfftw_destroy_plan(plan2_fc_same)      
+      call dfftw_destroy_plan(plan2_fc_dif)      
       call dfftw_destroy_plan(plan1_bc)      
-      call dfftw_destroy_plan(plan2_bc)      
+      call dfftw_destroy_plan(plan2_bc_same)      
+      call dfftw_destroy_plan(plan2_bc_dif)      
+      call dfftw_destroy_plan(plan_ctrans_same)      
+      call dfftw_destroy_plan(plan_ctrans_dif)      
+      call dfftw_destroy_plan(plan_strans_same)      
+      call dfftw_destroy_plan(plan_strans_dif)      
 #else
       call sfftw_destroy_plan(plan1_frc)      
       call sfftw_destroy_plan(plan1_bcr)      
       call sfftw_destroy_plan(plan1_fc)      
-      call sfftw_destroy_plan(plan2_fc)      
       call sfftw_destroy_plan(plan1_bc)      
-      call sfftw_destroy_plan(plan2_bc)      
+      call sfftw_destroy_plan(plan2_fc_same)      
+      call sfftw_destroy_plan(plan2_fc_dif)      
+      call sfftw_destroy_plan(plan2_bc_same)      
+      call sfftw_destroy_plan(plan2_bc_dif)      
+      call sfftw_destroy_plan(plan_ctrans_same)      
+      call sfftw_destroy_plan(plan_ctrans_dif)      
+      call sfftw_destroy_plan(plan_strans_same)      
+      call sfftw_destroy_plan(plan_strans_dif)      
 #endif
 
 #elif defined ESSL
@@ -336,6 +336,41 @@
 
       return
       end subroutine
+
+      subroutine seg_zero_z(A,xdim,ydim,z1,z2,zdim)
+
+      implicit none
+      integer x,y,z,xdim,ydim,zdim,z1,z2
+      complex(mytype) A(xdim,ydim,zdim)
+
+      do z=z1,z2
+         do y=1,ydim
+	    do x=1,xdim
+	       A(x,y,z) = 0.
+	    enddo
+	 enddo
+      enddo
+
+      return
+      end subroutine seg_zero_z
+
+    subroutine seg_copy_z(in,out,x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim,ydim,zdim,shift_z,x,y,z
+    complex(mytype) in(xdim,ydim,zdim), out(xdim,ydim,zdim)
+
+
+    do z=z1,z2
+       do y=y1,y2
+          do x=x1,x2
+	     out(x,y,z) = in(x,y,z+shift_z)
+	  enddo	
+        enddo	
+    enddo
+
+    return
+    end subroutine seg_copy_z
 
 
 !========================================================

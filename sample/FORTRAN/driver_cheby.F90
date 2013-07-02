@@ -139,7 +139,7 @@
          print *,'Using processor grid ',iproc,' x ',jproc
       endif
 
-      call p3dfft_setup (dims,nx,ny,nz,.false.,memsize)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nx,ny,nz,.false.,memsize)
       call p3dfft_get_dims(istart,iend,isize,1)
       call p3dfft_get_dims(fstart,fend,fsize,2)
 

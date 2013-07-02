@@ -34,18 +34,20 @@
       use fft_spec
       implicit none
 
-! Assume stride12
+! Assume stride1
       complex(mytype) source(ny_fft,iisize,kjsize)
-      complex(mytype) dest(nz_fft,jjsize,iisize)
+      complex(mytype) dest(nzc,jjsize,iisize)
       complex(mytype) buf3(nz_fft,jjsize)
 
       real(r8) t,tc
-      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l
+      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l,dny,dnz
       integer(i8) position,pos1,pos0
       character(len=3) op
 
 
 ! Pack send buffers for exchanging y and z for all x at once 
+
+      dny = ny_fft-nyc
 
       tc = tc - MPI_Wtime()
 
@@ -55,21 +57,58 @@
 #else
          pos0 = KfSndStrt(i)/(mytype*2)+ 1 
 #endif
-         do z=1,kjsize
-            position = pos0 +(z-1)*jjsz(i)*iisize
-            do x=1,iisize
-               do y=jjst(i),jjen(i)
-                  buf1(position) = source(y,x,z)
-                  position = position+1
-               enddo
+
+! Pack the sendbuf, omitting the center ny-nyc elements in Y dimension
+
+! If clearly in the first half of ny
+
+         if(jjen(i) .le. nyhc) then
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do x=1,iisize
+                  do y=jjst(i),jjen(i)
+                     buf1(position) = source(y,x,z)
+                     position = position+1
+                  enddo
+               enddo	
             enddo
-         enddo
+
+! If clearly in the second half of ny
+         else if (jjst(i) .ge. nyhc+1) then
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do x=1,iisize
+                  do y=jjst(i)+dny,jjen(i)+dny
+                     buf1(position) = source(y,x,z)
+                     position = position+1
+                  enddo
+               enddo	
+            enddo
+
+
+
+! If spanning the first and second half of ny (e.g. iproc is odd)
+         else
+     	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
+               do x=1,iisize
+                  do y=jjst(i),nyhc
+                     buf1(position) = source(y,x,z)
+                     position = position+1
+                  enddo
+                  do y=ny_fft-nyhc+1,jjen(i)+dny
+                     buf1(position) = source(y,x,z)
+                     position = position+1
+                  enddo
+               enddo	
+            enddo
+         endif
+
       enddo
-      
+
+
       tc = tc + MPI_Wtime()
       t = t - MPI_Wtime()
-
-! Exchange y-z buffers in columns of processors
 
 #ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax, mpi_byte, buf2,KfCntMax, mpi_byte,mpi_comm_col,ierr)
@@ -79,6 +118,180 @@
      if(jjsize .gt. 0) then
 
       tc = - MPI_Wtime() + tc
+
+      if(nz .ne. nzc) then
+	dnz = nz - nzc
+	
+      if(op(3:3) == '0' .or. op(3:3) == 'n') then
+
+      do x=1,iisize
+	pos0 = (x-1)*jjsize
+
+	do i=0,jproc-1
+
+	   pos1 = pos0 + i * KfCntMax / (mytype*2) 
+ 
+           if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
+! Just copy the data
+              do z=kjst(i),kjen(i),NBz
+                 z2 = min(z+NBz-1,kjen(i))
+
+                 do y=1,jjsize,NBy2
+                    y2 = min(y+NBy2-1,jjsize)
+                    pos2 = pos1 + y 
+
+                    do iz=z,z2
+                       position = pos2
+                       do iy=y,y2
+! Here we are sure that dest and buf are different
+                         dest(iz,iy,x) = buf2(position)
+                         position = position +1
+                       enddo
+                       pos2 = pos2 + iisize * jjsize
+                    enddo
+                 enddo
+                 pos1 = pos1 + iisize*jjsize*NBz
+              enddo
+
+	    else then
+! Copy some data, then insert zeros to restore full dimension, then again 
+! copy some data if needed	
+               do z=kjst(i),nzhc,NBz
+       	          z2 = min(z+NBz-1,nzhc)
+
+                 do y=1,jjsize,NBy2
+                    y2 = min(y+NBy2-1,jjsize)
+                    pos2 = pos1 + y 
+
+                    do iz=z,z2
+                       position = pos2
+                       do iy=y,y2
+! Here we are sure that dest and buf are different
+                         dest(iz,iy,x) = buf2(position)
+                         position = position +1
+                       enddo
+                       pos2 = pos2 + iisize * jjsize
+                    enddo
+                 enddo
+                 pos1 = pos1 + iisize*jjsize*NBz
+              enddo
+
+	      pos0 = pos0 + iisize*jjsize*dnz
+ 	      pos1 = pos0 + i * KfCntMax / (mytype*2) 
+
+	      do z=nzhc+1,kjen(i),NBz
+                 z2 = min(z+NBz-1,kjen(i))
+
+                 do y=1,jjsize,NBy2
+                    y2 = min(y+NBy2-1,jjsize)
+                    pos2 = pos1 + y 
+
+                    do iz=z,z2
+                       position = pos2
+                       do iy=y,y2
+! Here we are sure that dest and buf are different
+                         dest(iz,iy,x) = buf2(position)
+                         position = position +1
+                       enddo
+                       pos2 = pos2 + iisize * jjsize
+                    enddo
+                 enddo
+                 pos1 = pos1 + iisize*jjsize*NBz
+              enddo
+	   endif
+
+	enddo
+
+       enddo	
+
+     else
+      do x=1,iisize
+
+         do i=0,jproc-1
+
+            pos0 = i * KfCntMax / (mytype*2) + (x-1)*jjsize 
+         
+            do z=kjst(i),kjen(i),NBz
+               z2 = min(z+NBz-1,kjen(i))
+            
+               do y=1,jjsize,NBy2
+                  y2 = min(y+NBy2-1,jjsize)
+
+                  pos1 = pos0 +y
+
+                  do iz=z,z2
+                     position = pos1 
+                     do iy=y,y2
+! Here we are sure that dest and buf are different
+                        buf3(iz,iy) = buf2(position)
+                        position = position + 1
+                     enddo
+                     pos1 = pos1 + iisize * jjsize
+                  enddo
+               enddo
+               pos0 = pos0 + jjsize*iisize*NBz
+           enddo 
+         enddo
+
+	if(op(3:3) == 't' .or. op(3:3) == 'f') then
+             call exec_f_c2_same(buf3, 1,nz_fft, &
+			  buf3, 1,nz_fft,nz_fft,jjsize)
+	else if(op(3:3) == 'c') then	
+             call exec_ctrans_r2_complex_same(buf3, 2,2*nz_fft, &
+			  buf3, 2,2*nz_fft,nz_fft,jjsize)
+	else if(op(3:3) == 's') then	
+             call exec_strans_r2_complex_same(buf3, 2,2*nz_fft, &
+		          buf3, 2,2*nz_fft,nz_fft,jjsize)
+ 	else
+	   print *,taskid,'Unknown transform type: ',op(3:3)
+	   call MPI_abort(MPI_COMM_WORLD,ierr)
+	endif
+
+	do y=1,jjsize	
+	   do z=1,nzhc
+	      dest(z,y,x) = buf3(z,y)
+	   enddo
+	   do z=nzhc+1,nzc
+	      dest(z,y,x) = buf3(z+dnz,y)
+	   do
+	enddo
+
+      enddo
+
+      else  ! if nz = nzc
+
+      if(op(3:3) == '0' .or. op(3:3) == 'n') then
+
+      do x=1,iisize
+
+         do i=0,jproc-1
+
+            pos0 = i * KfCntMax / (mytype*2) + (x-1)*jjsize 
+         
+            do z=kjst(i),kjen(i),NBz
+               z2 = min(z+NBz-1,kjen(i))
+            
+               do y=1,jjsize,NBy2
+                  y2 = min(y+NBy2-1,jjsize)
+
+                  pos1 = pos0 +y
+
+                  do iz=z,z2
+                     position = pos1 
+                     do iy=y,y2
+! Here we are sure that dest and buf are different
+                        dest(iz,iy,x) = buf2(position)
+                        position = position + 1
+                     enddo
+                     pos1 = pos1 + iisize * jjsize
+                  enddo
+               enddo
+               pos0 = pos0 + jjsize*iisize*NBz
+           enddo 
+         enddo
+      enddo
+
+      else
 
       do x=1,iisize
 
@@ -109,25 +322,31 @@
          enddo
 
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
-             call exec_f_c2(buf3, 1,nz_fft, &
+             call exec_f_c2_dif(buf3, 1,nz_fft, &
 			  dest(1,1,x), 1,nz_fft,nz_fft,jjsize)
 	else if(op(3:3) == 'c') then	
-             call exec_ctrans_r2_complex(buf3, 2,2*nz_fft, &
+             call exec_ctrans_r2_complex_dif(buf3, 2,2*nz_fft, &
 			  dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
 	else if(op(3:3) == 's') then	
-             call exec_strans_r2_complex(buf3, 2,2*nz_fft, &
-		  dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
+             call exec_strans_r2_complex_dif(buf3, 2,2*nz_fft, &
+		          dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
  	else
 	   print *,taskid,'Unknown transform type: ',op(3:3)
 	   call MPI_abort(MPI_COMM_WORLD,ierr)
 	endif
+
       enddo
+
+      endif
+      endif
 
       tc = tc + MPI_Wtime()
 
      endif
 
-#else
+#else      
+! Exchange y-z buffers in columns of processors
+
       call mpi_alltoallv(buf1,KfSndCnts, KfSndStrt,mpi_byte,buf2,KfRcvCnts, KfRcvStrt,mpi_byte,mpi_comm_col,ierr)
 
       t = MPI_Wtime() + t
@@ -135,6 +354,113 @@
      if(jjsize .gt. 0) then
 
       tc = -MPI_Wtime() + tc
+
+      if(nz_fft .ne. nzc) then
+	dnz = nz_fft - nzc
+
+      if(op(3:3) == '0' .or. op(3:3) == 'n') then
+
+      do x=1,iisize
+
+         do z=1,nzhc,NBz
+            z2 = min(z+NBz-1,nz_fft)
+            
+            pos0 = (x-1)*jjsize + (z-1)*iisize*jjsize
+
+            do y=1,jjsize,NBy2
+               y2 = min(y+NBy2-1,jjsize)
+               
+               pos1 = pos0 + y 
+               
+               do iz=z,z2
+                  position = pos1
+                  do iy=y,y2
+! Here we are sure that dest and buf are different
+                     dest(iz,iy,x) = buf2(position)
+                     position = position +1
+                  enddo
+                  pos1 = pos1 + iisize * jjsize
+               enddo
+            enddo
+         enddo
+         do z=nzhc+1,nzc,NBz
+            z2 = min(z+NBz-1,nz_fft)
+            
+            pos0 = (x-1)*jjsize + (z+dnz-1)*iisize*jjsize
+
+            do y=1,jjsize,NBy2
+               y2 = min(y+NBy2-1,jjsize)
+               
+               pos1 = pos0 + y 
+               
+               do iz=z,z2
+                  position = pos1
+                  do iy=y,y2
+! Here we are sure that dest and buf are different
+                     dest(iz,iy,x) = buf2(position)
+                     position = position +1
+                  enddo
+                  pos1 = pos1 + iisize * jjsize
+               enddo
+            enddo
+         enddo
+       enddo	
+
+     else
+
+      do x=1,iisize
+
+         pos0 = (x-1)*jjsize 
+
+         do z=1,nz_fft,NBz
+            z2 = min(z+NBz-1,nz_fft)
+            
+            do y=1,jjsize,NBy2
+               y2 = min(y+NBy2-1,jjsize)
+               
+               pos1 = pos0 + y 
+               
+               do iz=z,z2
+                  position = pos1
+                  do iy=y,y2
+! Here we are sure that dest and buf are different
+                     buf3(iz,iy) = buf2(position)
+                     position = position +1
+                  enddo
+                  pos1 = pos1 + iisize * jjsize
+               enddo
+            enddo
+            pos0 = pos0 + iisize*jjsize*NBz
+         enddo
+
+	if(op(3:3) == 't' .or. op(3:3) == 'f') then
+             call exec_f_c2_same(buf3, 1,nz_fft, &
+			  buf3, 1,nz_fft,nz_fft,jjsize)
+	else if(op(3:3) == 'c') then	
+             call exec_ctrans_r2_complex_same(buf3, 2,2*nz_fft, &
+			  buf3, 2,2*nz_fft,nz_fft,jjsize)
+	else if(op(3:3) == 's') then	
+             call exec_strans_r2_complex_same(buf3, 2,2*nz_fft, &
+		          buf3, 2,2*nz_fft,nz_fft,jjsize)
+	else
+	   print *,taskid,'Unknown transform type: ',op(3:3)
+	   call MPI_abort(MPI_COMM_WORLD,ierr)
+	endif
+
+	do y=1,jjsize	
+	   do z=1,nzhc
+	      dest(z,y,x) = buf3(z,y)
+	   enddo
+	   do z=nzhc+1,nzc
+	      dest(z,y,x) = buf3(z+dnz,y)
+	   enddo
+	enddo
+
+      enddo
+    endif
+
+
+      else ! if nz = nzc
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
@@ -191,20 +517,22 @@
          enddo
 
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
-             call exec_f_c2(buf3, 1,nz_fft, &
+             call exec_f_c2_dif(buf3, 1,nz_fft, &
 			  dest(1,1,x), 1,nz_fft,nz_fft,jjsize)
 	else if(op(3:3) == 'c') then	
-             call exec_ctrans_r2_complex(buf3, 2,2*nz_fft, &
+             call exec_ctrans_r2_complex_dif(buf3, 2,2*nz_fft, &
 			  dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
 	else if(op(3:3) == 's') then	
-             call exec_strans_r2_complex(buf3, 2,2*nz_fft, &
-		  dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
+             call exec_strans_r2_complex_dif(buf3, 2,2*nz_fft, &
+		          dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
 	else
 	   print *,taskid,'Unknown transform type: ',op(3:3)
 	   call MPI_abort(MPI_COMM_WORLD,ierr)
 	endif
 
       enddo
+
+      endif
 
       endif
 

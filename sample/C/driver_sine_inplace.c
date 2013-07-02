@@ -103,7 +103,7 @@ int main(int argc,char **argv)
    if(proc_id == 0) {
      if((fp=fopen("stdin", "r"))==NULL){
         printf("Cannot open file. Setting to default nx=ny=nz=128, ndim=2, n=1.\n");
-        nx=ny=nz=128; n=1;ndim=2;
+        nx=ny=nz=128; n=1;
      } else {
         fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
         fclose(fp);
@@ -149,7 +149,7 @@ int main(int argc,char **argv)
       printf("Using processor grid %d x %d\n",dims[0],dims[1]);
 
    /* Initialize P3DFFT */
-   p3dfft_setup(dims,nx,ny,nz,1,memsize);
+   p3dfft_setup(dims,nx,ny,nz,MPI_COMM_WORLD,nx,ny,nz,1,memsize);
    /* Get dimensions for input array - real numbers, X-pencil shape.
       Note that we are following the Fortran ordering, i.e. 
       the dimension  with stride-1 is X. */

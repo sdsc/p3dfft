@@ -71,7 +71,7 @@
       integer fstart(3),fend(3),fsize(3)
       integer iproc,jproc,add
       logical iex
-      integer memsize(3),tmp1(3),tmp2(3),mypadd
+      integer memsize(3),tmp1(3),tmp2(3)
 
 ! Initialize MPI
 
@@ -145,10 +145,10 @@
       endif
 
 ! Set up work structures for P3DFFT
-      call p3dfft_setup (dims,nx,ny,nz,.true.)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nx,ny,nz,.true.)
 
 ! Get dimensions for the original array of real numbers, X-pencils
-      call p3dfft_get_dims(istart,iend,isize,1,mypadd)
+      call p3dfft_get_dims(istart,iend,isize,1)
 
 ! Get dimensions for the R2C-forward-transformed array of complex numbers
 !   Z-pencils (depending on how the library was compiled, the first 
@@ -161,9 +161,11 @@
 ! we need to make sure it has enough space. This is achieved
 ! by calling get_dims with option 3. 
 
-!      call p3dfft_get_dims(tmp1,tmp2,memsize,3)
+      call p3dfft_get_dims(tmp1,tmp2,memsize,3)
 
-      allocate (B(istart(1):iend(1),istart(2):iend(2),istart(3):iend(3)+mypadd), stat=ierr)
+!      print *,proc_id,': memsize=',memsize
+
+      allocate (B(istart(1):istart(1)+memsize(1)-1,istart(2):istart(2)+memsize(2)-1,istart(3):istart(3)+memsize(3)-1), stat=ierr)
 
       if(ierr .ne. 0) then
          print *,'Error ',ierr,' allocating array B'

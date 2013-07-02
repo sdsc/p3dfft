@@ -60,7 +60,6 @@
       real(mytype), dimension(:,:,:),  allocatable :: BEG,C
       complex(mytype), dimension(:,:,:),  allocatable :: AEND
       real(mytype) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
-      integer memsize(3)
 
       integer(i8) Ntot
       real(mytype) factor
@@ -70,7 +69,7 @@
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
       integer fstart(3),fend(3),fsize(3)
-      integer iproc,jproc
+      integer iproc,jproc,nxc,nyc,nzc
       logical iex
 
       call MPI_INIT (ierr)
@@ -145,8 +144,12 @@
          print *,'Using processor grid ',iproc,' x ',jproc
       endif
 
+      nxc = nx
+      nyc = ny
+      nzc = nz
+
 ! Set up work structures for P3DFFT
-      call p3dfft_setup (dims,nx,ny,nz,.true.,memsize)
+      call p3dfft_setup (dims,nx,ny,nz,MPI_COMM_WORLD,nxc,nyc,nzc)
 
 ! Get dimensions for the original array of real numbers, X-pencils
       call p3dfft_get_dims(istart,iend,isize,1)

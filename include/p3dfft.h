@@ -47,7 +47,7 @@
 
 #endif
 
-extern void FORT_MOD_NAME(p3dfft_setup)(int *dims,int *nx,int *ny,int *nz, int *ow, int *memsize);
+extern void FORT_MOD_NAME(p3dfft_setup)(int *dims,int *nx,int *ny,int *nz, int * comm, int *nxc, int *nyc, int *nzc, int *ow, int *memsize);
 extern void FORT_MOD_NAME(p3dfft_get_dims)(int *,int *,int *,int *);
 extern void FORT_MOD_NAME(get_timers)(double *timers);
 extern void FORT_MOD_NAME(set_timers)();
@@ -62,7 +62,7 @@ extern void FORT_MOD_NAME(p3dfft_btran_c2r)(float *A,float *B, unsigned char *op
 
 extern void FORT_MOD_NAME(p3dfft_clean)();
 
-extern void p3dfft_setup(int *dims,int nx,int ny,int nz,int ovewrite, int *memsize);
+				       extern void p3dfft_setup(int *dims,int nx,int ny,int nz,int comm, int nxc,int nyc, int nzc, int ovewrite, int *memsize);
 extern void p3dfft_get_dims(int *,int *,int *,int );
 
 #ifndef SINGLE_PREC
@@ -86,9 +86,9 @@ inline void set_timers() {
   FORT_MOD_NAME(set_timers)();
 }
 
-inline void p3dfft_setup(int *dims,int nx,int ny,int nz, int overwrite, int * memsize)
+inline void p3dfft_setup(int *dims,int nx,int ny,int nz, int comm, int nxc, int nyc, int nzc, int overwrite, int * memsize)
 {
-  FORT_MOD_NAME(p3dfft_setup)(dims,&nx,&ny,&nz,&overwrite,memsize);
+  FORT_MOD_NAME(p3dfft_setup)(dims,&nx,&ny,&nz,&comm, &nxc, &nyc, &nzc, &overwrite,memsize);
 }
 
 inline void p3dfft_get_dims(int *start,int *end,int *size,int conf)

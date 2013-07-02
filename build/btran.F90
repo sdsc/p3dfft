@@ -31,12 +31,12 @@
 
       real(mytype),TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nz_fft,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
 #else
-      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nz_fft)
+      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
 
-      integer x,y,z,i,k,nx,ny,nz,ierr
+      integer x,y,z,i,k,nx,ny,nz,ierr,dnz
       integer(i8) Nl
       character(len=3) op
 
@@ -47,8 +47,6 @@
       nx = nx_fft
       ny = ny_fft
       nz = nz_fft
-
-      call init_work(nx,ny,nz)
 
 ! For FFT libraries that require explicit allocation of work space,
 ! such as ESSL, initialize here
@@ -62,11 +60,11 @@
       if(jproc .gt. 1) then
 
 #ifdef STRIDE1
-         call init_b_c(buf, 1,nz, XYZg, 1, nz,nz,jjsize)
-         call bcomm1_trans(XYZg,XYZg,buf,op,timers(3),timers(9))
+         call init_b_c(XYZg, 1,nz, buf, 1, nz,nz,jjsize)
+         call bcomm1_trans(XYZg,buf,buf2,op,timers(3),timers(9))
 #else
 
-         if(OW) then
+         if(OW .and. nz .eq. nzc) then
 
             if(iisize*jjsize .gt. 0) then
 		if(op(1:1) == 't' .or. op(1:1) == 'f') then
@@ -74,21 +72,21 @@
                                  XYZg, iisize*jjsize, 1,nz,iisize*jjsize)
 
                    timers(9) = timers(9) - MPI_Wtime()
-                   call exec_b_c2(XYZg, iisize*jjsize,1, XYZg, & 
+                   call exec_b_c2_same(XYZg, iisize*jjsize,1, XYZg, & 
 				iisize*jjsize, 1,nz,iisize*jjsize)
                    timers(9) = timers(9) + MPI_Wtime()
  		else if(op(1:1) == 'c') then	
 	           call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, & 
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
  		else if(op(1:1) == 's') then	
 	           call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -99,38 +97,47 @@
             call bcomm1(XYZg,buf,timers(3),timers(9))
    
          else
-            if(iisize*jjsize .gt. 0) then
-		if(op(1:1) == 't' .or. op(1:1) == 'f') then
-                   call init_b_c(XYZg, iisize*jjsize, 1, &
+
+           if(iisize*jjsize .gt. 0) then
+              if(op(1:1) == 'n' .or. op(1:1) == '0') then
+                  call bcomm1(XYZg,buf,timers(3),timers(9))
+	      else
+
+	        dnz = nz - nzc
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+
+		 if(op(1:1) == 't' .or. op(1:1) == 'f') then
+                   call init_b_c(buf, iisize*jjsize, 1, &
 				 buf, iisize*jjsize, 1,nz,iisize*jjsize)
             
                    timers(9) = timers(9) - MPI_Wtime()
-    	           call exec_b_c2(XYZg, iisize*jjsize,1, buf, iisize*jjsize, 1,nz,iisize*jjsize)
+    	           call exec_b_c2_same(buf, iisize*jjsize,1, & 
+                                 buf, iisize*jjsize, 1,nz,iisize*jjsize)
                    timers(9) = timers(9) + MPI_Wtime()
-		else if(op(1:1) == 'c') then
-	           call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
+		 else if(op(1:1) == 'c') then
+	           call init_ctrans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, & 
+                   call exec_ctrans_r2_same (buf, 2*iisize*jjsize, 1, & 
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-		else if(op(1:1) == 's') then
-	           call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
+		 else if(op(1:1) == 's') then
+	           call init_strans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2 (XYZg, 2*iisize*jjsize, 1, & 
+                   call exec_strans_r2_same (buf, 2*iisize*jjsize, 1, & 
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
+	         else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
 		   call MPI_abort(MPI_COMM_WORLD,ierr)
-		endif
+		 endif
 
-		if(op(1:1) == 'n' .or. op(1:1) == '0') then
-                    call bcomm1(XYZg,buf,timers(3),timers(9))
-		else
-                    call bcomm1(buf,buf,timers(3),timers(9))
-		endif
+                 call bcomm1(buf,buf,timers(3),timers(9))
+              endif
+
             endif
          endif
 
@@ -142,28 +149,28 @@
             timers(9) = timers(9) - MPI_Wtime()
 
 #ifdef STRIDE1
-         call reorder_trans_b1(XYZg,XYZg,buf2,op)
+         call reorder_trans_b1(XYZg,buf,buf2,op)
 #else
-         Nl = iisize*jjsize*nz
-         if(OW) then   
+         Nl = iisize*jjsize*nzc
+         if(OW .and. nz .eq. nzc) then   
 
   	    if(op(1:1) == 't' .or. op(1:1) == 'f') then
                call init_b_c(XYZg, iisize*jjsize, 1, &
 			     XYZg, iisize*jjsize, 1,nz,iisize*jjsize)
-               call exec_b_c2(XYZg, iisize*jjsize, 1, &
+               call exec_b_c2_same(XYZg, iisize*jjsize, 1, &
 			      XYZg, iisize*jjsize, 1,nz,iisize*jjsize)
    	    else if(op(1:1) == 'c') then
 	       call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
 			            XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-               call exec_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
+               call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
  				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	    else if(op(1:1) == 's') then
 	       call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 		    	            XYZg, 2*iisize*jjsize, 1, & 
 			            nz, 2*iisize*jjsize)
-               call exec_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
+               call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
 				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
 	    else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -173,31 +180,43 @@
             call ar_copy(XYZg,buf,Nl)
 
          else
-  	    if(op(1:1) == 't' .or. op(1:1) == 'f') then
-               call init_b_c(XYZg, iisize*jjsize, 1,  &
+           if(iisize*jjsize .gt. 0) then
+
+	      if(op(1:1) == 'n' .or. op(1:1) == '0') then
+
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nz,0,iisize,jjsize,nz)
+              else
+
+	        dnz = nz - nzc
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+
+ 
+    	         if(op(1:1) == 't' .or. op(1:1) == 'f') then
+                    call init_b_c(buf, iisize*jjsize, 1,  &
 			     buf, iisize*jjsize, 1,nz,iisize*jjsize)
-               call exec_b_c2(XYZg, iisize*jjsize, 1, &
+                    call exec_b_c2_same(buf, iisize*jjsize, 1, &
 			      buf, iisize*jjsize, 1,nz,iisize*jjsize)
-   	    else if(op(1:1) == 'c') then
-	       call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
+   	         else if(op(1:1) == 'c') then
+	            call init_ctrans_r2 (buf, 2*iisize*jjsize, 1, &
 			            buf, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-               call exec_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, & 
+                    call exec_ctrans_r2_same (buf, 2*iisize*jjsize, 1, & 
  				    buf, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-     	    else if(op(1:1) == 's') then
-	       call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
+     	         else if(op(1:1) == 's') then
+	            call init_strans_r2 (buf, 2*iisize*jjsize, 1, &
 		    	            buf, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-               call exec_strans_r2 (XYZg, 2*iisize*jjsize, 1, & 
+                    call exec_strans_r2_same (buf, 2*iisize*jjsize, 1, & 
 				    buf, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize) 
-            else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
-		print *,taskid,'Unknown transform type: ',op(1:1)
-	        call MPI_abort(MPI_COMM_WORLD,ierr)
-	    endif
-   	    if(op(1:1) == 'n' .or. op(1:1) == '0') then
-                call ar_copy(XYZg,buf,Nl)
+                 else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
+		    print *,taskid,'Unknown transform type: ',op(1:1)
+	            call MPI_abort(MPI_COMM_WORLD,ierr)
+	         endif
+              endif
 	    endif
          endif
 #endif
@@ -216,11 +235,11 @@
       if(iisize * kjsize .gt. 0) then
 
 #ifdef STRIDE1
-         call init_b_c(XYZg,1,ny,buf,1,ny,ny,iisize*kjsize)
+         call init_b_c(buf,1,ny,buf,1,ny,ny,iisize*kjsize)
 
          timers(10) = timers(10) - MPI_Wtime()
 
-         call exec_b_c1(XYZg,1,ny,buf,1,ny,ny,iisize*kjsize)
+         call exec_b_c1(buf,1,ny,buf,1,ny,ny,iisize*kjsize)
 
          timers(10) = timers(10) + MPI_Wtime()
 
@@ -230,21 +249,20 @@
          timers(10) = timers(10) - MPI_Wtime()
          do z=kjstart,kjend
                
-            call btran_y_zplane(buf,z-kjstart,iisize,kjsize,iisize,1, buf,z-kjstart,iisize,kjsize,iisize,1,ny,iisize)
+            call btran_y_zplane(buf,z-kjstart,iisize,kjsize,iisize,1, \
+                                buf,z-kjstart,iisize,kjsize,iisize,1,ny,iisize)
             
          enddo
          timers(10) = timers(10) + MPI_Wtime()
 #endif
       endif
 
+#ifdef STRIDE1
       if(iproc .gt. 1) then 
          call bcomm2(buf,buf,timers(4),timers(11))
-#ifdef STRIDE1
       else
          call reorder_b2(buf,buf)
-#endif
       endif
-
 ! Perform Complex-to-real FFT in x dimension for all y and z
       if(jisize * kjsize .gt. 0) then
 
@@ -256,22 +274,35 @@
          timers(12) = timers(12) + MPI_Wtime()
 
       endif
+#else
+      if(iproc .gt. 1) then 
+         call bcomm2(buf,buf,timers(4),timers(11))
+! Perform Complex-to-real FFT in x dimension for all y and z
+         if(jisize * kjsize .gt. 0) then
 
+            call init_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
 
-      call free_work
+            timers(12) = timers(12) - MPI_Wtime()
 
+            call exec_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+            timers(12) = timers(12) + MPI_Wtime()
+         endif
+      else
+! Perform Complex-to-real FFT in x dimension for all y and z
+         if(jisize * kjsize .gt. 0) then
+
+            call init_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+
+            timers(12) = timers(12) - MPI_Wtime()
+
+            call exec_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+            timers(12) = timers(12) + MPI_Wtime()
+         endif
+       endif	
+
+#endif
 
       return
       end subroutine
 
-      subroutine wrap_exec_b_c2(A,strideA,B,strideB, N,m,L,k)
-
-      complex(mytype) A(L,N),B(L,N)
-      integer strideA,strideB,N,m,L,k
- 
-
-      call exec_b_c2(A(k,1),strideA,1,B(k,1),strideB,1,N,m)
-
-      return
-      end subroutine
 

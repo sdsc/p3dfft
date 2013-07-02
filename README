@@ -1,10 +1,10 @@
 
 P3DFFT - Highly scalable parallel 3D Fast Fourier Transforms library
 
-Version 2.5
+Version 2.6
 
-Copyright (C) 2006-2011 Dmitry Pekurovsky
-Copyright (C) 2006-2011 University of California
+Copyright (C) 2006-2013 Dmitry Pekurovsky
+Copyright (C) 2006-2013 University of California
 Copyright (C) 2010-2011 Jens Henrik Goebbert
 San Diego Supercomputer Center/UC SanDiego
 
@@ -34,6 +34,8 @@ decomposition, overcoming an important limitation to scalability of other
     * Optimized for parallel communication and single-CPU performance.
     * Uses established libraries (FFTW, ESSL) for underlying local 1D FFT. 
     * Fortran and C interfaces.
+    * Pruned input/output options
+    * User-defined communicator
 
 The 1D decomposition suffers from the limitation that the number
 of processors used cannot be greater than the maximum linear grid size of the 
