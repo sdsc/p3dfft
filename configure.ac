@@ -32,7 +32,7 @@ if test "$ok" = "yes"; then
         AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
-	AC_SUBST(FORTRAN_LIB,"-lmpi_f90 -limf -lifcore")
+	AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
 #        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi
 
@@ -56,7 +56,7 @@ if test "$ok" = "yes"; then
         AC_DEFINE(GNU, 1, [Define if you want to compile P3DFFT using GNU compiler])
 	eval "ARRAY${N}='-DGNU'"
         N=`expr $N + 1`
-        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpi_f90 -lmpi_f77")
+        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
 fi
 
 # check whether to enable single precision
