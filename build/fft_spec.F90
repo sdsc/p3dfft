@@ -32,7 +32,7 @@
 #ifdef FFTW
       include "fftw3.f"
       integer(i8) plan1_frc,plan1_bcr,plan1_fc,plan1_bc
-      integer(i8) plan_ctrans_same, plan_strans_same, \
+      integer(i8) plan_ctrans_same, plan_strans_same, &
          plan_ctrans_dif, plan_strans_dif
       integer(i8) plan2_bc_same,plan2_fc_same,plan2_bc_dif,plan2_fc_dif
 !      integer(i8) plan1,plan2,plan3      

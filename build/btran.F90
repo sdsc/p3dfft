@@ -249,7 +249,7 @@
          timers(10) = timers(10) - MPI_Wtime()
          do z=kjstart,kjend
                
-            call btran_y_zplane(buf,z-kjstart,iisize,kjsize,iisize,1, \
+            call btran_y_zplane(buf,z-kjstart,iisize,kjsize,iisize,1, &
                                 buf,z-kjstart,iisize,kjsize,iisize,1,ny,iisize)
             
          enddo
