@@ -27,15 +27,20 @@
 #define FORT_MOD_NAME(NAME) __p3dfft_NMOD_##NAME
 #define FORTNAME(NAME) NAME
 
-#elif defined INTEL
+elif defined INTEL
 
 #define FORT_MOD_NAME(NAME) p3dfft_mp_##NAME##_
 #define FORTNAME(NAME) NAME##_
 
-#elif defined PGI
+#elif defined PGI 
 
 #define FORT_MOD_NAME(NAME) p3dfft_##NAME##_
 #define FORTNAME(NAME) NAME##_
+
+#elif defined CRAY
+
+#define FORT_MOD_NAME(NAME) NAME##_
+#define FORTNAME(NAME) NAME
 
 #elif defined GNU
 #include "gnu.h"

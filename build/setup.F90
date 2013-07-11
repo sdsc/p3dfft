@@ -308,7 +308,7 @@
 
       endif
 
-!      print *,taskid,': padd=',padd
+      print *,taskid,': padd=',padd
 ! Initialize FFTW and allocate buffers for communication
       nm = nxhp * jisize * (kjsize+padd) 
       if(nm .gt. 0) then       
@@ -412,6 +412,11 @@
          KfRcvStrt(i) = (kjst(i) -1) * iisize * jjsize*mytype*2
          KfRcvCnts(i) = iisize*jjsize*kjsz(i)*mytype*2
       end do
+
+    if(taskid .eq. 0) then
+       print *,'KfRcv Cnts and Strt:', kfrcvcnts,kfrcvstrt
+    endif
+
 
 !   start pointers and types of send  for the 1st inverse transpose
       do i=0,jproc-1

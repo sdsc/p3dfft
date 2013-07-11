@@ -5,7 +5,11 @@
 /* #undef CC */
 
 /* arguments passed to configure script */
+<<<<<<< .mine
+#define CONFIGURE_ARGS "'--enable-pgi' '--enable-fftw' '--with-fftw=/opt/fftw/3.2.2.1' 'FC=ftn'"
+=======
 #define CONFIGURE_ARGS " '--enable-fftw' '--enable-intel' '--enable-stride1' '--with-fftw=/opt/apps/intel13/mvapich2_1_9/fftw3/3.3.2'"
+>>>>>>> .r529
 
 /* Define if you want to enable C convention for processor dimensions */
 /* #undef DIMS_C */
@@ -108,7 +112,7 @@
 #define STDC_HEADERS 1
 
 /* Define if you want to enable stride-1 data structures */
-#define STRIDE1 1
+/* #undef STRIDE1 */
 
 /* Define if you want to MPI_Alltoall instead of MPI_Alltotallv */
 /* #undef USE_EVEN */
