@@ -4,8 +4,8 @@
 !
 !    Software Framework for Scalable Fourier Transforms in Three Dimensions
 !
-!    Copyright (C) 2006-2010 Dmitry Pekurovsky
-!    Copyright (C) 2006-2010 University of California
+!    Copyright (C) 2006-2013 Dmitry Pekurovsky
+!    Copyright (C) 2006-2013 University of California
 !    Copyright (C) 2010-2011 Jens Henrik Goebbert
 !    This program is free software: you can redistribute it and/or modify
 !    it under the terms of the GNU General Public License as published by
