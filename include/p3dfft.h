@@ -1,8 +1,7 @@
 /*
 ! This file is part of P3DFFT library
 !
-! Version 2.4
-!
+
 ! Copyright (C) 2006-2013 Dmitry Pekurovsky
 ! Copyright (C) 2006-2013 UC San Diego
 !
