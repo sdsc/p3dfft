@@ -3,8 +3,8 @@
 !
 ! Version 2.4
 !
-! Copyright (C) 2006-2010 Dmitry Pekurovsky
-! Copyright (C) 2006-2010 UC San Diego
+! Copyright (C) 2006-2013 Dmitry Pekurovsky
+! Copyright (C) 2006-2013 UC San Diego
 !
 ! P3DFFT is free software: you can redistribute it and/or modify
 ! it under the terms of the GNU General Public License as published by
