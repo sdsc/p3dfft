@@ -4,8 +4,8 @@
 !
 !    Software Framework for Scalable Fourier Transforms in Three Dimensions
 !
-!    Copyright (C) 2006-2013 Dmitry Pekurovsky
-!    Copyright (C) 2006-2013 University of California
+!    Copyright (C) 2006-2010 Dmitry Pekurovsky
+!    Copyright (C) 2006-2010 University of California
 !    Copyright (C) 2010-2011 Jens Henrik Goebbert
 !
 !    This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 ! Transpose back Z to Y pencils
 ! Assumes stride1 data structure
 
-      subroutine bcomm1_trans (source,dest,buf3,op,t,tc)
+      subroutine bcomm1_trans (source,dest,op,t,tc)
 !========================================================
 
       use fft_spec
@@ -36,7 +36,7 @@
 
 ! Assume STRIDE1
       complex(mytype) source(nzc,jjsize,iisize)
-      complex(mytype) buf3(nz_fft,jjsize)
+      complex(mytype), allocatable:: buf3(:,:)
       complex(mytype) dest(ny_fft,iisize,kjsize)
 
       real(r8) t,tc
@@ -44,6 +44,7 @@
       integer(i8) position,pos1,pos0
       character(len=3) op
 
+      allocate(buf3(nz_fft,jjsize))
 
 !     Pack the data for sending
 
@@ -412,6 +413,7 @@
       endif
 
       tc = tc + MPI_Wtime()
+      deallocate(buf3)
       
       return
       end subroutine

@@ -4,8 +4,8 @@
 !
 !    Software Framework for Scalable Fourier Transforms in Three Dimensions
 !
-!    Copyright (C) 2006-2013 Dmitry Pekurovsky
-!    Copyright (C) 2006-2013 University of California
+!    Copyright (C) 2006-2010 Dmitry Pekurovsky
+!    Copyright (C) 2006-2010 University of California
 !    Copyright (C) 2010-2011 Jens Henrik Goebbert
 !
 !    This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@
 
 #ifdef STRIDE1
          call init_b_c(XYZg, 1,nz, buf, 1, nz,nz,jjsize)
-         call bcomm1_trans(XYZg,buf,buf2,op,timers(3),timers(9))
+         call bcomm1_trans(XYZg,buf,op,timers(3),timers(9))
 #else
 
          if(OW .and. nz .eq. nzc) then
@@ -261,16 +261,16 @@
       if(iproc .gt. 1) then 
          call bcomm2(buf,buf,timers(4),timers(11))
       else
-         call reorder_b2(buf,buf)
+         call reorder_b2(buf,buf1)
       endif
 ! Perform Complex-to-real FFT in x dimension for all y and z
       if(jisize * kjsize .gt. 0) then
 
-         call init_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+         call init_b_c2r(buf1,nxhp,XgYZ,nx,nx,jisize*kjsize)
 
          timers(12) = timers(12) - MPI_Wtime()
 
-         call exec_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+         call exec_b_c2r(buf1,nxhp,XgYZ,nx,nx,jisize*kjsize)
          timers(12) = timers(12) + MPI_Wtime()
 
       endif

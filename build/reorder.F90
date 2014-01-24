@@ -4,8 +4,8 @@
 !
 !    Software Framework for Scalable Fourier Transforms in Three Dimensions
 !
-!    Copyright (C) 2006-2013 Dmitry Pekurovsky
-!    Copyright (C) 2006-2013 University of California
+!    Copyright (C) 2006-2010 Dmitry Pekurovsky
+!    Copyright (C) 2006-2010 University of California
 !    Copyright (C) 2010-2011 Jens Henrik Goebbert
 !
 !    This program is free software: you can redistribute it and/or modify
@@ -284,7 +284,7 @@
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-  		        B(iz,iy,x) = A(iy-dny,x,iz)
+  		        B(iz,iy-dny,x) = A(iy,x,iz)
                      enddo
                   enddo
                enddo
@@ -296,7 +296,7 @@
                   y2 = min(y+NBy2-1,nyhc)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy,x,iz-dnz)
+		        B(iz-dnz,iy,x) = A(iy,x,iz)
                      enddo
                   enddo
                enddo
@@ -304,7 +304,7 @@
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy-dny,x,iz-dnz)
+		        B(iz-dnz,iy-dny,x) = A(iy,x,iz)
                      enddo
                   enddo
                enddo
@@ -329,7 +329,7 @@
                     y2 = min(y+NBy2-1,ny_fft)
                     do iz=z,z2
                         do iy=y,y2
-			   C(iz,iy) = A(iy-dny,x,iz)
+			   C(iz,iy-dny) = A(iy,x,iz)
                         enddo
                      enddo
                   enddo
