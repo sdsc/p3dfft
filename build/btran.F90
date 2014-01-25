@@ -259,7 +259,7 @@
 
 #ifdef STRIDE1
       if(iproc .gt. 1) then 
-         call bcomm2(buf,buf,timers(4),timers(11))
+         call bcomm2(buf,buf1,timers(4),timers(11))
       else
          call reorder_b2(buf,buf1)
       endif
