@@ -1,0 +1,125 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* overriding mpicc to link C programs (only for IBM) */
+#undef CC
+
+/* arguments passed to configure script */
+#undef CONFIGURE_ARGS
+
+/* Define if you want to compile P3DFFT using CRAY compiler */
+#undef CRAY
+
+/* Define if you want to enable C convention for processor dimensions */
+#undef DIMS_C
+
+/* Define if you want to use the ESSL library instead of FFTW */
+#undef ESSL
+
+/* Define whether you want to enable estimation */
+#undef ESTIMATE
+
+/* Define if you want to use the FFTW library */
+#undef FFTW
+
+/* Define if you want to compile P3DFFT using GNU compiler */
+#undef GNU
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#undef HAVE_MALLOC
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define if you want to compile P3DFFT using IBM compiler */
+#undef IBM
+
+/* Define if you want to compile P3DFFT using Intel compiler */
+#undef INTEL
+
+/* Define if you want to enable the measure algorithm */
+#undef MEASURE
+
+/* Define if you want to override the default value of NBL_X */
+#undef NBL_X
+
+/* Define if you want to override the default value of NBL_Y1 */
+#undef NBL_Y1
+
+/* Define if you want to override the default value of NBL_Y2 */
+#undef NBL_Y2
+
+/* Define if you want to override the default value of NBL_Z */
+#undef NBL_Z
+
+/* Define if you want 1D decomposition */
+#undef ONED
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define if you want to enable the patient algorithm */
+#undef PATIENT
+
+/* Define if you want to compile P3DFFT using PGI compiler */
+#undef PGI
+
+/* Define if you want to compile P3DFFT in single precision */
+#undef SINGLE_PREC
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define if you want to enable stride-1 data structures */
+#undef STRIDE1
+
+/* Define if you want to MPI_Alltoall instead of MPI_Alltotallv */
+#undef USE_EVEN
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to rpl_malloc if the replacement function should be used. */
+#undef malloc
