@@ -79,7 +79,7 @@
         nv_preset = nv
         deallocate(buf1,buf2,buf)
 
-        allocate (buf(nxhp*jisize*(kjsize+padd)*nv), stat=err)
+        allocate (buf(nxhp*jisize*(kjsize+padi)*nv), stat=err)
         if (err /= 0) then
           print *, 'Error ', err, ' allocating array buf'
         end if

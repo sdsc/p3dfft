@@ -86,7 +86,7 @@
 
       if(nv .gt. nv_preset) then
         nv_preset = nv
-        allocate(buf(nxhp*jisize*(kjsize+padd)*nv))
+        allocate(buf(nxhp*jisize*(kjsize+padi)*nv))
         deallocate(buf1,buf2)
 #ifdef USE_EVEN
         n1 = nv * IfCntMax * iproc /(mytype*2)

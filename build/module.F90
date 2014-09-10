@@ -48,7 +48,7 @@
 
       integer, parameter, public :: r8 = KIND(1.0d0)
       integer, parameter, public :: i8 = SELECTED_INT_KIND(18)
-      integer, save,public :: padd,num_thr
+      integer, save, public :: num_thr,padi
       real(r8), save,public :: timers(12)
       real(r8), save :: timer(12)
        integer, public :: real_size,complex_size

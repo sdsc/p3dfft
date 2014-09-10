@@ -35,7 +35,7 @@
       integer ierr, dims(2),  cartid(2)
       logical periodic(2),remain_dims(2)
       integer impid, ippid, jmpid, jppid
-      integer(i8) n1,n2,pad1
+      integer(i8) n1,n2,pad1,padd
       real(mytype), allocatable :: R(:)
       integer, optional, intent (out) :: memsize (3)
       integer, optional, intent (in) :: nxcut,nycut,nzcut
@@ -298,19 +298,20 @@
 
 ! We may need to pad arrays due to uneven size
       padd = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize) - nxhp*jisize*kjsize
-      if(padd .le. 0) then 
-         padd=0
+      padi = padd
+      if(padi .le. 0) then 
+         padi=0
       else
-         if(mod(padd,nxhp*jisize) .eq. 0) then
-            padd = padd / (nxhp*jisize)
+         if(mod(padi,nxhp*jisize) .eq. 0) then
+            padi = padi / (nxhp*jisize)
          else
-            padd = padd / (nxhp*jisize)+1
+            padi = padi / (nxhp*jisize)+1
          endif
 
       endif
 
 ! Initialize FFTW and allocate buffers for communication
-      nm = nxhp * jisize * (kjsize+padd) 
+      nm = nxhp * jisize * (kjsize+padi) 
       nv_preset = 1
       if(nm .gt. 0) then       
         allocate(buf1(nm),stat=err)
@@ -498,16 +499,17 @@
         pad1 = 0
       endif  
 
-      if(mod(pad1,nx*jisize) .ne. 0) then
-         pad1 = pad1 / (nx*jisize) + 1
+      padi=pad1
+      if(mod(padi,nx*jisize) .ne. 0) then
+         padi = padi / (nx*jisize) + 1
       else
-         pad1 = pad1 / (nx*jisize)
+         padi = padi / (nx*jisize)
       endif   
 
 
 	maxisize = nx
 	maxjsize = jisize
-	maxksize = kjsize + pad1
+	maxksize = kjsize + padi
 
 	if(present(memsize)) then
 	  memsize(1) = maxisize
