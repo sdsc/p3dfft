@@ -28,7 +28,7 @@
 
 #define FORTNAME(NAME) NAME
 
-elif defined INTEL
+#elif defined INTEL
 
 #define FORTNAME(NAME) NAME##_
 

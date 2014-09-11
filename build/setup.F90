@@ -25,10 +25,33 @@
 !----------------------------------------------------------------------------
 
 ! =========================================================
-      subroutine p3dfft_setup(dims,nx,ny,nz,mpi_comm_in,nxcut,nycut,nzcut,overwrite,memsize) BIND(C,NAME='p3dfft_setup')
+      subroutine p3dfft_setup_c(dims,nx,ny,nz,mpi_comm_in,nxcut,nycut,nzcut,OW,memsize) BIND(C,NAME='p3dfft_setup')
 !========================================================
 
       use iso_c_binding
+      implicit none
+
+      integer nx,ny,nz,mpi_comm_in,dims(2)
+      integer,intent (out) :: memsize (3)
+      integer,intent (in) :: nxcut,nycut,nzcut
+      integer,intent(in) :: OW
+      logical overwrite
+
+      if(OW .ne. 0) then
+         overwrite = .true.
+      else
+         overwrite = .false.
+      endif
+
+      call p3dfft_setup(dims,nx,ny,nz,mpi_comm_in,nxcut,nycut,nzcut,overwrite,memsize)
+
+      return
+      end subroutine
+
+! =========================================================
+      subroutine p3dfft_setup(dims,nx,ny,nz,mpi_comm_in,nxcut,nycut,nzcut,overwrite,memsize)
+!========================================================
+
       implicit none
 
       integer i,j,k,nx,ny,nz,err,mpi_comm_in
