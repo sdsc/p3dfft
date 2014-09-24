@@ -2,10 +2,10 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* overriding mpicc to link C programs (only for IBM) */
-#define CC "mpfort"
+/* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS " '--enable-ibm' '--enable-essl' 'FC=mpixlf2003_r' 'LDFLAGS=-L/soft/libraries/essl/current/lib64' 'LIBS=-lesslbg'"
+#define CONFIGURE_ARGS " '--enable-fftw' '--enable-intel' '--enable-stride1' '--with-fftw=/opt/fftw/3.3.3/intel/mvapich2/ib' 'FC=mpif90' 'CC=mpicc'"
 
 /* Define if you want to compile P3DFFT using CRAY compiler */
 /* #undef CRAY */
@@ -14,13 +14,13 @@
 /* #undef DIMS_C */
 
 /* Define if you want to use the ESSL library instead of FFTW */
-#define ESSL 1
+/* #undef ESSL */
 
 /* Define whether you want to enable estimation */
 /* #undef ESTIMATE */
 
 /* Define if you want to use the FFTW library */
-/* #undef FFTW */
+#define FFTW 1
 
 /* Define if you want to compile P3DFFT using GNU compiler */
 /* #undef GNU */
@@ -57,10 +57,10 @@
 #define HAVE_UNISTD_H 1
 
 /* Define if you want to compile P3DFFT using IBM compiler */
-#define IBM 1
+/* #undef IBM */
 
 /* Define if you want to compile P3DFFT using Intel compiler */
-/* #undef INTEL */
+#define INTEL 1
 
 /* Define if you want to enable the measure algorithm */
 #define MEASURE 1
@@ -111,7 +111,7 @@
 #define STDC_HEADERS 1
 
 /* Define if you want to enable stride-1 data structures */
-/* #undef STRIDE1 */
+#define STRIDE1 1
 
 /* Define if you want to MPI_Alltoall instead of MPI_Alltotallv */
 /* #undef USE_EVEN */

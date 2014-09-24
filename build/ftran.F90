@@ -339,11 +339,11 @@
 	nz = nzc
 
     	call p3dfft_ftran_r2c(in,out,'ffc')
-     	out = out *(1.d0/(dble(nx_fft*ny_fft)*(nzc-1)))
+     	out = out *(1.d0/(dble(nx_fft*ny_fft)*dble(nzc-1)))
 
 ! less tmp-memory version (but difficult to read)
 
-     	Lfactor = 4.d0/Lz
+     	Lfactor = 4.d0/dble(Lz)
 
 #ifdef STRIDE1
 ! first and last cheby-coeff needs to gets multiplied by factor 0.5
