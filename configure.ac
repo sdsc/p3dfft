@@ -23,8 +23,6 @@ if test "$enableibm" = "yes"; then
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
 	AC_SUBST(CCLD,"$FC")
-else
-	AC_SUBST(CCLD,"$CC")
 fi
 # check whether to compile using Intel
 AC_MSG_CHECKING([whether to use Intel compiler])
@@ -36,12 +34,11 @@ if test "$ok" = "yes"; then
 	N=`expr $N + 1`
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
 	   AC_SUBST(FORTRAN_LIB,"-lmpi -limf -lifcore")
-	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
-	   AC_SUBST(FORTRAN_LIB,"-lgfortran")							    
 	else
 	AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
 	fi
-#        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
+	AC_SUBST(CCLD,"$CC")
+#       FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi
 
 # check whether to compile using PGI
@@ -54,6 +51,7 @@ if test "$ok" = "yes"; then
 	eval "ARRAY${N}='-DPGI'"
         N=`expr $N + 1`
         AC_SUBST(FORTRAN_LIB,"-pgf90libs")
+	AC_SUBST(CCLD,"$CC")
 fi
 
 # check whether to compile using Cray
@@ -61,11 +59,12 @@ AC_MSG_CHECKING([whether to use Cray compiler])
 AC_ARG_ENABLE(cray, [AC_HELP_STRING([--enable-cray], [compile P3DFFT using CRAY compiler])], ok=$enableval, ok=no)
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
-        AC_DEFINE(CRAY, 1, [Define if you want to compile P3DFFT using CRAY compiler])
-    eval FCFLAGS="\$FCFLAGS' -em -ef'"
-    eval "ARRAY${N}='-DCRAY'"
+   	AC_DEFINE(CRAY, 1, [Define if you want to compile P3DFFT using CRAY compiler])
+    	eval FCFLAGS="\$FCFLAGS' -em -ef'"
+    	eval "ARRAY${N}='-DCRAY'"
         N=`expr $N + 1`
         FORTRAN_LIB=""
+	AC_SUBST(CCLD,"$CC")
 fi
 
 # check whether to compile using GNU
@@ -78,8 +77,12 @@ if test "$ok" = "yes"; then
         N=`expr $N + 1`
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
 	AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpi")
+	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
+        AC_SUBST(FORTRAN_LIB,"-lgfortran")
+	AC_SUBST(CCLD,"$FC")
 	else
-        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
+	AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
+	AC_SUBST(CCLD,"$CC")
 	fi
 fi
 

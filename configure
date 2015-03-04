@@ -2670,9 +2670,6 @@ $as_echo "#define CC \"mpfort\"" >>confdefs.h
         N=`expr $N + 1`
 	CCLD="$FC"
 
-else
-	CCLD="$CC"
-
 fi
 # check whether to compile using Intel
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use Intel compiler" >&5
@@ -2695,14 +2692,13 @@ $as_echo "#define INTEL 1" >>confdefs.h
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
 	   FORTRAN_LIB="-lmpi -limf -lifcore"
 
-	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
-	   FORTRAN_LIB="-lgfortran"
-
 	else
 	FORTRAN_LIB="-lmpichf90 -limf -lifcore"
 
 	fi
-#        FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
+	CCLD="$CC"
+
+#       FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
 fi
 
 # check whether to compile using PGI
@@ -2726,6 +2722,8 @@ $as_echo "#define PGI 1" >>confdefs.h
         N=`expr $N + 1`
         FORTRAN_LIB="-pgf90libs"
 
+	CCLD="$CC"
+
 fi
 
 # check whether to compile using Cray
@@ -2744,10 +2742,12 @@ if test "$ok" = "yes"; then
 
 $as_echo "#define CRAY 1" >>confdefs.h
 
-    eval FCFLAGS="\$FCFLAGS' -em -ef'"
-    eval "ARRAY${N}='-DCRAY'"
+    	eval FCFLAGS="\$FCFLAGS' -em -ef'"
+    	eval "ARRAY${N}='-DCRAY'"
         N=`expr $N + 1`
         FORTRAN_LIB=""
+	CCLD="$CC"
+
 fi
 
 # check whether to compile using GNU
@@ -2771,8 +2771,15 @@ $as_echo "#define GNU 1" >>confdefs.h
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
 	FORTRAN_LIB="-lgfortran -lmpi"
 
+	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
+        FORTRAN_LIB="-lgfortran"
+
+	CCLD="$FC"
+
 	else
-        FORTRAN_LIB="-lgfortran -lmpichf90"
+	FORTRAN_LIB="-lgfortran -lmpichf90"
+
+	CCLD="$CC"
 
 	fi
 fi
