@@ -22,8 +22,10 @@ if test "$enableibm" = "yes"; then
 	AC_DEFINE(CC, "mpfort", [overriding mpicc to link C programs (only for IBM)])
 	eval "ARRAY${N}='-DIBM'"
         N=`expr $N + 1`
+	AC_SUBST(CCLD,"$FC")
+else
+	AC_SUBST(CCLD,"$CC")
 fi
-
 # check whether to compile using Intel
 AC_MSG_CHECKING([whether to use Intel compiler])
 AC_ARG_ENABLE(intel, [AC_HELP_STRING([--enable-intel], [compile P3DFFT using Intel compiler])], ok=$enableval, ok=no)
@@ -33,7 +35,9 @@ if test "$ok" = "yes"; then
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
-	AC_SUBST(FORTRAN_LIB,"-lmpi -limf -lifcore")
+	   AC_SUBST(FORTRAN_LIB,"-lmpi -limf -lifcore")
+	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
+	   AC_SUBST(FORTRAN_LIB,"-lgfortran")							    
 	else
 	AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
 	fi
@@ -271,6 +275,27 @@ else
 	if test "$fftwval" == "yes"; then
 		AC_MSG_ERROR([location to FFTW was not given!])
 	fi
+fi
+
+# check for essl                                                                                                                       
+                                                           
+AC_MSG_CHECKING([ESSL directory])
+AC_ARG_WITH(essl, [AC_HELP_STRING([--with-essl], [path to location of ESSL library])], withessl=$withval, withessl="")
+
+if test "$withessl" != "yes" && test "$withessl" != ""; then
+   	
+        AC_MSG_RESULT([$withessl])
+        if [[ -d $withessl/lib64 ]]; then
+                AC_SUBST(ESSL_INC, "-I$withessl/include")
+                AC_SUBST(ESSL_LIB, "-L$withessl/lib64 -lesslbg -L$IBM_MAIN_DIR/xlf_r/bg/14.1/lib64")
+        else
+                AC_MSG_ERROR([essl library was not found in given location!])
+		fi
+else
+        AC_MSG_RESULT([none])
+        if test "$esslval" == "yes"; then
+                AC_MSG_ERROR([location to ESSL was not given!])
+        fi
 fi
 
 # construct compiler flags

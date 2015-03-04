@@ -53,37 +53,37 @@ test_inverse_c_x_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 test_inverse_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_rand_c_x_OBJECTS = driver_rand.$(OBJEXT)
 test_rand_c_x_OBJECTS = $(am_test_rand_c_x_OBJECTS)
 test_rand_c_x_LDADD = $(LDADD)
 test_rand_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_c_x_OBJECTS = driver_sine.$(OBJEXT)
 test_sine_c_x_OBJECTS = $(am_test_sine_c_x_OBJECTS)
 test_sine_c_x_LDADD = $(LDADD)
 test_sine_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_inplace_c_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_c_x_OBJECTS = $(am_test_sine_inplace_c_x_OBJECTS)
 test_sine_inplace_c_x_LDADD = $(LDADD)
 test_sine_inplace_c_x_DEPENDENCIES =  \
 	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_spec_c_x_OBJECTS = driver_spec.$(OBJEXT)
 test_spec_c_x_OBJECTS = $(am_test_spec_c_x_OBJECTS)
 test_spec_c_x_LDADD = $(LDADD)
 test_spec_c_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(test_inverse_c_x_SOURCES) $(test_rand_c_x_SOURCES) \
 	$(test_sine_c_x_SOURCES) $(test_sine_inplace_c_x_SOURCES) \
@@ -101,6 +101,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
+CCLD = @CCLD@
 CDFLAGS = @CDFLAGS@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
@@ -111,6 +112,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
+ESSL_INC = @ESSL_INC@
+ESSL_LIB = @ESSL_LIB@
 EXEEXT = @EXEEXT@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
@@ -137,6 +140,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -189,7 +193,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(CDFLAGS) -g 
 INCLUDES = -I$(top_builddir)/include/ 
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF)  $(FORTRAN_LIB)
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF)  $(FORTRAN_LIB) $(ESSL_LIB)
 csampledir = $(datadir)/p3dfft-samples/
 test_sine_c_x_SOURCES = driver_sine.c
 test_inverse_c_x_SOURCES = driver_inverse.c

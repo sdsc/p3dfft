@@ -1,6 +1,6 @@
 AM_FCFLAGS = $(FDFLAGS) $(INCLUDES) 
 INCLUDES = -I$(top_builddir)/include/
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) 
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) $(ESSL_LIB) 
 
 fsampledir = $(datadir)/p3dfft-samples/
 fsample_PROGRAMS =  test_sine_many_f.x test_sine_f.x test_sine_inplace_f.x test_rand_f.x test_spec_f.x test_inverse_f.x test_cheby_f.x test_noop_f.x test_sine_inplace_many_f.x test_rand_many_f.x

@@ -44,7 +44,7 @@
 
 #elif defined GNU
 #include "gnu.h"
-#define FORTNAME(NAME) NAME
+//#define FORTNAME(NAME) NAME
 
 #else
 #define FORTNAME(NAME) NAME

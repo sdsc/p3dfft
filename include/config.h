@@ -5,7 +5,7 @@
 /* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS " '--enable-fftw' '--enable-intel' '--enable-stride1' '--with-fftw=/opt/fftw/3.3.3/intel/mvapich2/ib' 'FC=mpif90' 'CC=mpicc'"
+#define CONFIGURE_ARGS " '--enable-gnu' '--enable-fftw' '--enable-stride1' '--with-fftw=/opt/fftw/3.3.3/gnu/mvapich2/ib' 'FC=mpif90' 'CC=mpicc'"
 
 /* Define if you want to compile P3DFFT using CRAY compiler */
 /* #undef CRAY */
@@ -23,7 +23,7 @@
 #define FFTW 1
 
 /* Define if you want to compile P3DFFT using GNU compiler */
-/* #undef GNU */
+#define GNU 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -60,7 +60,7 @@
 /* #undef IBM */
 
 /* Define if you want to compile P3DFFT using Intel compiler */
-#define INTEL 1
+/* #undef INTEL */
 
 /* Define if you want to enable the measure algorithm */
 #define MEASURE 1
@@ -94,6 +94,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "p3dfft"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.6"

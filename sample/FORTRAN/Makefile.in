@@ -55,38 +55,44 @@ test_cheby_f_x_OBJECTS = $(am_test_cheby_f_x_OBJECTS)
 test_cheby_f_x_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 test_cheby_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_inverse_f_x_OBJECTS = driver_inverse.$(OBJEXT)
 test_inverse_f_x_OBJECTS = $(am_test_inverse_f_x_OBJECTS)
 test_inverse_f_x_LDADD = $(LDADD)
 test_inverse_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_noop_f_x_OBJECTS = driver_noop.$(OBJEXT)
 test_noop_f_x_OBJECTS = $(am_test_noop_f_x_OBJECTS)
 test_noop_f_x_LDADD = $(LDADD)
 test_noop_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_rand_f_x_OBJECTS = driver_rand.$(OBJEXT)
 test_rand_f_x_OBJECTS = $(am_test_rand_f_x_OBJECTS)
 test_rand_f_x_LDADD = $(LDADD)
 test_rand_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_rand_many_f_x_OBJECTS = driver_rand_many.$(OBJEXT)
 test_rand_many_f_x_OBJECTS = $(am_test_rand_many_f_x_OBJECTS)
 test_rand_many_f_x_LDADD = $(LDADD)
 test_rand_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_sine_f_x_OBJECTS = driver_sine.$(OBJEXT)
 test_sine_f_x_OBJECTS = $(am_test_sine_f_x_OBJECTS)
 test_sine_f_x_LDADD = $(LDADD)
 test_sine_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_sine_inplace_f_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_f_x_OBJECTS = $(am_test_sine_inplace_f_x_OBJECTS)
 test_sine_inplace_f_x_LDADD = $(LDADD)
 test_sine_inplace_f_x_DEPENDENCIES =  \
 	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_inplace_many_f_x_OBJECTS =  \
 	driver_sine_inplace_many.$(OBJEXT)
 test_sine_inplace_many_f_x_OBJECTS =  \
@@ -94,17 +100,19 @@ test_sine_inplace_many_f_x_OBJECTS =  \
 test_sine_inplace_many_f_x_LDADD = $(LDADD)
 test_sine_inplace_many_f_x_DEPENDENCIES =  \
 	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_many_f_x_OBJECTS = driver_sine_many.$(OBJEXT)
 test_sine_many_f_x_OBJECTS = $(am_test_sine_many_f_x_OBJECTS)
 test_sine_many_f_x_LDADD = $(LDADD)
 test_sine_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_test_spec_f_x_OBJECTS = driver_spec.$(OBJEXT)
 test_spec_f_x_OBJECTS = $(am_test_spec_f_x_OBJECTS)
 test_spec_f_x_LDADD = $(LDADD)
 test_spec_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -135,6 +143,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
+CCLD = @CCLD@
 CDFLAGS = @CDFLAGS@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
@@ -145,6 +154,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
+ESSL_INC = @ESSL_INC@
+ESSL_LIB = @ESSL_LIB@
 EXEEXT = @EXEEXT@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
@@ -171,6 +182,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -223,7 +235,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_FCFLAGS = $(FDFLAGS) $(INCLUDES) 
 INCLUDES = -I$(top_builddir)/include/
-LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) 
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) $(ESSL_LIB) 
 fsampledir = $(datadir)/p3dfft-samples/
 test_sine_many_f_x_SOURCES = driver_sine_many.F90
 test_sine_f_x_SOURCES = driver_sine.F90
