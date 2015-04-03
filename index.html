@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>P3DFFT by sdsc</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>P3DFFT</h1>
+        <h2>A Scalable Framework for Three-dimensional Fourier Transforms and other spectral algorithms</h2>
+        <a href="https://github.com/sdsc/p3dfft" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="p3dfft-introduction" class="anchor" href="#p3dfft-introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>P3DFFT introduction</h1>
+
+<p>Parallel Three-Dimensional Fast Fourier Transforms, dubbed P3DFFT, is a library for large-scale computer simulations on parallel platforms. 3D FFT is an important algorithm for simulations in a wide range of fields, including studies of turbulence, climatology, astrophysics and material science. This project was initiated at San Diego Supercomputer Center (SDSC) at UC San Diego by its main author Dmitry Pekurovsky, Ph.D. Its continual evolution has resulted in an ever expanding list of features and now includes algorithms beyond FFT (Fast Fourier Transform).  </p>
+
+<p>P3DFFT uses 2D, or pencil, decomposition. This overcomes an important limitation to scalability inherent in FFT libraries implementing 1D (or slab) decomposition: the number of processors/tasks used to run this problem in parallel can be as large as N^2, were N is the linear problem size. This approach has shown good scalability up to O(10^6) cores. </p>
+
+<p>P3DFFT is written in Fortran90/MPI and is optimized for parallel performance. C interface is available, as are detailed documentation and examples in both Fortran and C. A configure script is supplied for ease of installation. This package depends on a serial FFT library such as Fastest Fourier Transform in the West (FFTW) or IBM's ESSL.</p>
+
+<p>In the forward transform, given an input of an array of 3D real values, an output of 3D complex array of Fourier coefficients is returned. Current features include:</p>
+
+<pre><code>- real-to-complex/complex-to-real FFT in 3D
+- real-to-complex FFT in 2D followed by sine/cosine/Chebyshev/empty transform, and the reverse for backward transform.
+- pruned transforms (less than full input or output)
+- in-place or out-of-place transforms
+- multi-variable transforms 
+</code></pre>
+
+<p>For more information see the User Guide. For installation instructions click here.</p>
+
+<h1>
+<a id="citation-information" class="anchor" href="#citation-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citation information</h1>
+
+<p>Please acknowledge/cite use of P3DFFT as follows: D. Pekurovsky, “P3DFFT: a framework for parallel computations of Fourier transforms in three dimensions”, SIAM Journal on Scientific Computing 2012, Vol. 34, No. 4, pp. C192-C209. This paper can be obtained here.</p>
+
+<h1>
+<a id="version-history" class="anchor" href="#version-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version History</h1>
+
+<p>2.7.1 - Added multi-variable transforms (p3dfft_ftran_r2c_many, p3dfft_btran_c2r_many)</p>
+
+<p>2.6.1 - Added pruned transforms, added user-defined communicator </p>
+
+<p>2.5.1 - Added cosine/sine/Chebyshev/empty transform in addition to Fourier
+Communication</p>
+
+<p>Be sure to subscribe to the project mailing list where you can discuss topics of interest with other users and developers and get timely news regarding this library. Click on Issues tab above to see the list of outstanding problems or report a new problem or suggestion. You can also reach the main author Dmitry Pekurovsky at <a href="mailto:dmitry@sdsc.edu">dmitry@sdsc.edu</a>.</p>
+
+<p>We are interested to hear your experiences, and suggestions for future releases. Please let us know if you are interested in contributing to future development of the library. The author is also interested in collaborating on computational science projects where 3D FFT and related transforms are applied.</p>
+
+<h1>
+<a id="future-work" class="anchor" href="#future-work" aria-hidden="true"><span class="octicon octicon-link"></span></a>Future work</h1>
+
+<pre><code>- Hybrid MPI/OpenMP
+- One-sided communication
+- Generalized data layout options 
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/sdsc/p3dfft/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/sdsc/p3dfft/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/sdsc/p3dfft"></a> is maintained by <a href="https://github.com/sdsc">sdsc</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-61531324-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
