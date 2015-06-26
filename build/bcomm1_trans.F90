@@ -166,7 +166,7 @@
 
       complex(mytype) source(nzc,jjsize,iisize)
 #ifdef USE_EVEN
-      complex(mytype) sendbuf(KfCntMax*nv*jproc/(mytrype*2))
+      complex(mytype) sendbuf(KfCntMax*nv*jproc/(mytype*2))
 #else
       complex(mytype) sendbuf(nzc*jjsize*iisize*nv)
 #endif
