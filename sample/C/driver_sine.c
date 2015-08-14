@@ -228,7 +228,11 @@ int main(int argc,char **argv)
 
    Cget_timers(timers);
 
+#ifndef SINGLE_PREC
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+#else
+   MPI_Reduce(&cdiff,&ccdiff,1,MPI_REAL,MPI_MAX,0,MPI_COMM_WORLD);
+#endif
 
   if(proc_id == 0) {
 #ifndef SINGLE_PREC

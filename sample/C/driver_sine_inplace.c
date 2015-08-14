@@ -243,7 +243,11 @@ int main(int argc,char **argv)
         }
     }
 
+#ifndef SINGLE_PREC
    MPI_Reduce(&cdiff,&ccdiff,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+#else
+   MPI_Reduce(&cdiff,&ccdiff,1,MPI_REAL,MPI_MAX,0,MPI_COMM_WORLD);
+#endif
 
   get_timers(timers);
 
