@@ -94,6 +94,8 @@
 
       dny = ny_fft-nyc
       position = 1
+
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
       do j=1,nv
 
       do i=0,jproc-1
@@ -164,6 +166,7 @@
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
          do i=0,jproc-1
 #ifdef USE_EVEN
             position = i*KfCntMax*nv/(mytype*2)+1
@@ -219,6 +222,7 @@
          tc = tc - MPI_Wtime()
 
          position = 1
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
          do i=0,jproc-1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
@@ -260,6 +264,7 @@
 
       dny = ny_fft-nyc
       position = 1
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(mytype*2)  + 1 

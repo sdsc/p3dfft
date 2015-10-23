@@ -100,6 +100,7 @@
       integer nv,j,i,x,y,z,pos0,position,dny,pos1
 
       dny = ny_fft-nyc
+!$OMP PARALLEL DO private(i,j,pos0,pos1,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i * nv *KfCntMax/(mytype*2)  + 1 
@@ -183,16 +184,16 @@
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
-	pos0 = (x-1)*jjsize
-
          do i=0,jproc-1
 
 #ifdef USE_EVEN
- 	      pos1 = pos0 + (i * nv + j-1) * KfCntMax / (mytype*2) 
+ 	      pos0 = (x-1)*jjsize + (i * nv + j-1) * KfCntMax / (mytype*2) 
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
+ 	      pos0 = (x-1)*jjsize + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #endif
+	   pos1 = pos0
 
            if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
 ! Just copy the data
@@ -241,9 +242,9 @@
 
 	      pos0 = pos0 + iisize*jjsize*dnz
 #ifdef USE_EVEN
- 	      pos1 = pos0 + (i * nv + j-1) * KfCntMax / (mytype*2) 
+ 	      pos1 = pos0 
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
+ 	      pos1 = pos0 
 #endif
 
 	      do z=nzhc+1,kjen(i),NBz
@@ -273,8 +274,8 @@
 
      else
  
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) collapse(2)
        do x=1,iisize
-
          do i=0,jproc-1
 
 #ifdef USE_EVEN
@@ -334,8 +335,8 @@
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
-
          do i=0,jproc-1
 
 #ifdef USE_EVEN
@@ -369,9 +370,10 @@
 
       else
       
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
-
          do i=0,jproc-1
+
 
 #ifdef USE_EVEN
             pos0 = (i * nv +j-1)*KfCntMax / (mytype*2) + (x-1)*jjsize 
@@ -446,6 +448,12 @@
 
       tc = tc - MPI_Wtime()
 
+#ifdef DEBUG
+       print *,taskid,': fcomm2_trans: packing'
+#endif      
+
+
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(mytype*2)  + 1 
@@ -505,6 +513,10 @@
       tc = tc + MPI_Wtime()
       t = t - MPI_Wtime()
 
+#ifdef DEBUG
+       print *,taskid,': fcomm2_trans: initiating exchange'
+#endif      
+
 #ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax, mpi_byte, buf2,KfCntMax, mpi_byte,mpi_comm_col,ierr)
 #else      
@@ -514,6 +526,10 @@
 #endif
 
       t = MPI_Wtime() + t
+
+#ifdef DEBUG
+       print *,taskid,': fcomm2_trans: unpacking'
+#endif      
 
      if(jjsize .gt. 0) then
 

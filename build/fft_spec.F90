@@ -31,11 +31,18 @@
 
 #ifdef FFTW
       include "fftw3.f"
-      integer(i8) plan1_frc,plan1_bcr,plan1_fc,plan1_bc
-      integer(i8) plan_ctrans_same, plan_strans_same, &
-         plan_ctrans_dif, plan_strans_dif
-      integer(i8) plan2_bc_same,plan2_fc_same,plan2_bc_dif,plan2_fc_dif
-!      integer(i8) plan1,plan2,plan3      
+
+      integer(i8), allocatable, dimension(:) :: plan1_frc,plan1_bcr,plan1_fc,plan1_bc
+      integer(i8), allocatable, dimension(:) :: plan_ctrans_same, plan_strans_same,  plan_ctrans_dif, plan_strans_dif
+      integer(i8), allocatable, dimension(:) :: plan2_bc_same,plan2_fc_same,plan2_bc_dif,plan2_fc_dif
+      integer(i8), allocatable, dimension(:) :: startx_frc,startx_bcr,startx_f_c1,startx_b_c1
+      integer(i8), allocatable, dimension(:) :: startx_ctrans_same, startx_strans_same,  startx_ctrans_dif, startx_strans_dif
+      integer(i8), allocatable, dimension(:) :: startx_b_c2_same,startx_f_c2_same,startx_b_c2_dif,startx_f_c2_dif
+      integer(i8), allocatable, dimension(:) :: starty_frc,starty_bcr,starty_f_c1,starty_b_c1
+      integer(i8), allocatable, dimension(:) :: starty_ctrans_same, starty_strans_same, &
+         starty_ctrans_dif, starty_strans_dif
+      integer(i8), allocatable, dimension(:) :: starty_b_c2_same,starty_f_c2_same,starty_b_c2_dif,starty_f_c2_dif
+
       integer fftw_flag,NULL
 #ifdef ESTIMATE
       parameter(fftw_flag = FFTW_ESTIMATE,NULL=0)

@@ -100,6 +100,7 @@
       integer i,j,nv,position,pos0,pos1,x,y,z,dny      
 
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,j,pos0,pos1,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax *nv/(mytype*2) +  1 
@@ -180,6 +181,7 @@
       dnz = nz - nzc
       if(op(1:1) == '0' .or. op(1:1) == 'n') then
 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
          do x=1,iisize
             do i=0,jproc-1
             
@@ -274,6 +276,8 @@
          enddo
 
       else
+
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) 
          do x=1,iisize
 
 	    if(nz .ne. nzc) then
@@ -423,6 +427,7 @@
       integer i,dny,position,pos0,pos1,x,y,z
 
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,pos0,pos1,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(mytype*2) +  1 

@@ -87,6 +87,7 @@
 
       position=1
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
       do i=0,jproc-1
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
@@ -166,6 +167,7 @@
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
       do i=0,jproc-1
 #ifdef USE_EVEN
          position = i*KfCntMax*nv/(mytype*2)+1
@@ -205,6 +207,7 @@
       if(KfCntUneven) then
          tc = tc - MPI_Wtime()
          position = 1
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
          do i=0,jproc-1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
@@ -253,6 +256,7 @@
 
       position=1
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
       do i=0,jproc-1
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then

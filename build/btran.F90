@@ -234,6 +234,7 @@
 !        call print_buf_real(XgYZ(1,j),nx,jisize,kjsize)
 !      enddo	
 
+      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -606,6 +607,8 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
        endif	
 
 #endif
+
+      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine

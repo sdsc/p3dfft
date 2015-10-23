@@ -69,15 +69,27 @@
       use p3dfft
       implicit none
 
-      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m
+      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      integer omp_get_thread_num
 
 #ifdef FFTW
+
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_b_c1(tid)
+      sty = starty_b_c1(tid)
+      plan = plan1_bc(tid) 
+
 #ifndef SINGLE_PREC
-         call dfftw_execute_dft(plan1_bc,X,Y)
+         call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-         call sfftw_execute_dft(plan1_bc,X,Y)
+         call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
@@ -101,15 +113,25 @@
       use p3dfft
       implicit none
 
-      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m
+      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      integer omp_get_thread_num
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_b_c2_same(tid)
+      sty = starty_b_c2_same(tid)
+      plan = plan2_bc_same(tid) 
 #ifndef SINGLE_PREC
-         call dfftw_execute_dft(plan2_bc_same,X,Y)
+         call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-         call sfftw_execute_dft(plan2_bc_same,X,Y)
+         call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
@@ -132,16 +154,26 @@
       use fft_spec
       use p3dfft
       implicit none
+      integer omp_get_thread_num
 
-      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m
+      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_b_c2_dif(tid)
+      sty = starty_b_c2_dif(tid)
+      plan = plan2_bc_dif(tid) 
 #ifndef SINGLE_PREC
-         call dfftw_execute_dft(plan2_bc_dif,X,Y)
+         call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-         call sfftw_execute_dft(plan2_bc_dif,X,Y)
+         call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
 
 #ifndef SINGLE_PREC
@@ -166,16 +198,25 @@
       use p3dfft
       implicit none
 
-      integer dimx,dimy,N,m
+      integer dimx,dimy,N,m,tid
+      integer*8 plan,stx,sty
       complex(mytype) X((N/2+1)*m)
       real(mytype) Y(N*m)
+      integer omp_get_thread_num
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_bcr(tid)
+      sty = starty_bcr(tid)
+      plan = plan1_bcr(tid) 
 #ifndef SINGLE_PREC
-      call dfftw_execute_dft_c2r(plan1_bcr,X,Y)
+      call dfftw_execute_dft_c2r(plan,X(stx),Y(sty))
 #else
-      call sfftw_execute_dft_c2r(plan1_bcr,X,Y)
+      call sfftw_execute_dft_c2r(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -200,17 +241,27 @@
       use fft_spec
       use p3dfft
       implicit none
+      integer omp_get_thread_num
 
-      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2
+      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_f_c1(tid)
+      sty = starty_f_c1(tid)
+      plan = plan1_fc(tid) 
+
 #ifndef SINGLE_PREC
-      call dfftw_execute_dft(plan1_fc,X,Y)
+      call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-      call sfftw_execute_dft(plan1_fc,X,Y)
+      call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -233,16 +284,26 @@
       use fft_spec
       use p3dfft
       implicit none
+      integer omp_get_thread_num
 
-      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2
+      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_f_c2_same(tid)
+      sty = starty_f_c2_same(tid)
+      plan = plan2_fc_same(tid) 
+
 #ifndef SINGLE_PREC
-      call dfftw_execute_dft(plan2_fc_same,X,Y)
+      call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-      call sfftw_execute_dft(plan2_fc_same,X,Y)
+      call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -266,15 +327,25 @@
       use p3dfft
       implicit none
 
-      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2
+      integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
+      integer*8 plan,stx,sty
       complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      integer omp_get_thread_num
 
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_f_c2_dif(tid)
+      sty = starty_f_c2_dif(tid)
+      plan = plan2_fc_dif(tid) 
+
 #ifndef SINGLE_PREC
-      call dfftw_execute_dft(plan2_fc_dif,X,Y)
+      call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
-      call sfftw_execute_dft(plan2_fc_dif,X,Y)
+      call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -299,17 +370,27 @@
       use fft_spec
       use p3dfft
 
-      integer dimx,dimy,N,m
+      integer dimx,dimy,N,m,tid
+      integer*8 plan,stx,sty
       real(mytype) X(N*m)
       complex(mytype) Y((N/2+1)*m)
+      integer omp_get_thread_num
 
 #ifdef FFTW
 
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_frc(tid)
+      sty = starty_frc(tid)
+      plan = plan1_frc(tid) 
 #ifndef SINGLE_PREC
-      call dfftw_execute_dft_r2c(plan1_frc,X,Y)
+      call dfftw_execute_dft_r2c(plan,X(stx),Y(sty))
 #else
-      call sfftw_execute_dft_r2c(plan1_frc,X,Y)
+      call sfftw_execute_dft_r2c(plan,X(stx),Y(sty))
 #endif
+
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -337,17 +418,27 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
     use p3dfft
     implicit none
  
-    integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
+    integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m,tid
+      integer*8 plan,stx,sty
     real (mytype) :: X (N*m), Y (N*m)
     integer :: nm2
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_ctrans_same(tid)
+      sty = starty_ctrans_same(tid)
+      plan = plan_ctrans_same(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_ctrans_same, X, Y)
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
-    call sfftw_execute_r2r (plan_ctrans_same, X, Y)
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -374,15 +465,25 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_ctrans_dif(tid)
+      sty = starty_ctrans_dif(tid)
+      plan = plan_ctrans_dif(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_ctrans_dif, X, Y)
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
-    call sfftw_execute_r2r (plan_ctrans_dif, X, Y)
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -410,17 +511,27 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_ctrans_same(tid)
+      sty = starty_ctrans_same(tid)
+      plan = plan_ctrans_same(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_ctrans_same, X, Y)
-    call dfftw_execute_r2r (plan_ctrans_same, X(2), Y(2))
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
+    call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #else
-    call sfftw_execute_r2r (plan_ctrans_same, X, Y)
-    call sfftw_execute_r2r (plan_ctrans_same, X(2), Y(2))
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
+    call sfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -454,17 +565,27 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_ctrans_dif(tid)
+      sty = starty_ctrans_dif(tid)
+      plan = plan_ctrans_dif(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_ctrans_dif, X, Y)
-    call dfftw_execute_r2r (plan_ctrans_dif, X(2), Y(2))
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
+    call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #else
-    call sfftw_execute_r2r (plan_ctrans_dif, X, Y)
-    call sfftw_execute_r2r (plan_ctrans_dif, X(2), Y(2))
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
+    call sfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -503,15 +624,25 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_strans_same(tid)
+      sty = starty_strans_same(tid)
+      plan = plan_strans_same(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_strans_same, X, Y)
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
-    call sfftw_execute_r2r (plan_strans_same, X, Y)
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -538,15 +669,25 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_strans_dif(tid)
+      sty = starty_strans_dif(tid)
+      plan = plan_strans_dif(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_strans_dif, X, Y)
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
-    call sfftw_execute_r2r (plan_strans_dif, X, Y)
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -574,17 +715,27 @@ subroutine exec_strans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_strans_same(tid)
+      sty = starty_strans_same(tid)
+      plan = plan_strans_same(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_strans_same, X, Y)
-    call dfftw_execute_r2r (plan_strans_same, X(2), Y(2))
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
+    call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #else
-    call sfftw_execute_r2r (plan_strans_same, X, Y)
-    call sfftw_execute_r2r (plan_strans_same, X(2), Y(2))
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
+    call sfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #endif
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
@@ -618,17 +769,28 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
  
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
     real (mytype) :: X (N*m), Y (N*m)
-    integer :: nm2
+    integer :: nm2,tid
+      integer*8 plan,stx,sty
+      integer omp_get_thread_num
  
 #ifdef FFTW
+!$OMP PARALLEL private(tid,stx,sty,plan)
+
+      tid = omp_get_thread_num()
+      stx = startx_strans_dif(tid)
+      sty = starty_strans_dif(tid)
+      plan = plan_strans_dif(tid) 
  
 #ifndef SINGLE_PREC
-    call dfftw_execute_r2r (plan_strans_dif, X, Y)
-    call dfftw_execute_r2r (plan_strans_dif, X(2), Y(2))
+    call dfftw_execute_r2r (plan, X(stx), Y(sty))
+    call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #else
-    call sfftw_execute_r2r (plan_strans_dif, X, Y)
-    call sfftw_execute_r2r (plan_strans_dif, X(2), Y(2))
+    call sfftw_execute_r2r (plan, X(stx), Y(sty))
+    call sfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
 #endif
+
+!$OMP END PARALLEL
+
 #elif defined ESSL
     nm2 = (N-1) * 2
  
