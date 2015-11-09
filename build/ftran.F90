@@ -246,8 +246,10 @@
       endif
 
 !      deallocate(buf)
+ 
+      call mpi_barrier(mpi_comm_world,ierr)
 
-      return
+     return
       end subroutine
 
 ! This is a C wrapper routine
@@ -691,6 +693,12 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+#ifdef DEBUG
+      print *,taskid,': Waiting at barrier'
+#endif
+
+      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine

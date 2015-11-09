@@ -55,7 +55,7 @@
       implicit none
 
       integer i,j,k,nx,ny,nz,err,mpi_comm_in
-      integer ierr, dims(2),  cartid(2)
+      integer ierr, dims(2),  cartid(2),mydims(2)
       logical periodic(2),remain_dims(2)
       integer impid, ippid, jmpid, jppid
       integer(i8) n1,n2,pad1,padd
@@ -138,15 +138,19 @@
       jproc = dims(2)
 
 #ifndef DIMS_C
-       i = dims(1)  
-       dims(1) = dims(2)
-       dims(2) = i
+!       i = dims(1)  
+!       dims(1) = dims(2)
+!       dims(2) = i
+	mydims(1) = dims(2)
+	mydims(2) = dims(1)
+#else
+	mydims = dims
 #endif
 
       periodic(1) = .false.
       periodic(2) = .false.
 ! creating cartesian processor grid
-      call MPI_Cart_create(mpicomm,2,dims,periodic,.false.,mpi_comm_cart,ierr)
+      call MPI_Cart_create(mpicomm,2,mydims,periodic,.false.,mpi_comm_cart,ierr)
 ! Obtaining process ids with in the cartesian grid
       call MPI_Cart_coords(mpi_comm_cart,taskid,2,cartid,ierr)
 ! process with a linear id of 5 may have cartid of (3,1)
@@ -345,19 +349,20 @@
         if(err .ne. 0) then
            print *,'p3dfft_setup: Error allocating buf2 (',nm
         endif
-        allocate(R(nm*2),stat=err)
-        if(err .ne. 0) then
-           print *,'p3dfft_setup: Error allocating R (',nm*2
-        endif
+1        allocate(R(nm*2),stat=err)
+!        if(err .ne. 0) then
+!           print *,'p3dfft_setup: Error allocating R (',nm*2
+!        endif
         buf1 = 0.0
         R = 0.0
 
 ! For FFT libraries that allocate work space implicitly such as through 
 ! plans (e.g. FFTW) initialize here
 
-        call init_plan(buf1,R,buf2,nm)
+        call init_plan
+!(buf1,R,buf2,nm)
 
-        deallocate(R)
+!        deallocate(R)
         allocate(buf(nm),stat=err)
         if(err .ne. 0) then
            print *,'p3dfft_setup: Error allocating buf (',nm

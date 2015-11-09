@@ -56,6 +56,7 @@
 
       tc = tc - MPI_Wtime()
 
+!$OMP PARALLEL DO private(i,position,x,y,z)
       do i=0,iproc-1
 #ifdef USE_EVEN
          position = i*IfCntMax * nv/(mytype*2) + 1 
@@ -98,6 +99,7 @@
 
 ! Unpack the data
 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,ix,iy,x2,y2,position,x,y,z) collapse(2)
       do i=0,iproc-1
 
 	do j=1,nv
@@ -170,8 +172,13 @@
 
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
 
+#ifdef DEBUG
+       print *,taskid,': fcomm1: packing data'
+#endif
+
       tc = tc - MPI_Wtime()
 
+!$OMP PARALLEL DO private(i,position,x,y,z)
       do i=0,iproc-1
 #ifdef USE_EVEN
          position = i*IfCntMax/(mytype*2) + 1 
@@ -190,6 +197,10 @@
       tc = tc + MPI_Wtime()
       t = t - MPI_Wtime()
 
+#ifdef DEBUG
+       print *,taskid,': fcomm1: initiating exchange'
+#endif
+
 #ifdef USE_EVEN
 
 ! Use MPI_Alltoall
@@ -207,18 +218,20 @@
       tc = - MPI_Wtime() + tc
 
 ! Unpack the data
-
-      do i=0,iproc-1
-
-#ifdef USE_EVEN
-         pos0 = i*IfCntMax/(mytype*2)+1
-#else
-         pos0 = IfRcvStrt(i)/(mytype*2)+1
+#ifdef DEBUG
+       print *,taskid,': fcomm1: unpacking data'
 #endif
 
+
+!$OMP PARALLEL DO private(i,position,x,y,z,pos0,pos1,pos2,iy,y2,ix,x2) collapse(2)
+      do i=0,iproc-1
          do z=1,kjsize
-            pos1 = pos0 + (z-1)*iisize*jisz(i) 
-            
+#ifdef USE_EVEN
+            pos1 = i*IfCntMax/(mytype*2)+1 + (z-1)*iisize*jisz(i) 
+#else            
+	    pos1 = IfRcvStrt(i)/(mytype*2)+1 + (z-1)*iisize*jisz(i) 
+#endif
+
 #ifdef STRIDE1
             do y=jist(i),jien(i),nby1
                y2 = min(y+nby1-1,jien(i))
