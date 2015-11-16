@@ -166,7 +166,7 @@
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
 
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+!$OMP PARALLEL DO private(i,j,position,x,y,z) 
          do i=0,jproc-1
 #ifdef USE_EVEN
             position = i*KfCntMax*nv/(mytype*2)+1
@@ -264,7 +264,7 @@
 
       dny = ny_fft-nyc
       position = 1
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(mytype*2)  + 1 

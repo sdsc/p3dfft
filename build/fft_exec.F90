@@ -249,19 +249,27 @@
 
 
 #ifdef FFTW
-!$OMP PARALLEL private(tid,stx,sty,plan)
+!!$OMP PARALLEL private(tid,stx,sty,plan)
 
-      tid = omp_get_thread_num()
+!      tid = omp_get_thread_num()
+
+
+       do tid=0,num_thr-1
+       
       stx = startx_f_c1(tid)
       sty = starty_f_c1(tid)
       plan = plan1_fc(tid) 
+
+!      print *,'Thread ',tid,': stx,sty,plan=',stx,sty,plan
 
 #ifndef SINGLE_PREC
       call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
       call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
-!$OMP END PARALLEL
+
+     enddo
+!!$OMP END PARALLEL
 
 #elif defined ESSL
 

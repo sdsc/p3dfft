@@ -167,7 +167,7 @@
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
 
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+!$OMP PARALLEL DO private(i,j,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          position = i*KfCntMax*nv/(mytype*2)+1
@@ -256,7 +256,7 @@
 
       position=1
       dny = ny_fft - nyc
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
       do i=0,jproc-1
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
