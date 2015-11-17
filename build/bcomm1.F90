@@ -87,12 +87,19 @@
 
       position=1
       dny = ny_fft - nyc
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+      do j=1,nv
       do i=0,jproc-1
+#ifdef USE_EVEN
+         pos0 = (i * nv +(j-1))* KfCntMax/(mytype*2)  + 1 
+#else
+         pos0 = (nv * KfSndStrt(i) + (j-1)*KfSndCnts(i))/(mytype*2)+ 1 
+#endif
+
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
-	    do j=1,nv
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),jjen(i)
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -100,12 +107,11 @@
                   enddo
                enddo
 	    enddo
-            enddo
 
 ! If clearly in the second half of ny
          else if (jjst(i) .ge. nyhc+1) then
-	    do j=1,nv
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i)+dny,jjen(i)+dny
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -113,12 +119,11 @@
                   enddo
                enddo
             enddo         
-            enddo
 
 ! If spanning the first and second half of nz (i.e. jproc is odd)  
          else
-	    do j=1,nv
 	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),nyhc
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -132,11 +137,9 @@
                   enddo
                enddo
             enddo
-            enddo
          endif
 
 ! Fill center with zeros
-         do j=1,nv
          do z=1,kjsize
             do y=nyhc+1,ny_fft-nyhc
                do x=1,iisize
@@ -145,10 +148,6 @@
             enddo
          enddo
          enddo
-
-#ifdef USE_EVEN
-         position = (i+1)*KfCntMax*nv/(mytype*2)+1
-#endif
       enddo
 
       end subroutine      
@@ -167,7 +166,7 @@
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
 
-!$OMP PARALLEL DO private(i,j,position,x,y,z) 
+!$OMP PARALLEL DO private(i,position,x,y,z) 
       do i=0,jproc-1
 #ifdef USE_EVEN
          position = i*KfCntMax*nv/(mytype*2)+1
@@ -258,9 +257,16 @@
       dny = ny_fft - nyc
 !$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
       do i=0,jproc-1
+#ifdef USE_EVEN
+         pos0 = i*KfCntMax/(mytype*2)  + 1 
+#else
+         pos0 = KfSndStrt(i)/(mytype*2)+ 1 
+#endif
+
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),jjen(i)
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -271,6 +277,7 @@
 ! If clearly in the second half of ny
          else if (jjst(i) .ge. nyhc+1) then
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i)+dny,jjen(i)+dny
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -282,6 +289,7 @@
 ! If spanning the first and second half of nz (i.e. jproc is odd)  
          else
 	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),nyhc
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -306,9 +314,6 @@
             enddo
          enddo
 
-#ifdef USE_EVEN
-         position = (i+1)*KfCntMax/(mytype*2)+1
-#endif
       enddo
       
       

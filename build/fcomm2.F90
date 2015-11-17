@@ -166,7 +166,7 @@
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
 
-!$OMP PARALLEL DO private(i,j,position,x,y,z) 
+!$OMP PARALLEL DO private(i,position,x,y,z) 
          do i=0,jproc-1
 #ifdef USE_EVEN
             position = i*KfCntMax*nv/(mytype*2)+1
