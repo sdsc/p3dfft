@@ -74,17 +74,17 @@
 
       if(mpi_set) then
          print *,'P3DFFT Setup error: the problem is already initialized. '
-         print *,'Currently multiple setups not supported.'       
+         print *,'Currently multiple setups not supported.'
          print *,'Quit the library using p3dfft_clean before initializing another setup'
          call MPI_ABORT(MPI_COMM_WORLD, 0)
       endif
 
       if(present(overwrite)) then
-         OW = overwrite	     
+         OW = overwrite
       else
          OW = .true.
       endif
-      
+
 
       timers = 0.0
 
@@ -97,17 +97,17 @@
 	nxc = nxcut
       else
         nxc = nx
-      endif	
+      endif
       if(present(nycut)) then
 	nyc = nycut
       else
         nyc = ny
-      endif	
+      endif
       if(present(nzcut)) then
 	nzc = nzcut
       else
         nzc = nz
-      endif	
+      endif
 
       nxh=nx/2
       nxhp=nxh+1
@@ -128,8 +128,8 @@
          call MPI_ABORT(MPI_COMM_WORLD, 0)
       endif
 
-#ifdef STRIDE1      
-      if(taskid .eq. 0) then 
+#ifdef STRIDE1
+      if(taskid .eq. 0) then
          print *,'Using stride-1 layout'
       endif
 #endif
@@ -138,7 +138,7 @@
       jproc = dims(2)
 
 #ifndef DIMS_C
-       i = dims(1)  
+       i = dims(1)
        dims(1) = dims(2)
        dims(2) = i
 #endif
@@ -215,8 +215,8 @@
       allocate (kjen(0:jproc-1))
 !
 !Mapping 3-D data arrays onto 2-D process grid
-! (nx+2,ny,nz) => (iproc,jproc)      
-! 
+! (nx+2,ny,nz) => (iproc,jproc)
+!
       call MapDataToProc(nxhpc,iproc,iist,iien,iisz)
       call MapDataToProc(ny,iproc,jist,jien,jisz)
       call MapDataToProc(nyc,jproc,jjst,jjen,jjsz)
@@ -256,7 +256,7 @@
 
       IfCntMax = iisz(iproc-1)*jisz(iproc-1)*kjsize*mytype*2
       KfCntMax = iisize * jjsz(jproc-1) * kjsz(jproc-1)*mytype*2
-      if(mod(ny,jproc) .ne. 0 .or. mod(nz,jproc) .ne. 0) then 
+      if(mod(ny,jproc) .ne. 0 .or. mod(nz,jproc) .ne. 0) then
          KfCntUneven = .true.
       else
          KfCntUneven = .false.
@@ -311,10 +311,10 @@
       if(NBz .eq. 0) then
          NBz = 1
       endif
-      
+
       if(taskid .eq. 0) then
          print *,'Using loop block sizes ',NBx,NBy1,NBy2,NBz
-      endif  
+      endif
 
 #endif
 
@@ -322,7 +322,7 @@
 ! We may need to pad arrays due to uneven size
       padd = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize) - nxhp*jisize*kjsize
       padi = padd
-      if(padi .le. 0) then 
+      if(padi .le. 0) then
          padi=0
       else
          if(mod(padi,nxhp*jisize) .eq. 0) then
@@ -334,9 +334,9 @@
       endif
 
 ! Initialize FFTW and allocate buffers for communication
-      nm = nxhp * jisize * (kjsize+padi) 
+      nm = nxhp * jisize * (kjsize+padi)
       nv_preset = 1
-      if(nm .gt. 0) then       
+      if(nm .gt. 0) then
         allocate(buf1(nm),stat=err)
         if(err .ne. 0) then
            print *,'p3dfft_setup: Error allocating buf1 (',nm
@@ -352,7 +352,7 @@
         buf1 = 0.0
         R = 0.0
 
-! For FFT libraries that allocate work space implicitly such as through 
+! For FFT libraries that allocate work space implicitly such as through
 ! plans (e.g. FFTW) initialize here
 
         call init_plan(buf1,R,buf2,nm)
@@ -379,7 +379,7 @@
 #endif
 
 !#ifdef USE_EVEN
-!       
+!
 !     n1 = IfCntMax * iproc / (mytype*2)
 !     n2 = KfCntMax * jproc / (mytype*2)
 !     allocate(buf_x(n1))
@@ -395,22 +395,22 @@
 ! Displacements and buffer counts for mpi_alltoallv
 
       allocate (IfSndStrt(0:iproc-1))
-      allocate (IfSndCnts(0:iproc-1))     
+      allocate (IfSndCnts(0:iproc-1))
       allocate (IfRcvStrt(0:iproc-1))
       allocate (IfRcvCnts(0:iproc-1))
 
       allocate (KfSndStrt(0:jproc-1))
-      allocate (KfSndCnts(0:jproc-1))     
+      allocate (KfSndCnts(0:jproc-1))
       allocate (KfRcvStrt(0:jproc-1))
       allocate (KfRcvCnts(0:jproc-1))
 
       allocate (JrSndStrt(0:jproc-1))
-      allocate (JrSndCnts(0:jproc-1))     
+      allocate (JrSndCnts(0:jproc-1))
       allocate (JrRcvStrt(0:jproc-1))
       allocate (JrRcvCnts(0:jproc-1))
 
       allocate (KrSndStrt(0:iproc-1))
-      allocate (KrSndCnts(0:iproc-1))     
+      allocate (KrSndCnts(0:iproc-1))
       allocate (KrRcvStrt(0:iproc-1))
       allocate (KrRcvCnts(0:iproc-1))
 
@@ -520,14 +520,14 @@
 
       if(pad1 .le. 0) then
         pad1 = 0
-      endif  
+      endif
 
       padi=pad1
       if(mod(padi,nx*jisize) .ne. 0) then
          padi = padi / (nx*jisize) + 1
       else
          padi = padi / (nx*jisize)
-      endif   
+      endif
 
 
 	maxisize = nx
@@ -542,10 +542,10 @@
 
       end subroutine p3dfft_setup
 
-!==================================================================       
+!==================================================================
       subroutine MapDataToProc (data,proc,st,en,sz)
 !========================================================
-!    
+!
        implicit none
        integer data,proc,st(0:proc-1),en(0:proc-1),sz(0:proc-1)
        integer i,size,nl,nu
@@ -567,8 +567,7 @@
          sz(i) = size
          en(i) = en(i-1) + size
       enddo
-      en(proc-1)= data 
+      en(proc-1)= data
       sz(proc-1)= data-st(proc-1)+1
 
       end subroutine
-
