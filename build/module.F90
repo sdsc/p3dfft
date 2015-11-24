@@ -54,7 +54,7 @@
        integer, public :: real_size,complex_size
 
       integer,save :: NX_fft,NY_fft,NZ_fft,nxh,nxhp,nv_preset
-      integer,save :: nxc,nyc,nzc,nxhc,nxhpc,nyh,nzh,nyhc,nzhc,nyhcp,nzhcp	
+      integer,save :: nxc,nyc,nzc,nxhc,nxhpc,nyh,nzh,nyhc,nzhc,nyhcp,nzhcp
       integer,save :: ipid,jpid,taskid,numtasks,iproc,jproc
       integer,save :: iistart,iiend,iisize,jjstart,jjsize,jjend
       integer,save ::jistart,kjstart,jisize,kjsize,jiend,kjend
@@ -66,7 +66,7 @@
 ! mpi process info
 !
       logical :: mpi_set=.false.
-      integer, save :: mpi_comm_cart,mpicomm      
+      integer, save :: mpi_comm_cart,mpicomm
       integer, save :: mpi_comm_row, mpi_comm_col
       integer,save, dimension(:), allocatable :: iist,iien,iisz
       integer,save, dimension(:), allocatable :: jist,jien,jisz
@@ -91,7 +91,7 @@
       integer, save, dimension (:), allocatable :: IjCnts, IjStrt
       integer, save, dimension (:), allocatable :: JiCnts, JiStrt
       integer, save, dimension (:), allocatable :: KjCnts, KjStrt
- 
+
 #ifdef USE_EVEN
     integer * 8, save :: IfCntMax, KfCntMax
     integer * 8, save :: IJCntMax, JICntMax
@@ -120,7 +120,7 @@
     integer, save, dimension (:, :), allocatable :: proc_coords2id
     integer, save, dimension (:, :, :), allocatable :: proc_dims
     integer, save, dimension (:, :), allocatable :: proc_parts
- 
+
     public :: p3dfft_get_dims, p3dfft_get_mpi_info, p3dfft_setup, &
 		p3dfft_ftran_r2c, p3dfft_btran_c2r, p3dfft_cheby, &
 		p3dfft_ftran_r2c_many, p3dfft_btran_c2r_many, p3dfft_cheby_many, &
@@ -161,18 +161,18 @@
 !=====================================================
       integer istart(3),iend(3),isize(3),conf
 
-      call p3dfft_get_dims(istart,iend,isize,conf) 
+      call p3dfft_get_dims(istart,iend,isize,conf)
 
       end subroutine
 
 !=====================================================
 ! Return array dimensions for either real-space (conf=1) or wavenumber-space(conf=2)
-! 
-      subroutine p3dfft_get_dims(istart,iend,isize,conf) 
+!
+      subroutine p3dfft_get_dims(istart,iend,isize,conf)
 !=====================================================
 
       integer istart(3),iend(3),isize(3),conf
-      
+
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'
       else
@@ -225,22 +225,22 @@
 ! --------------------------------------
     subroutine p3dfft_get_mpi_info (mpi_taskid, mpi_tasks, mpi_comm)
       implicit none
- 
+
 !         function args
       integer, intent (out) :: mpi_taskid
       integer, intent (out) :: mpi_tasks
       integer, intent (out) :: mpi_comm
- 
+
       if ( .not. mpi_set) then
         print *, 'P3DFFT error: call setup before other routines'
         return
       end if
- 
+
       mpi_taskid = taskid
       mpi_tasks = numtasks
       mpi_comm = mpi_comm_cart
- 
-    end subroutine 	
+
+    end subroutine
 
 ! this is a C wrapper routine
 !========================================================
@@ -249,10 +249,10 @@
 
       call p3dfft_clean
 
-      end subroutine 
+      end subroutine
 
 !========================================================
-      subroutine p3dfft_clean() 
+      subroutine p3dfft_clean()
 !========================================================
 
 !!--------------------------------------------------------------
@@ -262,35 +262,35 @@
 
 #ifdef FFTW
 #ifndef SINGLE_PREC
-      call dfftw_destroy_plan(plan1_frc)      
-      call dfftw_destroy_plan(plan1_bcr)      
-      call dfftw_destroy_plan(plan1_fc)      
-      call dfftw_destroy_plan(plan2_fc_same)      
-      call dfftw_destroy_plan(plan2_fc_dif)      
-      call dfftw_destroy_plan(plan1_bc)      
-      call dfftw_destroy_plan(plan2_bc_same)      
-      call dfftw_destroy_plan(plan2_bc_dif)      
-      call dfftw_destroy_plan(plan_ctrans_same)      
-      call dfftw_destroy_plan(plan_ctrans_dif)      
-      call dfftw_destroy_plan(plan_strans_same)      
-      call dfftw_destroy_plan(plan_strans_dif)      
+      call dfftw_destroy_plan(plan1_frc)
+      call dfftw_destroy_plan(plan1_bcr)
+      call dfftw_destroy_plan(plan1_fc)
+      call dfftw_destroy_plan(plan2_fc_same)
+      call dfftw_destroy_plan(plan2_fc_dif)
+      call dfftw_destroy_plan(plan1_bc)
+      call dfftw_destroy_plan(plan2_bc_same)
+      call dfftw_destroy_plan(plan2_bc_dif)
+      call dfftw_destroy_plan(plan_ctrans_same)
+      call dfftw_destroy_plan(plan_ctrans_dif)
+      call dfftw_destroy_plan(plan_strans_same)
+      call dfftw_destroy_plan(plan_strans_dif)
 #else
-      call sfftw_destroy_plan(plan1_frc)      
-      call sfftw_destroy_plan(plan1_bcr)      
-      call sfftw_destroy_plan(plan1_fc)      
-      call sfftw_destroy_plan(plan1_bc)      
-      call sfftw_destroy_plan(plan2_fc_same)      
-      call sfftw_destroy_plan(plan2_fc_dif)      
-      call sfftw_destroy_plan(plan2_bc_same)      
-      call sfftw_destroy_plan(plan2_bc_dif)      
-      call sfftw_destroy_plan(plan_ctrans_same)      
-      call sfftw_destroy_plan(plan_ctrans_dif)      
-      call sfftw_destroy_plan(plan_strans_same)      
-      call sfftw_destroy_plan(plan_strans_dif)      
+      call sfftw_destroy_plan(plan1_frc)
+      call sfftw_destroy_plan(plan1_bcr)
+      call sfftw_destroy_plan(plan1_fc)
+      call sfftw_destroy_plan(plan1_bc)
+      call sfftw_destroy_plan(plan2_fc_same)
+      call sfftw_destroy_plan(plan2_fc_dif)
+      call sfftw_destroy_plan(plan2_bc_same)
+      call sfftw_destroy_plan(plan2_bc_dif)
+      call sfftw_destroy_plan(plan_ctrans_same)
+      call sfftw_destroy_plan(plan_ctrans_dif)
+      call sfftw_destroy_plan(plan_strans_same)
+      call sfftw_destroy_plan(plan_strans_dif)
 #endif
 
 #elif defined ESSL
-      deallocate(caux1)      
+      deallocate(caux1)
       deallocate(caux2)
       deallocate(raux1)
       deallocate(raux2)
@@ -299,6 +299,10 @@
       deallocate(buf1)
       deallocate(buf2)
       deallocate(buf)
+
+    ! modified, bugfix. these variables were not freed and therefore causing
+    ! an error if setup is called, then free is called, then again setup
+    deallocate(iiist,iiisz,iiien,ijst,ijsz,ijen)
 
     deallocate (iist)
     deallocate (iisz)
@@ -312,7 +316,7 @@
     deallocate (kjst)
     deallocate (kjsz)
     deallocate (kjen)
-  
+
     deallocate (IfSndStrt)
     deallocate (IfSndCnts)
     deallocate (IfRcvStrt)
@@ -329,7 +333,7 @@
     deallocate (KrSndCnts)
     deallocate (KrRcvStrt)
     deallocate (KrRcvCnts)
- 
+
     deallocate (IiCnts)
     deallocate (IiStrt)
     deallocate (IjCnts)
@@ -338,12 +342,12 @@
     deallocate (JiStrt)
     deallocate (KjCnts)
     deallocate (KjStrt)
- 
+
     deallocate (proc_id2coords)
     deallocate (proc_coords2id)
     deallocate (proc_dims)
     deallocate (proc_parts)
- 
+
     mpi_set = .false.
 
       return
@@ -360,7 +364,7 @@
       do j=1,nv
          call ar_copy(A(1,j),B(1,j),nar)
       enddo
-      
+
       return
       end subroutine
 
@@ -422,7 +426,7 @@
     complex(mytype) in(xdim,ydim,zdim,nv), out(dim,nv)
 
     do j=1,nv
-      call seg_copy_z(in(1,1,1,j),out(1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)    
+      call seg_copy_z(in(1,1,1,j),out(1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
     enddo
 
     return
@@ -437,7 +441,7 @@
     complex(mytype) out(xdim,ydim,zdim,nv), in(dim,nv)
 
     do j=1,nv
-      call seg_copy_z(in(1,j),out(1,1,1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)    
+      call seg_copy_z(in(1,j),out(1,1,1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
     enddo
 
     return
@@ -456,8 +460,8 @@
        do y=y1,y2
           do x=x1,x2
 	     out(x,y,z) = in(x,y,z+shift_z)
-	  enddo	
-        enddo	
+	  enddo
+        enddo
     enddo
 
     return
@@ -508,7 +512,7 @@
 
       complex(mytype) A(lx,ly,lz)
       integer lx,ly,lz,i,j,k
-      
+
       do k=1,lz
          do j=1,ly
             do i=1,lx
@@ -526,7 +530,7 @@
 
       real(mytype) A(lx,ly,lz)
       integer lx,ly,lz,i,j,k
-      
+
       do k=1,lz
          do j=1,ly
             do i=1,lx
@@ -546,15 +550,15 @@
 ! --------------------------------------
   function proc_neighb (base_proc_id, orient, direction)
     implicit none
- 
+
 !         function args
     integer, intent (in) :: base_proc_id, orient, direction
     integer :: proc_neighb
- 
+
     integer :: coord_i, coord_j
- 
+
     proc_neighb = - 1
- 
+
 !         check input
     if (base_proc_id < 0 .or. base_proc_id >= iproc*jproc) then
       return
@@ -565,10 +569,10 @@
     if (direction /= 1 .and. direction /= 2) then
       return
     end if
- 
+
     coord_i = proc_id2coords (base_proc_id*2)
     coord_j = proc_id2coords (base_proc_id*2+1)
- 
+
 !         direction=1:i, direction=2:j, orient=-1 or 1
     if (direction == 1 .and. &
        (coord_i+orient) >= 0 .and. &
@@ -579,10 +583,10 @@
        (coord_j+orient) <= jproc) then
     proc_neighb = proc_coords2id (coord_i, coord_j+orient)
   end if
- 
+
   return
 end function proc_neighb
- 
+
 ! --------------------------------------
 !
 !  search_proc(..)
@@ -590,25 +594,25 @@ end function proc_neighb
 ! --------------------------------------
 function search_proc (point_i, point_j, dimI_offset, dimJ_offset, conf)
   implicit none
- 
+
 !         function args
   integer, intent (in) :: point_i, point_j, dimI_offset, dimJ_offset
   integer, intent (in) :: conf
   integer :: search_proc
- 
+
   integer :: proc_id
- 
+
   search_proc = - 1
- 
+
 !         check input
   if (dimI_offset < 1 .or. dimI_offset > 3 .or. &
       dimJ_offset < 1 .or. dimJ_offset > 3 .or. &
       conf < 1 .or. conf > 2) then
     return
   end if
- 
+
   proc_id = proc_coords2id (0, 0)
- 
+
 !         search in direction i
   do
     if (point_i < proc_dims(conf, dimI_offset, proc_id)+proc_dims(conf, dimI_offset+6, proc_id)) then
@@ -621,7 +625,7 @@ function search_proc (point_i, point_j, dimI_offset, dimJ_offset, conf)
       end if
     end if
   end do
- 
+
 !         search in direction j
   do
     if (point_j < proc_dims(conf, dimJ_offset, proc_id)+proc_dims(conf, dimJ_offset+6, proc_id)) then
@@ -634,11 +638,11 @@ function search_proc (point_i, point_j, dimI_offset, dimJ_offset, conf)
       end if
     end if
   end do
- 
+
   search_proc = proc_id
   return
 end function search_proc
- 
+
 ! --------------------------------------
 !
 !  get_proc_parts(..)
@@ -646,27 +650,27 @@ end function search_proc
 ! --------------------------------------
 subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf, ierr)
   implicit none
- 
+
 !         function args
   integer, intent (in) :: base_x, base_y, base_z
   integer, intent (in) :: size_x, size_y, size_z
   integer, intent (in) :: conf
   integer, intent (out) :: ierr
- 
+
 !         other vars
   integer :: base_i, base_j, base_k
   integer :: size_i, size_j, size_k
   integer :: dimI_offset, dimJ_offset
   integer :: no_parts, p
- 
+
   integer :: found_proc_id
   integer :: end_of_dim_i, end_of_dim_j
   integer :: size_i_exist
   integer :: start_base_j, start_size_j, start_id_j
- 
+
   ierr = 0
   proc_parts = - 1
- 
+
 !    int s,t;
 !         pencil in X-dimension (physical space)
   if (conf == 1) then
@@ -678,7 +682,7 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
     size_k = size_x
     dimI_offset = 2
     dimJ_offset = 3
- 
+
 !         pencil in Z-dimension (fourier space)
   else if (conf == 2) then
     base_i = base_x
@@ -689,32 +693,32 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
     size_k = size_z
     dimI_offset = 1
     dimJ_offset = 2
- 
+
   else
     ierr = 1
     return
   end if
- 
+
 !         find the proc, which contain the base point, this proc will be as start search point
   found_proc_id = search_proc (base_i, base_j, dimI_offset, dimJ_offset, conf)
   if (found_proc_id < 0) then
     ierr = - 1
     return
   end if
- 
+
   no_parts = 0
   end_of_dim_i = 0
   end_of_dim_j = 0
- 
+
 !         start to check which proc is contained, write the result in proc_partsbackup in i,j,k system
   do while (end_of_dim_i ==  0)
     no_parts = no_parts + 1
     proc_parts (no_parts, 1) = found_proc_id
- 
+
     start_id_j = found_proc_id
     start_base_j = base_j
     start_size_j = size_j
- 
+
 !           dim-i
 !           check if it is contained in one proc on i dim
     if (base_i+size_i <= proc_dims(conf, dimI_offset, found_proc_id) &
@@ -730,11 +734,11 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
       size_i = base_i + size_i - proc_dims (conf, dimI_offset, found_proc_id) - proc_dims (conf, dimI_offset+6, found_proc_id)
       base_i = proc_dims (conf, dimI_offset, found_proc_id) + proc_dims (conf, dimI_offset+6, found_proc_id)
     end if
- 
+
 !           dim-k
     proc_parts (no_parts, 4) = base_k
     proc_parts (no_parts, 7) = size_k
- 
+
 !           dim-j
     end_of_dim_j = 0
     size_i_exist = 1
@@ -746,14 +750,14 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
         size_i_exist = 0
       else
         no_parts = no_parts + 1
- 
+
 !                the values are copied from last proc data in array
         proc_parts (no_parts, 1) = found_proc_id
         proc_parts (no_parts, 4) = proc_parts (no_parts-1, 4)
         proc_parts (no_parts, 5) = proc_parts (no_parts-1, 5)
         proc_parts (no_parts, 7) = proc_parts (no_parts-1, 7)
       end if
- 
+
       if (base_j+size_j <= proc_dims(conf, dimJ_offset, found_proc_id) &
                          + proc_dims(conf, dimJ_offset+6, found_proc_id)) then
         proc_parts (no_parts, 3) = base_j
@@ -767,20 +771,20 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
         size_j = base_j + size_j - proc_dims (conf, dimJ_offset, found_proc_id) - proc_dims (conf, dimJ_offset+6, found_proc_id)
         base_j = proc_dims (conf, dimJ_offset, found_proc_id) + proc_dims (conf, dimJ_offset+6, found_proc_id)
       end if
- 
+
       if (end_of_dim_j == 0) then
         found_proc_id = proc_neighb (found_proc_id, 1, 2)
         if (found_proc_id < 0) exit
       end if
     end do
- 
+
     if (end_of_dim_i == 0) then
       found_proc_id = proc_neighb (start_id_j, 1, 1)
       if (found_proc_id < 0) exit
     end if
- 
+
   end do
- 
+
 !         transform the result from i,j,k system to x,y,z system according to the style
   do p = 0, (iproc*jproc)
     base_i = proc_parts (p, 2)
@@ -789,7 +793,7 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
     size_i = proc_parts (p, 5)
     size_j = proc_parts (p, 6)
     size_k = proc_parts (p, 7)
- 
+
 !           physical space
     if (conf == 1) then
       proc_parts (p, 2) = base_k
@@ -798,7 +802,7 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
       proc_parts (p, 5) = size_k
       proc_parts (p, 6) = size_i
       proc_parts (p, 7) = size_j
- 
+
 !           fourier space (no translation nessessary)
     else if (conf .eq. 2) then
 !              proc_parts(p,2) = base_i
@@ -809,7 +813,7 @@ subroutine get_proc_parts (base_x, base_y, base_z, size_x, size_y, size_z, conf,
 !              proc_parts(p,7) = size_k
     end if
   end do
- 
+
 end subroutine get_proc_parts
 
 ! --------------------------------------
@@ -819,21 +823,21 @@ end subroutine get_proc_parts
 ! --------------------------------------
 subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
- 
+
   real (mytype), intent (in) :: source (NX_fft, jisize, kjsize)
   real (mytype), intent (out) :: dest (iiisize, NY_fft, kjsize)
   real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
- 
+
   real (8) :: t
   integer :: x, y, i, ierr, z, xs, j, N, ix, iy
   integer * 8 :: position
- 
+
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
   position = 1
- 
+
   do i = 0, iproc - 1
- 
+
     do z = 1, kjsize
       do y = 1, jisize
         do x = iiist (i), iiien (i)
@@ -846,7 +850,7 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * IiCntMax / (mytype) + 1
 #endif
   end do
- 
+
   t = t - MPI_Wtime ()
 #ifdef USE_EVEN
 ! Use MPI_Alltoall
@@ -858,7 +862,7 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   call mpi_alltoallv (rbuf1, IiCnts, IiStrt, mpi_byte, rbuf2, JiCnts, JiStrt, mpi_byte, mpi_comm_row, ierr)
 #endif
   t = t + MPI_Wtime ()
- 
+
 ! Unpack the data
   position = 1
   do i = 0, iproc - 1
@@ -874,7 +878,7 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * IiCntMax / (mytype) + 1
 #endif
   end do
- 
+
   dstart (1) = iiistart
   dend (1) = iiiend
   dsize (1) = iiisize
@@ -884,10 +888,10 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   dstart (3) = kjstart
   dend (3) = kjend
   dsize (3) = kjsize
- 
+
   return
 end subroutine
- 
+
 ! --------------------------------------
 !
 !     Transpose Y and X pencils (real data)
@@ -895,19 +899,19 @@ end subroutine
 ! --------------------------------------
 subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
- 
+
   real (mytype), intent (in) :: source (iiisize, NY_fft, kjsize)
   real (mytype), intent (out) :: dest (NX_fft, jisize, kjsize)
   real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
- 
+
   real (8) :: t
   integer :: x, y, i, ierr, z, xs, j, N, ix, iy
   integer * 8 :: position, pos1
- 
+
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
   position = 1
- 
+
   do i = 0, iproc - 1
     do z = 1, kjsize
       do y = jist (i), jien (i)
@@ -921,7 +925,7 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * JICntMax / (mytype) + 1
 #endif
   end do
- 
+
   t = t - MPI_Wtime ()
 #ifdef USE_EVEN
 ! Use MPI_Alltoall
@@ -935,7 +939,7 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
                       rbuf2, IiCnts, IiStrt, mpi_byte, mpi_comm_row, ierr)
 #endif
   t = t + MPI_Wtime ()
- 
+
 ! Unpack the data
   position = 1
   do i = 0, iproc - 1
@@ -951,7 +955,7 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * JICntMax / (mytype) + 1
 #endif
   end do
- 
+
   dstart (1) = 1
   dend (1) = NX_fft
   dsize (1) = NX_fft
@@ -961,10 +965,10 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   dstart (3) = kjstart
   dend (3) = kjend
   dsize (3) = kjsize
- 
+
   return
 end subroutine
- 
+
 ! --------------------------------------
 !
 !     Transpose X and Z pencils (real data)
@@ -972,21 +976,21 @@ end subroutine
 ! --------------------------------------
 subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
- 
+
   real (mytype), intent (in) :: source (NX_fft, jisize, kjsize)
   real (mytype), intent (out) :: dest (ijsize, jisize, NZ_fft)
   real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
- 
+
   real (8) :: t
   integer :: x, y, i, ierr, z, xs, j, N, ix, iy
   integer * 8 :: position
- 
+
 ! Pack the send buffer for exchanging x and z (within a given y plane ) into sendbuf
   position = 1
- 
+
   do i = 0, jproc - 1
- 
+
     do z = 1, kjsize
       do y = 1, jisize
         do x = ijst (i), ijen (i)
@@ -999,7 +1003,7 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * IJCntMax / (mytype) + 1
 #endif
   end do
- 
+
   t = t - MPI_Wtime ()
 #ifdef USE_EVEN
 ! Use MPI_Alltoall
@@ -1013,7 +1017,7 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
                       rbuf2, KjCnts, KjStrt, mpi_byte, mpi_comm_col, ierr)
 #endif
   t = t + MPI_Wtime ()
- 
+
 ! Unpack the data
   position = 1
   do i = 0, jproc - 1
@@ -1029,7 +1033,7 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * IJCntMax / (mytype) + 1
 #endif
   end do
- 
+
   dstart (1) = ijstart
   dend (1) = ijend
   dsize (1) = ijsize
@@ -1039,10 +1043,10 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   dstart (3) = 1
   dend (3) = NZ_fft
   dsize (3) = NZ_fft
- 
+
   return
 end subroutine
- 
+
 ! --------------------------------------
 !
 !     Transpose Z and X pencils (real data)
@@ -1050,21 +1054,21 @@ end subroutine
 ! --------------------------------------
 subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
- 
+
   real (mytype), intent (in) :: source (ijsize, jisize, NZ_fft)
   real (mytype), intent (out) :: dest (NX_fft, jisize, kjsize)
   real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
- 
+
   real (8) :: t
   integer :: x, y, i, ierr, z, xs, j, N, ix, iy
   integer * 8 :: position
- 
+
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
   position = 1
- 
+
   do i = 0, jproc - 1
- 
+
     do z = kjst (i), kjen (i)
       do y = 1, jisize
         do x = 1, ijsize
@@ -1077,7 +1081,7 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * KjCntMax / (mytype) + 1
 #endif
   end do
- 
+
   t = t - MPI_Wtime ()
 #ifdef USE_EVEN
 ! Use MPI_Alltoall
@@ -1089,7 +1093,7 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   call mpi_alltoallv (rbuf1, KjCnts, KjStrt, mpi_byte, rbuf2, IjCnts, IjStrt, mpi_byte, mpi_comm_col, ierr)
 #endif
   t = t + MPI_Wtime ()
- 
+
 ! Unpack the data
   position = 1
   do i = 0, jproc - 1
@@ -1105,7 +1109,7 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
     position = (i+1) * KjCntMax / (mytype) + 1
 #endif
   end do
- 
+
   dstart (1) = 1
   dend (1) = NX_fft
   dsize (1) = NX_fft
@@ -1115,23 +1119,23 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   dstart (3) = kjstart
   dend (3) = kjend
   dsize (3) = kjsize
- 
+
   return
 end subroutine
- 
-
- 
-
- 
-
- 
-
- 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 !========================================================
- 
+
 !      subroutine p3dfft_rot_x180 (XYZg)
 !      use fft_spec
 !      implicit none
@@ -1172,5 +1176,3 @@ end subroutine
 !      end subroutine p3dfft_rot_x180
 
       end module
-
-
