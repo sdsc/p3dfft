@@ -66,6 +66,7 @@
       dnz = nz_fft - nzc
       if(op(1:1) == '0' .or. op(1:1) == 'n') then
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
             do y=1,nyhc,NBy2
                y2 = min(y+NBy2-1,nyhc)
@@ -122,9 +123,9 @@
                 enddo
              enddo
           enddo
-
 	else
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
            do x=1,iisize
 	      do y=1,nyc
 	         do z=1,nzhc
@@ -139,7 +140,7 @@
 	      enddo 
 
 	      if(op(1:1) == 't' .or. op(1:1) == 'f') then
-                 call exec_b_c2_same(C, 1,nz_fft, &
+                 call exec_b_c2_same_serial(C, 1,nz_fft, &
 				  C, 1,nz_fft,nz_fft,nyc)
  	      else if(op(1:1) == 'c') then	
                  call exec_ctrans_r2_complex_same(C, 2,2*nz_fft, & 
@@ -199,11 +200,10 @@
 
       complex(mytype) B(nxhp,ny_fft,kjsize,nv)
       complex(mytype) A(ny_fft,nxhpc,kjsize,nv)
+      complex(mytype) tmp(nxhpc,ny_fft)
       integer x,y,z,iy,x2,ix,y2,nv,j
-      complex(mytype), allocatable :: tmp(:,:)
 
-
-      allocate(tmp(nxhpc,ny_fft))
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) collapse(2)
 
       do j=1,nv
       do z=1,kjsize
@@ -230,8 +230,6 @@
       enddo
       enddo
 
-      deallocate(tmp)
-
       return
       end subroutine
 
@@ -252,8 +250,9 @@
 
 !      allocate(tmp(ny_fft,nxhpc))
 
+!!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) collapse(2)
        do j=1,nv
-      do z=1,kjsize
+       do z=1,kjsize
          do y=1,ny_fft,nby1
             y2 = min(y+nby1-1,ny_fft)
             do x=1,nxhpc,nbx
@@ -316,6 +315,7 @@
       dny = ny_fft - nyc
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 	
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C) 
          do x=1,iisize
             do z=1,nzhc,NBz
 	       z2 = min(z+NBz-1,nzhc)
@@ -362,6 +362,7 @@
 
 	else
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C) 
            do x=1,iisize
               do z=1,nz_fft,NBz
 	         z2 = min(z+NBz-1,nz_fft)
@@ -442,11 +443,9 @@
       complex(mytype) B(nxhp,ny_fft,kjsize)
       complex(mytype) A(ny_fft,nxhpc,kjsize)
       integer x,y,z,iy,x2,ix,y2
-      complex(mytype), allocatable :: tmp(:,:)
+      complex(mytype) tmp(nxhpc,ny_fft)
 
-
-      allocate(tmp(nxhpc,ny_fft))
-
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) 
       do z=1,kjsize
          do x=1,nxhpc,nbx
             x2 = min(x+nbx-1,nxhpc)
@@ -470,9 +469,6 @@
          enddo
       enddo
 
-
-      deallocate(tmp)
-
       return
       end subroutine
 
@@ -494,6 +490,7 @@
 !      allocate(tmp(ny_fft,nxhpc))
 
 
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) 
       do z=1,kjsize
          do y=1,ny_fft,nby1
             y2 = min(y+nby1-1,ny_fft)

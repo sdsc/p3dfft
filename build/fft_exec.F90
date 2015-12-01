@@ -106,6 +106,42 @@
       return
       end
 
+      subroutine exec_b_c2_same_serial(X,stride_x1,stride_x2,Y,stride_y1, &
+          stride_y2,N,m)
+
+      use fft_spec
+      use p3dfft
+      implicit none
+
+      integer stride_x1,stride_x2,stride_y1,stride_y2,N,m
+      integer*8 plan
+      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+
+#ifdef FFTW
+
+      plan = plan2_bc_same(0)
+#ifndef SINGLE_PREC
+         call dfftw_execute_dft(plan,X,Y)
+#else
+         call sfftw_execute_dft(plan,X,Y)
+#endif
+
+#elif defined ESSL
+
+#ifndef SINGLE_PREC
+      call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
+              caux1,cnaux,caux2,cnaux)       
+#else
+      call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
+              caux1,cnaux,caux2,cnaux)       
+#endif
+
+#else
+      Error: undefined FFT library
+#endif
+      return
+      end
+
       subroutine exec_b_c2_same(X,stride_x1,stride_x2,Y,stride_y1, &
           stride_y2,N,m)
 
@@ -124,7 +160,7 @@
       tid = omp_get_thread_num()
       stx = startx_b_c2_same(tid)
       sty = starty_b_c2_same(tid)
-      plan = plan2_bc_same(tid) 
+      plan = plan2_bc_same(tid)
 #ifndef SINGLE_PREC
          call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
