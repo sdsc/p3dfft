@@ -5,7 +5,7 @@
 /* #undef CC */
 
 /* arguments passed to configure script */
-#define CONFIGURE_ARGS " '--enable-gnu' '--enable-fftw' '--enable-stride1' '--with-fftw=/opt/fftw/3.3.3/gnu/mvapich2/ib' 'FC=mpif90' 'CC=mpicc'"
+#define CONFIGURE_ARGS " '--prefix=/home/engels/src/p3dfft-pseudospectators/' '--enable-gnu' '--enable-fftw' '--with-fftw=/home/engels/src/fftw-3.3.3' '--enable-measure' '--enable-stride1' 'LDFLAGS=-lm' 'FC=mpif90' 'CC=mpicc'"
 
 /* Define if you want to compile P3DFFT using CRAY compiler */
 /* #undef CRAY */
@@ -94,6 +94,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "p3dfft"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.6"
