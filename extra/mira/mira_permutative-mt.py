@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# This script will generate a permutative batch job script on Edison for
+# This script will generate a permutative batch job script on Mira for
 # the mt branch of p3dfft.
 #
 # More specifically, the generated batch script will test for correctness
@@ -16,14 +16,24 @@
 # The jobs/ directory needs to exist in the current working directory. This
 # is where all batch job files are written to.
 
+
+# Make another script to run the resultant script:
+# #!/bin/bash
+# qsub -A P3DFFT -t 30 -n 1 --mode script mira_permutative-mt.sh
+
 import os
 import re
 
-TOTALTASKS = 16
-NUMMPITASKS = 8  # used for dims
+NUMNODES = 1
+TASKSPERNODE = 16
+
+TOTALTASKS = NUMNODES * TASKSPERNODE # for reference
+
+RANKSPERNODE = 8 # used for dims
 NUMTHREADS = 2   # env var OMP_NUM_THREADS
 
-assert (TOTALTASKS == NUMMPITASKS * NUMTHREADS)
+# TASKSPERNODE = RANKSPERNODE * NUMTHREADS
+assert (TASKSPERNODE == RANKSPERNODE * NUMTHREADS)
 
 # Factorisation helper function
 def factors(n):
@@ -31,18 +41,10 @@ def factors(n):
         ([i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0)))
 
     # Open batch job file to be written to.
-batchf = open('jobs/edison_permutative-mt.sh', 'w')
+batchf = open('jobs/mira_permutative-mt.sh', 'w')
 
 # Write SBATCH header commands.
 batchf.write('#!/bin/bash\n')
-batchf.write('#PBS -N p3dfft-mt\n')
-batchf.write('#PBS -o out/out.$PBS_JOBID\n')
-batchf.write('#PBS -e out/err.$PBS_JOBID\n')
-batchf.write('#PBS -q debug\n')
-batchf.write('#PBS -l mppwidth=' + str(TOTALTASKS) + '\n')
-batchf.write('#PBS -M jytang@ucsd.edu\n')
-batchf.write('#PBS -m abe\n')
-batchf.write('#PBS -l walltime=00:30:00\n')
 batchf.write('\n')
 batchf.write('export OMP_NUM_THREADS=' + str(NUMTHREADS) + '\n')
 
@@ -63,6 +65,7 @@ c_test_files = filter(pattern.match, next(os.walk(c_dir))[2])
 
 # Get full paths to tests in all dirs
 all_tests = []
+
 for d in p3dfft_dirs:
     f_dir = os.path.join(d, 'sample/FORTRAN')
     c_dir = os.path.join(d, 'sample/C')
@@ -73,7 +76,7 @@ for d in p3dfft_dirs:
 
 # Calculate dims
 all_dims = []
-facs = sorted(factors(NUMMPITASKS))
+facs = sorted(factors(RANKSPERNODE))
 if (len(facs) % 2 == 0):
     # take the two factors in the middle
     all_dims.append("'" + str(facs[len(facs)/2-1]) + " " + str(facs[len(facs)/2]) + "'")
@@ -96,10 +99,12 @@ for test in all_tests:
         # write dims
         batchf.write("echo " + dims + " > dims\n")
         # run test
-        batchf.write("aprun -n " + str(NUMMPITASKS) + " -d " + str(NUMTHREADS) + " -ss " + basedir + "/" + test + "\n")
+        batchf.write("runjob -p " + str(NUMCORES) + " --np " + str(NUMCORES) + " " + basedir + "/" + test + "\n")
     # 1x1 dims test
     batchf.write("echo '1 1' > dims\n")
-    batchf.write("aprun -n 1 -d " + str(NUMTHREADS) + " " + basedir + "/" + test + "\n")
+    batchf.write("runjob -p 1 --np 1 " + basedir + "/" + test + "\n")
+
+        # can add -np (#nodes * --npernode)
 
 # Truncate previous content if any existed.
 #batchf.truncate()

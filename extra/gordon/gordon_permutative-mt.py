@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# This script will generate a permutative batch job script on Edison for
+# This script will generate a permutative batch job script on Gordon for
 # the mt branch of p3dfft.
 #
 # More specifically, the generated batch script will test for correctness
@@ -31,15 +31,15 @@ def factors(n):
         ([i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0)))
 
     # Open batch job file to be written to.
-batchf = open('jobs/edison_permutative-mt.sh', 'w')
+batchf = open('jobs/gordon_permutative-mt.sh', 'w')
 
 # Write SBATCH header commands.
 batchf.write('#!/bin/bash\n')
 batchf.write('#PBS -N p3dfft-mt\n')
 batchf.write('#PBS -o out/out.$PBS_JOBID\n')
 batchf.write('#PBS -e out/err.$PBS_JOBID\n')
-batchf.write('#PBS -q debug\n')
-batchf.write('#PBS -l mppwidth=' + str(TOTALTASKS) + '\n')
+batchf.write('#PBS -q normal\n')
+batchf.write('#PBS -l nodes=1:ppn=' + str(NUMMPITASKS) + ':native\n')
 batchf.write('#PBS -M jytang@ucsd.edu\n')
 batchf.write('#PBS -m abe\n')
 batchf.write('#PBS -l walltime=00:30:00\n')
@@ -96,10 +96,10 @@ for test in all_tests:
         # write dims
         batchf.write("echo " + dims + " > dims\n")
         # run test
-        batchf.write("aprun -n " + str(NUMMPITASKS) + " -d " + str(NUMTHREADS) + " -ss " + basedir + "/" + test + "\n")
+        batchf.write("ibrun -npernode " + str(NUMMPITASKS) + " -tpp " + str(NUMTHREADS) + " " + basedir + "/" + test + "\n")
     # 1x1 dims test
     batchf.write("echo '1 1' > dims\n")
-    batchf.write("aprun -n 1 -d " + str(NUMTHREADS) + " " + basedir + "/" + test + "\n")
+    batchf.write("ibrun -npernode 1 -tpp " + str(NUMTHREADS) + " " + basedir + "/" + test + "\n")
 
 # Truncate previous content if any existed.
 #batchf.truncate()

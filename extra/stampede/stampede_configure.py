@@ -25,7 +25,7 @@ else:
     os.chdir(d)
     b = list(bin(i))[2:]
     b = map(int,['0']*(len(opts)-len(b)) + b)
-    c = './configure --enable-intel --enable-fftw --with-fftw=$FFTWHOME FC=mpif90 CC=mpicc'
+    c = './configure --enable-intel --enable-fftw --with-fftw=$TACC_FFTW3_DIR FC=mpif90 CC=mpicc'
     for i in range(len(opts)):
       if b[i]:
         c += ' --enable-' + opts[i]

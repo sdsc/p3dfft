@@ -1,16 +1,14 @@
 #!/usr/bin/python
 
-# This script will generate a permutative batch job script on Edison for
-# the mt branch of p3dfft.
+# This script will generate a permutative batch job script on Stampede.
 #
 # More specifically, the generated batch script will test for correctness
 # of all tests (under sample/FORTRAN and sample/C) for each configuration
-# of p3dfft-mt available (see below). Because we only care about correctness,
-# 1 node with 16 cores will be used with four dimensions: 4x4, 1x16, 16x1.
-# NUMTHREADS can be set to vary the number of OMP threads.
+# of p3dfft available (see below). Because we only care about correctness,
+# 1 node with 16 cores will be used with four dimensions: 4x4, 1x16, 16x1, 1x1.
 #
-# The p3dfft-mt directories need to be in the current working directory from which
-# this script is executed, named 'p3dfft0-mt' to 'p3dfftX-mt' (use the configure-mt.py
+# The p3dfft directories need to be in the current working directory from which
+# this script is executed, named 'p3dfft0' to 'p3dfftX' (use the configure.py
 # script for that).
 #
 # The jobs/ directory needs to exist in the current working directory. This
@@ -19,11 +17,7 @@
 import os
 import re
 
-TOTALTASKS = 16
-NUMMPITASKS = 8  # used for dims
-NUMTHREADS = 2   # env var OMP_NUM_THREADS
-
-assert (TOTALTASKS == NUMMPITASKS * NUMTHREADS)
+NUMCORES = 16
 
 # Factorisation helper function
 def factors(n):
@@ -31,26 +25,23 @@ def factors(n):
         ([i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0)))
 
     # Open batch job file to be written to.
-batchf = open('jobs/edison_permutative-mt.sh', 'w')
+batchf = open('jobs/stampede_permutative.sh', 'w')
 
 # Write SBATCH header commands.
 batchf.write('#!/bin/bash\n')
-batchf.write('#PBS -N p3dfft-mt\n')
-batchf.write('#PBS -o out/out.$PBS_JOBID\n')
-batchf.write('#PBS -e out/err.$PBS_JOBID\n')
-batchf.write('#PBS -q debug\n')
-batchf.write('#PBS -l mppwidth=' + str(TOTALTASKS) + '\n')
-batchf.write('#PBS -M jytang@ucsd.edu\n')
-batchf.write('#PBS -m abe\n')
-batchf.write('#PBS -l walltime=00:30:00\n')
+batchf.write('#SBATCH -J p3dfft\n')
+batchf.write('#SBATCH -o out/out.%j\n')
+batchf.write('#SBATCH -e out/err.%j\n')
+batchf.write('#SBATCH -p normal\n')
+batchf.write('#SBATCH -n ' + str(NUMCORES) + '\n')
+batchf.write('#SBATCH --mail-user=jytang@ucsd.edu\n')
+batchf.write('#SBATCH --mail-type=ALL\n')
+batchf.write('#SBATCH -t 00:30:00\n')
 batchf.write('\n')
-batchf.write('export OMP_NUM_THREADS=' + str(NUMTHREADS) + '\n')
-
-basedir = os.getcwd()
 
 # Get all p3dfft config directories
 p3dfft_dirs = next(os.walk('.'))[1]
-pattern = re.compile('p3dfft\d+-mt$')
+pattern = re.compile('p3dfft\d+$')
 p3dfft_dirs = sorted(filter(pattern.match, p3dfft_dirs))
 
 # Get all test names using first directory
@@ -63,6 +54,7 @@ c_test_files = filter(pattern.match, next(os.walk(c_dir))[2])
 
 # Get full paths to tests in all dirs
 all_tests = []
+
 for d in p3dfft_dirs:
     f_dir = os.path.join(d, 'sample/FORTRAN')
     c_dir = os.path.join(d, 'sample/C')
@@ -73,7 +65,7 @@ for d in p3dfft_dirs:
 
 # Calculate dims
 all_dims = []
-facs = sorted(factors(NUMMPITASKS))
+facs = sorted(factors(NUMCORES))
 if (len(facs) % 2 == 0):
     # take the two factors in the middle
     all_dims.append("'" + str(facs[len(facs)/2-1]) + " " + str(facs[len(facs)/2]) + "'")
@@ -96,10 +88,10 @@ for test in all_tests:
         # write dims
         batchf.write("echo " + dims + " > dims\n")
         # run test
-        batchf.write("aprun -n " + str(NUMMPITASKS) + " -d " + str(NUMTHREADS) + " -ss " + basedir + "/" + test + "\n")
+        batchf.write("ibrun -n " + str(NUMCORES) + " ../" + test + "\n")
     # 1x1 dims test
     batchf.write("echo '1 1' > dims\n")
-    batchf.write("aprun -n 1 -d " + str(NUMTHREADS) + " " + basedir + "/" + test + "\n")
+    batchf.write("ibrun -n 1 ../" + test + "\n")
 
 # Truncate previous content if any existed.
 #batchf.truncate()
