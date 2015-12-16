@@ -38,11 +38,17 @@
        complex(mytype), allocatable :: A(:),C(:)
        integer omp_get_num_threads,omp_get_thread_num,l,m,tid,ierr
 
+#ifdef OPENMP
+       
 !$OMP PARALLEL 
 !$OMP MASTER      
       num_thr = omp_get_num_threads()
 !$OMP END MASTER
 !$OMP END PARALLEL 
+
+#else
+      num_thr = 1
+#endif
 
       if(taskid .eq. 0) then
          print *,'Running on ',num_thr,'threads'
