@@ -78,7 +78,11 @@
 
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+	tid = 0
+#endif
       stx = startx_b_c1(tid)
       sty = starty_b_c1(tid)
       plan = plan1_bc(tid) 
@@ -157,7 +161,11 @@
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+	tid = 0
+#endif
       stx = startx_b_c2_same(tid)
       sty = starty_b_c2_same(tid)
       plan = plan2_bc_same(tid)
@@ -199,7 +207,11 @@
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_b_c2_dif(tid)
       sty = starty_b_c2_dif(tid)
       plan = plan2_bc_dif(tid) 
@@ -243,7 +255,11 @@
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_bcr(tid)
       sty = starty_bcr(tid)
       plan = plan1_bcr(tid) 
@@ -285,12 +301,16 @@
 
 
 #ifdef FFTW
-!!$OMP PARALLEL private(tid,stx,sty,plan)
+!$OMP PARALLEL private(tid,stx,sty,plan)
 
-!      tid = omp_get_thread_num()
+#ifdef OPENMP
+      tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
 
 
-       do tid=0,num_thr-1
+!       do tid=0,num_thr-1
        
       stx = startx_f_c1(tid)
       sty = starty_f_c1(tid)
@@ -304,8 +324,8 @@
       call sfftw_execute_dft(plan,X(stx),Y(sty))
 #endif
 
-     enddo
-!!$OMP END PARALLEL
+!     enddo
+!$OMP END PARALLEL
 
 #elif defined ESSL
 
@@ -337,7 +357,11 @@
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_f_c2_same(tid)
       sty = starty_f_c2_same(tid)
       plan = plan2_fc_same(tid) 
@@ -379,7 +403,11 @@
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
-      tid = omp_get_thread_num()
+#ifdef OPENMP
+     tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_f_c2_dif(tid)
       sty = starty_f_c2_dif(tid)
       plan = plan2_fc_dif(tid) 
@@ -424,7 +452,11 @@
 
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_frc(tid)
       sty = starty_frc(tid)
       plan = plan1_frc(tid) 
@@ -471,7 +503,11 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_ctrans_same(tid)
       sty = starty_ctrans_same(tid)
       plan = plan_ctrans_same(tid) 
@@ -516,7 +552,11 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_ctrans_dif(tid)
       sty = starty_ctrans_dif(tid)
       plan = plan_ctrans_dif(tid) 
@@ -562,7 +602,11 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_ctrans_same(tid)
       sty = starty_ctrans_same(tid)
       plan = plan_ctrans_same(tid) 
@@ -616,7 +660,11 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_ctrans_dif(tid)
       sty = starty_ctrans_dif(tid)
       plan = plan_ctrans_dif(tid) 
@@ -675,7 +723,11 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_strans_same(tid)
       sty = starty_strans_same(tid)
       plan = plan_strans_same(tid) 
@@ -720,7 +772,11 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_strans_dif(tid)
       sty = starty_strans_dif(tid)
       plan = plan_strans_dif(tid) 
@@ -766,7 +822,11 @@ subroutine exec_strans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
-      tid = omp_get_thread_num()
+#ifdef OPENMP
+      tid = omp_get_thread_num() 
+#else
+      tid = 0
+#endif
       stx = startx_strans_same(tid)
       sty = starty_strans_same(tid)
       plan = plan_strans_same(tid) 
@@ -820,7 +880,11 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
+#ifdef OPENMP
       tid = omp_get_thread_num()
+#else
+      tid = 0
+#endif
       stx = startx_strans_dif(tid)
       sty = starty_strans_dif(tid)
       plan = plan_strans_dif(tid) 
