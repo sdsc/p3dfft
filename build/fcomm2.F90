@@ -197,7 +197,7 @@
       complex(mytype) dest(iisize,jjsize,nz_fft)
 
       real(r8) t,tc
-      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,dny
+      integer x,z,y,i,j,ierr,xs,ys,y2,z2,iy,iz,dny
       integer(i8) position,pos1,pos0
 
 
@@ -222,7 +222,7 @@
          tc = tc - MPI_Wtime()
 
          position = 1
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
          do i=0,jproc-1
             do z=kjst(i),kjen(i)
                do y=1,jjsize

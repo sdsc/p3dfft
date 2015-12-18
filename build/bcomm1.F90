@@ -196,8 +196,8 @@
       complex(mytype) source(iisize,jjsize,nz_fft)
       complex(mytype) dest(iisize,ny_fft,kjsize)
       real(r8) t,tc
-      integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2,dny
-      integer(i8) position,pos1
+      integer x,y,z,i,j,ierr,xs,ys,iy,iz,y2,z2,dny
+      integer(i8) position,pos1,pos0
       
 !     Pack the data for sending
 
@@ -206,7 +206,7 @@
       if(KfCntUneven) then
          tc = tc - MPI_Wtime()
          position = 1
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
          do i=0,jproc-1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
