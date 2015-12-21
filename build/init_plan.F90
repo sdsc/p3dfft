@@ -84,7 +84,7 @@
          starty_bcr(tid+1) = starty_bcr(tid) + (m+1)*nx_fft 		
          startx_bcr(tid+1) = startx_bcr(tid) + (m+1)*nxhp 		
       enddo		         
-      do tid=l,num_thr-1
+      do tid=l,num_thr-2
          startx_frc(tid+1) = startx_frc(tid) + m*nx_fft
          starty_frc(tid+1) = starty_frc(tid) + m*nxhp
          starty_bcr(tid+1) = starty_bcr(tid) + m*nx_fft
@@ -154,7 +154,7 @@
          starty_b_c1(tid+1) = starty_b_c1(tid) + (m+1)*ny_fft 		
          startx_b_c1(tid+1) = startx_b_c1(tid) + (m+1)*ny_fft 		
       enddo		         
-      do tid=l,num_thr-1
+      do tid=l,num_thr-2
          startx_f_c1(tid+1) = startx_f_c1(tid) + m*ny_fft
          starty_f_c1(tid+1) = starty_f_c1(tid) + m*ny_fft
          starty_b_c1(tid+1) = starty_b_c1(tid) + m*ny_fft
@@ -327,7 +327,7 @@
          starty_b_c1(tid+1) = starty_b_c1(tid) + (m+1)
          startx_b_c1(tid+1) = startx_b_c1(tid) + (m+1)
       enddo		         
-      do tid=l,num_thr-1
+      do tid=l,num_thr-2
          startx_f_c1(tid+1) = startx_f_c1(tid) + m
          starty_f_c1(tid+1) = starty_f_c1(tid) + m
          starty_b_c1(tid+1) = starty_b_c1(tid) + m
@@ -367,10 +367,11 @@
 #endif
 	enddo
 
+#ifdef DEBUG
        print *,'plan1_fc=',plan1_fc
        print *,'plan1_bc=',plan1_bc
        print *,'plan1_frc=',plan1_frc
-
+#endif 
 	deallocate(A)
 
 ! !$OMP END PARALLEL
@@ -401,7 +402,7 @@
 	 starty_ctrans_same(tid+1) = starty_ctrans_same(tid) + (m+1)*2
 	 starty_strans_same(tid+1) = starty_strans_same(tid) + (m+1)*2
       enddo		         
-      do tid=l,num_thr-1
+      do tid=l,num_thr-2
          startx_f_c2_same(tid+1) = startx_f_c2_same(tid) + m
          starty_f_c2_same(tid+1) = starty_f_c2_same(tid) + m
          starty_b_c2_same(tid+1) = starty_b_c2_same(tid) + m
