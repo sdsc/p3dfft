@@ -51,7 +51,7 @@
       use fft_spec
       implicit none
 
-      integer x,y,z,i,k,nx,ny,nz,ierr,dnz,nv,j,n1,n2,dim_in,dim_out
+      integer x,y,z,i,k,nx,ny,nz,ierr,dnz,nv,j,n1,n2,dim_in,dim_out,dny
       real(mytype),TARGET :: XgYZ(dim_out,nv)
 #ifdef STRIDE1
       complex(mytype), TARGET :: XYZg(dim_in,nv)
@@ -163,6 +163,12 @@
 		call seg_zero_z_many(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz,iisize*jjsize*nz,nv)
  
 		call ztran_b_same_many(buf,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
+
+	        dny = ny - nyc
+	        call seg_copy_y_b_many(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_copy_y_b_many(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_zero_y_many(buf,nyhc+1,ny-nyhc,iisize,ny,nz,nv)
+
               endif
 	    endif
          endif
@@ -212,7 +218,8 @@
          call reorder_b2_many(buf,buf1,nv)
 #else
 	Nl = jisize*kjsize*nxhp
-	call ar_copy_many(buf,jisize*kjsize*nxhp,buf1,jisize*kjsize*nxhp,Nl,nv)
+	call seg_copy_x_b_many(buf,buf1,1,nxhpc,0,nxhpc,nxhp,jisize,kjsize,nxhpc*jisize*kjsize,nv)
+	call seg_zero_x_many(buf1,nxhpc+1,nxhp,nxhp,jisize,kjsize,nv)
 #endif
       endif
 
@@ -342,7 +349,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
 
-      integer x,y,z,i,k,nx,ny,nz,ierr,dnz
+      integer x,y,z,i,k,nx,ny,nz,ierr,dnz,dny
       integer(i8) Nl
       character(len=3) op
 
@@ -488,41 +495,39 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
          else
            if(iisize*jjsize .gt. 0) then
 
-	      if(op(1:1) == 'n' .or. op(1:1) == '0') then
-
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nz,0,iisize,jjsize,nz)
-              else
-
 	        dnz = nz - nzc
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
-		call seg_zero_z(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz)
-
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf1,iisize,jjsize,nzhc+1,nz-nzhc,nz)
  
     	         if(op(1:1) == 't' .or. op(1:1) == 'f') then
-                    call init_b_c(buf, iisize*jjsize, 1,  &
-			     buf, iisize*jjsize, 1,nz,iisize*jjsize)
-                    call exec_b_c2_same(buf, iisize*jjsize, 1, &
-			      buf, iisize*jjsize, 1,nz,iisize*jjsize)
+                    call init_b_c(buf1, iisize*jjsize, 1,  &
+			     buf1, iisize*jjsize, 1,nz,iisize*jjsize)
+                    call exec_b_c2_same(buf1, iisize*jjsize, 1, &
+			      buf1, iisize*jjsize, 1,nz,iisize*jjsize)
    	         else if(op(1:1) == 'c') then
-	            call init_ctrans_r2 (buf, 2*iisize*jjsize, 1, &
-			            buf, 2*iisize*jjsize, 1, &
+	            call init_ctrans_r2 (buf1, 2*iisize*jjsize, 1, &
+			            buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-                    call exec_ctrans_r2_same (buf, 2*iisize*jjsize, 1, & 
- 				    buf, 2*iisize*jjsize, 1, &
+                    call exec_ctrans_r2_same (buf1, 2*iisize*jjsize, 1, & 
+ 				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	         else if(op(1:1) == 's') then
-	            call init_strans_r2 (buf, 2*iisize*jjsize, 1, &
-		    	            buf, 2*iisize*jjsize, 1, &
+	            call init_strans_r2 (buf1, 2*iisize*jjsize, 1, &
+		    	            buf1, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-                    call exec_strans_r2_same (buf, 2*iisize*jjsize, 1, & 
-				    buf, 2*iisize*jjsize, 1, &
+                    call exec_strans_r2_same (buf1, 2*iisize*jjsize, 1, & 
+				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize) 
                  else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		    print *,taskid,'Unknown transform type: ',op(1:1)
 	            call MPI_abort(MPI_COMM_WORLD,ierr)
-	         endif
-              endif
+ 	         endif
+
+ 		 dny = ny - nyc
+		 call seg_copy_y(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz)
+		 call seg_copy_y(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz)
+		 call seg_zero_y(buf,nyhc+1,ny-nyhc,iisize,ny,nz)
 	    endif
          endif
 #endif
@@ -597,11 +602,14 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 ! Perform Complex-to-real FFT in x dimension for all y and z
          if(jisize * kjsize .gt. 0) then
 
-            call init_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+	    call seg_copy_x(buf,buf1,1,nxhpc,0,nxhpc,nxhp,jisize,kjsize)
+	    call seg_zero_x(buf1,nxhpc+1,nxhp,nxhp,jisize,kjsize)
+
+            call init_b_c2r(buf1,nxhp,XgYZ,nx,nx,jisize*kjsize)
 
             timers(12) = timers(12) - MPI_Wtime()
 
-            call exec_b_c2r(buf,nxhp,XgYZ,nx,nx,jisize*kjsize)
+            call exec_b_c2r(buf1,nxhp,XgYZ,nx,nx,jisize*kjsize)
             timers(12) = timers(12) + MPI_Wtime()
          endif
        endif	

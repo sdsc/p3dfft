@@ -57,7 +57,7 @@
       real(mytype), TARGET :: XgYZ(dim_in,nv)
       complex(mytype), TARGET :: XYZg(dim_out,nv)
 
-      integer x,y,z,i,nx,ny,nz,ierr,dnz,nv,j,err,n1,n2
+      integer x,y,z,i,nx,ny,nz,ierr,dnz,nv,j,err,n1,n2,dny
       integer(i8) Nl
       character(len=3) op
       if(.not. mpi_set) then
@@ -115,10 +115,10 @@
 ! FFT transform (R2C) in X for all z and y
 
       if(jisize * kjsize .gt. 0) then
-         call init_f_r2c(XgYZ,nx,buf,nxhp,nx,jisize*kjsize)
+         call init_f_r2c(XgYZ,nx,buf2,nxhp,nx,jisize*kjsize)
 
          timers(5) = timers(5) - MPI_Wtime()
-	 call f_r2c_many(XgYZ,nx,buf,nxhp,nx,jisize*kjsize,dim_in,nv)
+	 call f_r2c_many(XgYZ,nx,buf2,nxhp,nx,jisize*kjsize,dim_in,nv)
          timers(5) = timers(5) + MPI_Wtime()
 
       endif
@@ -130,12 +130,14 @@
 #ifdef DEBUG
 	print *,taskid,': Calling fcomm1'
 #endif
-         call fcomm1_many(buf,buf,nv,timers(1),timers(6))
+         call fcomm1_many(buf2,buf,nv,timers(1),timers(6))
          
+      else
 
 #ifdef STRIDE1
-      else
-         call reorder_f1_many(buf,buf,buf1,nv)
+         call reorder_f1_many(buf2,buf,buf1,nv)
+#else
+ 	 call seg_copy_x_f_many(buf2,buf,1,nxhpc,0,nxhp,nxhpc,jisize,kjsize,nxhpc*jisize*kjsize,nv)
 #endif
       endif
 
@@ -231,13 +233,20 @@
          dnz = nz - nzc
 	 if(dnz .gt. 0) then
 
-	    call ztran_f_same_many(buf,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
-            call seg_copy_z_f_many(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz,dim_out,nv)
-            call seg_copy_z_f_many(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz,dim_out,nv)
+	    dny = ny - nyc
+	    call seg_copy_y_f_many(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+
+	    call ztran_f_same_many(buf1,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
+            call seg_copy_z_f_many(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz,dim_out,nv)
+            call seg_copy_z_f_many(buf1,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz,dim_out,nv)
 	else
 
-         call ar_copy_many(buf,iisize*jjsize*nz,XYZg,dim_out,Nl,nv)
-	 call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
+	    dny = ny - nyc
+	    call seg_copy_y_f_many(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+
+	    call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
         endif
 #endif
 
@@ -435,7 +444,7 @@
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
 
-      integer x,y,z,i,nx,ny,nz,ierr,dnz
+      integer x,y,z,i,nx,ny,nz,ierr,dnz,dny
       integer(i8) Nl
       character(len=3) op
       
@@ -459,11 +468,11 @@
 
 
       if(jisize * kjsize .gt. 0) then
-         call init_f_r2c(XgYZ,nx,buf,nxhp,nx,jisize*kjsize)
+         call init_f_r2c(XgYZ,nx,buf2,nxhp,nx,jisize*kjsize)
 
          timers(5) = timers(5) - MPI_Wtime()
 
-         call exec_f_r2c(XgYZ,nx,buf,nxhp,nx,jisize*kjsize)
+         call exec_f_r2c(XgYZ,nx,buf2,nxhp,nx,jisize*kjsize)
 
          timers(5) = timers(5) + MPI_Wtime()
 
@@ -477,12 +486,14 @@
 #ifdef DEBUG
 	print *,taskid,': Calling fcomm1'
 #endif
-         call fcomm1(buf,buf,timers(1),timers(6))
+         call fcomm1(buf2,buf,timers(1),timers(6))
          
+      else
 
 #ifdef STRIDE1
-      else
-         call reorder_f1(buf,buf,buf1)
+         call reorder_f1(buf2,buf,buf1)
+#else
+	call seg_copy_x(buf2,buf,1,nxhpc,0,nxhp,nxhpc,jisize,kjsize)
 #endif
       endif
 
@@ -630,37 +641,44 @@
          dnz = nz - nzc
 	 if(dnz .gt. 0) then
 
+	    dny = ny - nyc
+	    call seg_copy_y(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
-               call init_f_c(buf,iisize*jjsize, 1,buf,iisize*jjsize, 1,nz,iisize*jjsize)
+               call init_f_c(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
          
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_f_c2_same(buf,iisize*jjsize, 1,buf,iisize*jjsize, 1,nz,iisize*jjsize)
+              call exec_f_c2_same(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 'c') then
-               call init_ctrans_r2(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+               call init_ctrans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
          
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_ctrans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_ctrans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 's') then
-               call init_strans_r2(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+               call init_strans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
          
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_strans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_strans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
 		print *,'Unknown transform type: ',op(3:3)
 		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
-	   call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-	   call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
 
 	else
 
-         call ar_copy(buf,XYZg,Nl)
+	    dny = ny - nyc
+	    call seg_copy_y(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
          
