@@ -171,7 +171,7 @@ AC_MSG_CHECKING([whether to override default value of NBL_X])
 AC_ARG_ENABLE(nblx, [AC_HELP_STRING([--enable-nblx], [to define loop blocking factor NBL_X])], nblval=$enableval, nblval="")
 if test "$nblval" != ""; then
         AC_MSG_RESULT([yes])
-        AC_DEFINE(NBL_X, $nblval, [Define if you want to override the default value of NBL_X]) 
+        AC_DEFINE(NBL_X, $nblval, [Define if you want to override the default value of NBL_X])
 	eval "ARRAY${N}='-DNBL_X=$nblval'"
         N=`expr $N + 1`
 else
@@ -188,7 +188,7 @@ if test "$nblval" != ""; then
         N=`expr $N + 1`
 else
         AC_MSG_RESULT([no])
-fi 
+fi
 
 # check whether to override default value of NBL_Y2
 AC_MSG_CHECKING([whether to override the default value of NBL_Y2])
@@ -200,7 +200,7 @@ if test "$nblval" != ""; then
         N=`expr $N + 1`
 else
         AC_MSG_RESULT([no])
-fi 
+fi
 
 # check whether to override default value of NBL_Z
 AC_MSG_CHECKING([whether to override the default value of NBL_Z])
@@ -212,17 +212,17 @@ if test "$nblval" != ""; then
         N=`expr $N + 1`
 else
         AC_MSG_RESULT([no])
-fi 
+fi
 
 # check whether to use OpenMP
-# AC_MSG_CHECKING([whether to use OpenMP library])
-# AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
-# AC_MSG_RESULT([$ok])
-# if test "$ok" = "yes"; then
-#       AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
-#       eval "ARRAY${N}='-DOPENMP'"
-#       N=`expr $N + 1`
-# fi
+AC_MSG_CHECKING([whether to use OpenMP library])
+AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+      AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
+      eval "ARRAY${N}='-DOPENMP'"
+      N=`expr $N + 1`
+fi
 
 # check whether to use FFTW
 AC_MSG_CHECKING([whether to use FFTW library])
@@ -280,13 +280,13 @@ else
 	fi
 fi
 
-# check for essl                                                                                                                       
-                                                           
+# check for essl
+
 AC_MSG_CHECKING([ESSL directory])
 AC_ARG_WITH(essl, [AC_HELP_STRING([--with-essl], [path to location of ESSL library])], withessl=$withval, withessl="")
 
 if test "$withessl" != "yes" && test "$withessl" != ""; then
-   	
+
         AC_MSG_RESULT([$withessl])
         if [[ -d $withessl/lib64 ]]; then
                 AC_SUBST(ESSL_INC, "-I$withessl/include")
