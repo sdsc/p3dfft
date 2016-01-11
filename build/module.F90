@@ -392,6 +392,36 @@
       end subroutine
 
 !========================================================
+      subroutine seg_zero_x_many(A,x1,x2,xdim,ydim,zdim,nv)
+!========================================================
+
+      implicit none
+      integer x,y,z,xdim,ydim,zdim,x1,x2,nv,j,dim
+      complex(mytype) A(xdim,ydim,zdim,nv)
+
+      do j=1,nv
+         call seg_zero_x(A(1,1,1,j),x1,x2,xdim,ydim,zdim)
+      enddo
+
+      return
+      end subroutine
+
+!========================================================
+      subroutine seg_zero_y_many(A,y1,y2,xdim,ydim,zdim,nv)
+!========================================================
+
+      implicit none
+      integer x,y,z,xdim,ydim,zdim,y1,y2,nv,j,dim
+      complex(mytype) A(xdim,ydim,zdim,nv)
+
+      do j=1,nv
+         call seg_zero_y(A(1,1,1,j),y1,y2,xdim,ydim,zdim)
+      enddo
+
+      return
+      end subroutine
+
+!========================================================
       subroutine seg_zero_z_many(A,xdim,ydim,z1,z2,zdim,dim,nv)
 !========================================================
 
@@ -426,6 +456,104 @@
       end subroutine seg_zero_z
 
 !========================================================
+      subroutine seg_zero_y(A,y1,y2,xdim,ydim,zdim)
+!========================================================
+
+      implicit none
+      integer x,y,z,xdim,ydim,zdim,y1,y2
+      complex(mytype) A(xdim,ydim,zdim)
+
+      do z=1,zdim
+         do y=y1,y2
+	    do x=1,xdim
+	       A(x,y,z) = 0.
+	    enddo
+	 enddo
+      enddo
+
+      return
+      end subroutine seg_zero_y
+
+!========================================================
+      subroutine seg_zero_x(A,x1,x2,xdim,ydim,zdim)
+!========================================================
+
+      implicit none
+      integer x,y,z,xdim,ydim,zdim,x1,x2
+      complex(mytype) A(xdim,ydim,zdim)
+
+      do z=1,zdim
+         do y=1,ydim
+	    do x=x1,x2
+	       A(x,y,z) = 0.
+	    enddo
+	 enddo
+      enddo
+
+      return
+      end subroutine seg_zero_x
+
+!========================================================
+    subroutine seg_copy_x_f_many(in,out,x1,x2,shift_x,xdim1,xdim2,ydim,zdim,dim,nv)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z,nv,j,dim
+    complex(mytype) in(xdim1,ydim,zdim,nv), out(dim,nv)
+
+    do j=1,nv
+      call seg_copy_x(in(1,1,1,j),out(1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)    
+    enddo
+
+    return
+    end subroutine
+
+!========================================================
+    subroutine seg_copy_x_b_many(in,out,x1,x2,shift_x,xdim1,xdim2,ydim,zdim,dim,nv)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z,nv,j,dim
+    complex(mytype) out(xdim2,ydim,zdim,nv), in(dim,nv)
+
+    do j=1,nv
+      call seg_copy_x(in(1,j),out(1,1,1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)    
+    enddo
+
+    return
+    end subroutine
+
+!========================================================
+    subroutine seg_copy_y_f_many(in,out,y1,y2,shift_y,xdim,ydim1,ydim2,zdim,dim,nv)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z,nv,j,dim
+    complex(mytype) in(xdim,ydim1,zdim,nv), out(dim,nv)
+
+    do j=1,nv
+      call seg_copy_y(in(1,1,1,j),out(1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)    
+    enddo
+
+    return
+    end subroutine
+
+!========================================================
+    subroutine seg_copy_y_b_many(in,out,y1,y2,shift_y,xdim,ydim1,ydim2,zdim,dim,nv)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z,nv,j,dim
+    complex(mytype) out(xdim,ydim2,zdim,nv), in(dim,nv)
+
+    do j=1,nv
+      call seg_copy_y(in(1,j),out(1,1,1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)    
+    enddo
+
+    return
+    end subroutine
+
+!========================================================
     subroutine seg_copy_z_f_many(in,out,x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim,dim,nv)
 !========================================================
 
@@ -434,7 +562,7 @@
     complex(mytype) in(xdim,ydim,zdim,nv), out(dim,nv)
 
     do j=1,nv
-      call seg_copy_z(in(1,1,1,j),out(1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)    
+      call seg_copy_z(in(1,1,1,j),out(1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
     enddo
 
     return
@@ -449,7 +577,7 @@
     complex(mytype) out(xdim,ydim,zdim,nv), in(dim,nv)
 
     do j=1,nv
-      call seg_copy_z(in(1,j),out(1,1,1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)    
+      call seg_copy_z(in(1,j),out(1,1,1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
     enddo
 
     return
@@ -468,13 +596,52 @@
        do y=y1,y2
           do x=x1,x2
 	     out(x,y,z) = in(x,y,z+shift_z)
-	  enddo	
-        enddo	
+	  enddo
+        enddo
     enddo
 
     return
     end subroutine seg_copy_z
 
+!========================================================
+    subroutine seg_copy_y(in,out,y1,y2,shift_y,xdim,ydim1,ydim2,zdim)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z
+    complex(mytype) in(xdim,ydim1,zdim), out(xdim,ydim2,zdim)
+
+
+    do z=1,zdim
+       do y=y1,y2
+          do x=1,xdim
+	     out(x,y,z) = in(x,y+shift_y,z)
+	  enddo	
+        enddo	
+    enddo
+
+    return
+    end subroutine seg_copy_y
+
+!========================================================
+    subroutine seg_copy_x(in,out,x1,x2,shift_x,xdim1,xdim2,ydim,zdim)
+!========================================================
+
+    implicit none
+    integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z
+    complex(mytype) in(xdim1,ydim,zdim), out(xdim2,ydim,zdim)
+
+
+    do z=1,zdim
+       do y=1,ydim
+          do x=x1,x2
+	     out(x,y,z) = in(x+shift_x,y,z)
+	  enddo	
+        enddo	
+    enddo
+
+    return
+    end subroutine seg_copy_x
 
 !========================================================
       subroutine get_timers_w(timer) BIND(C,name='get_timers')
