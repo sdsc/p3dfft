@@ -1,9 +1,9 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT(P3DFFT, 2.6, dmitry@sdsc.edu)
-AM_INIT_AUTOMAKE(no-dependencies)
+AC_PREREQ([2.59])
+AC_INIT([P3DFFT], [2.7.4], [dmitry@sdsc.edu])
+AM_INIT_AUTOMAKE([no-dependencies])
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
 
@@ -35,7 +35,14 @@ if test "$ok" = "yes"; then
 	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
 	   AC_SUBST(FORTRAN_LIB,"-lmpi -limf -lifcore")
 	else
-	AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
+        AC_MSG_CHECKING([whether to use OpenMPI])
+        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
+        AC_MSG_RESULT([$ok])
+        if test "$ok" = "yes"; then
+	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore")
+        else
+	        AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
+        fi
 	fi
 	AC_SUBST(CCLD,"$CC")
 #       FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
@@ -50,7 +57,14 @@ if test "$ok" = "yes"; then
         AC_DEFINE(PGI, 1, [Define if you want to compile P3DFFT using PGI compiler])
 	eval "ARRAY${N}='-DPGI'"
         N=`expr $N + 1`
-        AC_SUBST(FORTRAN_LIB,"-pgf90libs")
+        AC_MSG_CHECKING([whether to use OpenMPI])
+        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
+        AC_MSG_RESULT([$ok])
+        if test "$ok" = "yes"; then
+	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -pgf90libs")
+        else
+            AC_SUBST(FORTRAN_LIB,"-lmpichf90 -pgf90libs")
+        fi
 	AC_SUBST(CCLD,"$CC")
 fi
 
@@ -81,7 +95,14 @@ if test "$ok" = "yes"; then
         AC_SUBST(FORTRAN_LIB,"-lgfortran")
 	AC_SUBST(CCLD,"$FC")
 	else
-	AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
+        AC_MSG_CHECKING([whether to use OpenMPI])
+        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
+        AC_MSG_RESULT([$ok])
+        if test "$ok" = "yes"; then
+	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -lgfortran")
+        else
+	        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
+        fi
 	AC_SUBST(CCLD,"$CC")
 	fi
 fi
