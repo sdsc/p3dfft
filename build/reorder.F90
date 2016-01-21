@@ -290,7 +290,7 @@
       integer x,y,z,iy,iz,y2,z2,ierr,dnz,dny,nv,j,dim
       complex(mytype) B(dim,nv)
       complex(mytype) A(ny_fft,iisize,nz_fft,nv)
-      complex(mytype) C(nz_fft,ny_fft)
+      complex(mytype) C(nz_fft,nyc)
       character(len=3) op
 
       do j=1,nv
@@ -308,7 +308,7 @@
       integer x,y,z,iy,iz,y2,z2,ierr,dnz,dny
       complex(mytype) A(ny_fft,iisize,nz_fft)
       complex(mytype) B(nzc,nyc,iisize)
-      complex(mytype) C(nz_fft,ny_fft)
+      complex(mytype) C(nz_fft,nyc)
       character(len=3) op
 
       dnz = nz_fft - nzc
@@ -329,31 +329,31 @@
                   enddo
                enddo
 
-               do y=nyhc+dny+1,ny_fft,NBy2
+               do y=nyhc+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-  		        B(iz,iy,x) = A(iy-dny,x,iz)
+  		        B(iz,iy,x) = A(iy+dny,x,iz)
                      enddo
                   enddo
                enddo
             enddo
-            do z=nzhc+dnz+1,nz_fft,NBz
+            do z=nzhc+1,nzc,NBz
 	       z2 = min(z+NBz-1,nz_fft)
             
                do y=1,nyhc,NBy2
                   y2 = min(y+NBy2-1,nyhc)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy,x,iz-dnz)
+		        B(iz,iy,x) = A(iy,x,iz+dnz)
                      enddo
                   enddo
                enddo
-               do y=nyhc+dny+1,ny_fft,NBy2
+               do y=nyhc+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy-dny,x,iz-dnz)
+		        B(iz,iy,x) = A(iy+dny,x,iz+dnz)
                      enddo
                   enddo
                enddo
@@ -375,11 +375,11 @@
                         enddo
                      enddo
                   enddo
-                 do y=nyhc+dny+1,ny_fft,NBy2
+                 do y=nyhc+1,nyc,NBy2
                     y2 = min(y+NBy2-1,ny_fft)
                     do iz=z,z2
                         do iy=y,y2
-			   C(iz,iy) = A(iy-dny,x,iz)
+			   C(iz,iy) = A(iy+dny,x,iz)
                         enddo
                      enddo
                   enddo
