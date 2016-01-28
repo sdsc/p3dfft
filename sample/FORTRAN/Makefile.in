@@ -32,11 +32,11 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-fsample_PROGRAMS = test_sine_many_f.x$(EXEEXT) test_sine_f.x$(EXEEXT) test_sine_pruned_f.x$(EXEEXT) \
-	test_sine_inplace_f.x$(EXEEXT) test_rand_f.x$(EXEEXT) \
-	test_spec_f.x$(EXEEXT) test_inverse_f.x$(EXEEXT) \
-	test_cheby_f.x$(EXEEXT) test_noop_f.x$(EXEEXT) \
-	test_sine_inplace_many_f.x$(EXEEXT) \
+fsample_PROGRAMS = test_sine_many_f.x$(EXEEXT) test_sine_f.x$(EXEEXT) \
+	test_sine_pruned_f.x$(EXEEXT) test_sine_inplace_f.x$(EXEEXT) \
+	test_rand_f.x$(EXEEXT) test_spec_f.x$(EXEEXT) \
+	test_inverse_f.x$(EXEEXT) test_cheby_f.x$(EXEEXT) \
+	test_noop_f.x$(EXEEXT) test_sine_inplace_many_f.x$(EXEEXT) \
 	test_rand_many_f.x$(EXEEXT)
 subdir = sample/FORTRAN
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -87,12 +87,6 @@ test_sine_f_x_LDADD = $(LDADD)
 test_sine_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-am_test_sine_pruned_f_x_OBJECTS = driver_sine_pruned.$(OBJEXT)
-test_sine_pruned_f_x_OBJECTS = $(am_test_sine_pruned_f_x_OBJECTS)
-test_sine_pruned_f_x_LDADD = $(LDADD)
-test_sine_pruned_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
 am_test_sine_inplace_f_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_f_x_OBJECTS = $(am_test_sine_inplace_f_x_OBJECTS)
 test_sine_inplace_f_x_LDADD = $(LDADD)
@@ -111,6 +105,12 @@ am_test_sine_many_f_x_OBJECTS = driver_sine_many.$(OBJEXT)
 test_sine_many_f_x_OBJECTS = $(am_test_sine_many_f_x_OBJECTS)
 test_sine_many_f_x_LDADD = $(LDADD)
 test_sine_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_test_sine_pruned_f_x_OBJECTS = driver_sine_pruned.$(OBJEXT)
+test_sine_pruned_f_x_OBJECTS = $(am_test_sine_pruned_f_x_OBJECTS)
+test_sine_pruned_f_x_LDADD = $(LDADD)
+test_sine_pruned_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_spec_f_x_OBJECTS = driver_spec.$(OBJEXT)
@@ -132,13 +132,15 @@ SOURCES = $(test_cheby_f_x_SOURCES) $(test_inverse_f_x_SOURCES) \
 	$(test_rand_many_f_x_SOURCES) $(test_sine_f_x_SOURCES) \
 	$(test_sine_inplace_f_x_SOURCES) \
 	$(test_sine_inplace_many_f_x_SOURCES) \
-	$(test_sine_many_f_x_SOURCES) $(test_spec_f_x_SOURCES)
+	$(test_sine_many_f_x_SOURCES) $(test_sine_pruned_f_x_SOURCES) \
+	$(test_spec_f_x_SOURCES)
 DIST_SOURCES = $(test_cheby_f_x_SOURCES) $(test_inverse_f_x_SOURCES) \
 	$(test_noop_f_x_SOURCES) $(test_rand_f_x_SOURCES) \
 	$(test_rand_many_f_x_SOURCES) $(test_sine_f_x_SOURCES) \
 	$(test_sine_inplace_f_x_SOURCES) \
 	$(test_sine_inplace_many_f_x_SOURCES) \
-	$(test_sine_many_f_x_SOURCES) $(test_spec_f_x_SOURCES)
+	$(test_sine_many_f_x_SOURCES) $(test_sine_pruned_f_x_SOURCES) \
+	$(test_spec_f_x_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -343,9 +345,6 @@ test_rand_many_f.x$(EXEEXT): $(test_rand_many_f_x_OBJECTS) $(test_rand_many_f_x_
 test_sine_f.x$(EXEEXT): $(test_sine_f_x_OBJECTS) $(test_sine_f_x_DEPENDENCIES) 
 	@rm -f test_sine_f.x$(EXEEXT)
 	$(FCLINK) $(test_sine_f_x_OBJECTS) $(test_sine_f_x_LDADD) $(LIBS)
-test_sine_pruned_f.x$(EXEEXT): $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_DEPENDENCIES) 
-	@rm -f test_sine_pruned_f.x$(EXEEXT)
-	$(FCLINK) $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_LDADD) $(LIBS)
 test_sine_inplace_f.x$(EXEEXT): $(test_sine_inplace_f_x_OBJECTS) $(test_sine_inplace_f_x_DEPENDENCIES) 
 	@rm -f test_sine_inplace_f.x$(EXEEXT)
 	$(FCLINK) $(test_sine_inplace_f_x_OBJECTS) $(test_sine_inplace_f_x_LDADD) $(LIBS)
@@ -355,6 +354,9 @@ test_sine_inplace_many_f.x$(EXEEXT): $(test_sine_inplace_many_f_x_OBJECTS) $(tes
 test_sine_many_f.x$(EXEEXT): $(test_sine_many_f_x_OBJECTS) $(test_sine_many_f_x_DEPENDENCIES) 
 	@rm -f test_sine_many_f.x$(EXEEXT)
 	$(FCLINK) $(test_sine_many_f_x_OBJECTS) $(test_sine_many_f_x_LDADD) $(LIBS)
+test_sine_pruned_f.x$(EXEEXT): $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_DEPENDENCIES) 
+	@rm -f test_sine_pruned_f.x$(EXEEXT)
+	$(FCLINK) $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_LDADD) $(LIBS)
 test_spec_f.x$(EXEEXT): $(test_spec_f_x_OBJECTS) $(test_spec_f_x_DEPENDENCIES) 
 	@rm -f test_spec_f.x$(EXEEXT)
 	$(FCLINK) $(test_spec_f_x_OBJECTS) $(test_spec_f_x_LDADD) $(LIBS)

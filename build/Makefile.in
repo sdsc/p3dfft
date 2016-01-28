@@ -70,8 +70,7 @@ ARFLAGS = cru
 libp3dfft_a_AR = $(AR) $(ARFLAGS)
 libp3dfft_a_LIBADD =
 am_libp3dfft_a_OBJECTS = fft_spec.$(OBJEXT) module.$(OBJEXT) \
-	fft_init.$(OBJEXT) fft_exec.$(OBJEXT) wrap.$(OBJEXT) \
-	ghosts.$(OBJEXT)
+	fft_init.$(OBJEXT) fft_exec.$(OBJEXT) wrap.$(OBJEXT)
 libp3dfft_a_OBJECTS = $(am_libp3dfft_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
@@ -183,11 +182,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_FCFLAGS = $(FDFLAGS) 
+AM_FCFLAGS = $(FDFLAGS)
 INCLUDES = $(FFTW_INC)
 LDADD = $(FFTW_LIB)
 lib_LIBRARIES = libp3dfft.a
-libp3dfft_a_SOURCES = fft_spec.F90 module.F90 fft_init.F90 fft_exec.F90 wrap.F90 ghosts.F90
+libp3dfft_a_SOURCES = fft_spec.F90 module.F90 fft_init.F90 fft_exec.F90 wrap.F90
 all: all-am
 
 .SUFFIXES:
@@ -469,7 +468,7 @@ uninstall-am: uninstall-libLIBRARIES
 
 
 module.o: setup.F90 init_plan.F90 ftran.F90 btran.F90 reorder.F90 fcomm1.F90 \
-fcomm2_trans.F90 bcomm1_trans.F90 fcomm2.F90 bcomm1.F90 bcomm2.F90 ghosts.F90
+fcomm2_trans.F90 bcomm1_trans.F90 fcomm2.F90 bcomm1.F90 bcomm2.F90
 
 all-local:
 	-@[ -e "p3dfft.mod" ] && mv -f p3dfft.mod ../include
