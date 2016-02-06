@@ -126,18 +126,21 @@ if test "$ok" = "yes"; then
             if test "$ok" = "yes"; then
                 eval "ARRAY${N}='-qsmp=omp'"
                 N=`expr $N + 1`
+                CFLAGS=$CFLAGS" -qsmp=omp"
             fi
         ;;
         intel)
             if test "$ok" = "yes"; then
                 eval "ARRAY${N}='-openmp'"
                 N=`expr $N + 1`
+                CFLAGS=$CFLAGS" -openmp"
             fi
         ;;
         pgi)
             if test "$ok" = "yes"; then
                 eval "ARRAY${N}='-mp'"
                 N=`expr $N + 1`
+                CFLAGS=$CFLAGS" -mp"
             fi
         ;;
         cray)
@@ -146,6 +149,7 @@ if test "$ok" = "yes"; then
             if test "$ok" = "yes"; then
                 eval "ARRAY${N}='-fopenmp'"
                 N=`expr $N + 1`
+                CFLAGS=$CFLAGS" -fopenmp"
             fi
         ;;
         *)
