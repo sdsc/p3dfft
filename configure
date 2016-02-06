@@ -717,10 +717,11 @@ ac_user_opts='
 enable_option_checking
 enable_ibm
 enable_intel
-enable_openmpi
 enable_pgi
 enable_cray
 enable_gnu
+enable_openmpi
+enable_openmp
 enable_single
 enable_oned
 enable_estimate
@@ -733,7 +734,6 @@ enable_nblx
 enable_nbly1
 enable_nbly2
 enable_nblz
-enable_openmp
 enable_fftw
 enable_essl
 with_fftw
@@ -1366,10 +1366,11 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-ibm            compile P3DFFT using IBM compiler
   --enable-intel          compile P3DFFT using Intel compiler
-  --enable-openmpi        use the OpenMPI MPI implementation
   --enable-pgi            compile P3DFFT using PGI compiler
   --enable-cray           compile P3DFFT using CRAY compiler
   --enable-gnu            compile P3DFFT using GNU compiler
+  --enable-openmpi        use the OpenMPI MPI implementation
+  --enable-openmp         for using the OpenMP library (disabled by default)
   --enable-single         compile P3DFFT in single precision (default is
                           double precision)
   --enable-oned           for 1D decomposition (default is 2D but it can be
@@ -1400,7 +1401,6 @@ Optional Features:
   --enable-nbly1          to define loop blocking factor NBL_Y1
   --enable-nbly2          to define loop blocking factor NBL_Y2
   --enable-nblz           to define loop blocking factor NBL_Z
-  --enable-openmp         for using the OpenMP library (disabled by default)
   --enable-fftw           for using the FFTW library
   --enable-essl           for using ESSL (on IBM) in 1D FFTs.
 
@@ -2671,54 +2671,32 @@ $as_echo "#define IBM 1" >>confdefs.h
 $as_echo "#define CC \"mpfort\"" >>confdefs.h
 
 	eval "ARRAY${N}='-DIBM'"
-        N=`expr $N + 1`
+    N=`expr $N + 1`
 	CCLD="$FC"
 
+    compiler="ibm"
 fi
 # check whether to compile using Intel
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use Intel compiler" >&5
 $as_echo_n "checking whether to use Intel compiler... " >&6; }
 # Check whether --enable-intel was given.
 if test "${enable_intel+set}" = set; then :
-  enableval=$enable_intel; ok=$enableval
+  enableval=$enable_intel; enableintel=$enableval
 else
-  ok=no
+  enableintel=no
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-if test "$ok" = "yes"; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enableintel" >&5
+$as_echo "$enableintel" >&6; }
+if test "$enableintel" = "yes"; then
 
 $as_echo "#define INTEL 1" >>confdefs.h
 
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
-	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
-	   FORTRAN_LIB="-lmpi -limf -lifcore"
-
-	else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMPI" >&5
-$as_echo_n "checking whether to use OpenMPI... " >&6; }
-        # Check whether --enable-openmpi was given.
-if test "${enable_openmpi+set}" = set; then :
-  enableval=$enable_openmpi; ok=$enableval
-else
-  ok=no
-fi
-
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-        if test "$ok" = "yes"; then
-	        FORTRAN_LIB="-lmpi_mpifh -limf -lifcore"
-
-        else
-	        FORTRAN_LIB="-lmpichf90 -limf -lifcore"
-
-        fi
-	fi
 	CCLD="$CC"
 
-#       FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
+    compiler="intel"
 fi
 
 # check whether to compile using PGI
@@ -2726,40 +2704,23 @@ fi
 $as_echo_n "checking whether to use PGI compiler... " >&6; }
 # Check whether --enable-pgi was given.
 if test "${enable_pgi+set}" = set; then :
-  enableval=$enable_pgi; ok=$enableval
+  enableval=$enable_pgi; enablepgi=$enableval
 else
-  ok=no
+  enablepgi=no
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-if test "$ok" = "yes"; then
-#	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enablepgi" >&5
+$as_echo "$enablepgi" >&6; }
+if test "$enablepgi" = "yes"; then
+    #	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
 
 $as_echo "#define PGI 1" >>confdefs.h
 
 	eval "ARRAY${N}='-DPGI'"
-        N=`expr $N + 1`
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMPI" >&5
-$as_echo_n "checking whether to use OpenMPI... " >&6; }
-        # Check whether --enable-openmpi was given.
-if test "${enable_openmpi+set}" = set; then :
-  enableval=$enable_openmpi; ok=$enableval
-else
-  ok=no
-fi
-
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-        if test "$ok" = "yes"; then
-	        FORTRAN_LIB="-lmpi_mpifh -pgf90libs"
-
-        else
-            FORTRAN_LIB="-lmpichf90 -pgf90libs"
-
-        fi
+    N=`expr $N + 1`
 	CCLD="$CC"
 
+    compiler="pgi"
 fi
 
 # check whether to compile using Cray
@@ -2767,23 +2728,24 @@ fi
 $as_echo_n "checking whether to use Cray compiler... " >&6; }
 # Check whether --enable-cray was given.
 if test "${enable_cray+set}" = set; then :
-  enableval=$enable_cray; ok=$enableval
+  enableval=$enable_cray; enablecray=$enableval
 else
-  ok=no
+  enablecray=no
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-if test "$ok" = "yes"; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enablecray" >&5
+$as_echo "$enablecray" >&6; }
+if test "$enablecray" = "yes"; then
 
 $as_echo "#define CRAY 1" >>confdefs.h
 
-    	eval FCFLAGS="\$FCFLAGS' -em -ef'"
-    	eval "ARRAY${N}='-DCRAY'"
-        N=`expr $N + 1`
-        FORTRAN_LIB=""
+    eval FCFLAGS="\$FCFLAGS' -em -ef'"
+    eval "ARRAY${N}='-DCRAY'"
+    N=`expr $N + 1`
+    FORTRAN_LIB=""
 	CCLD="$CC"
 
+    compiler="cray"
 fi
 
 # check whether to compile using GNU
@@ -2791,7 +2753,82 @@ fi
 $as_echo_n "checking whether to use GNU compiler... " >&6; }
 # Check whether --enable-gnu was given.
 if test "${enable_gnu+set}" = set; then :
-  enableval=$enable_gnu; ok=$enableval
+  enableval=$enable_gnu; enablegnu=$enableval
+else
+  enablegnu=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enablegnu" >&5
+$as_echo "$enablegnu" >&6; }
+if test "$enablegnu" = "yes"; then
+
+$as_echo "#define GNU 1" >>confdefs.h
+
+	eval "ARRAY${N}='-DGNU'"
+    N=`expr $N + 1`
+	if (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
+	    CCLD="$FC"
+
+	else
+	    CCLD="$CC"
+
+	fi
+    compiler="gnu"
+fi
+
+# check whether to use OpenMPI
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMPI" >&5
+$as_echo_n "checking whether to use OpenMPI... " >&6; }
+# Check whether --enable-openmpi was given.
+if test "${enable_openmpi+set}" = set; then :
+  enableval=$enable_openmpi; ok=$enableval
+else
+  ok=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
+$as_echo "$ok" >&6; }
+case $compiler in
+    ibm)
+    ;;
+    intel)
+        if test "$ok" = "yes"; then
+	        FORTRAN_LIB="-lmpi_mpifh -limf -lifcore"
+
+        else
+	        FORTRAN_LIB="-lmpichf90 -limf -lifcore"
+
+        fi
+    ;;
+    pgi)
+        if test "$ok" = "yes"; then
+            FORTRAN_LIB="-lmpi_mpifh -pgf90libs"
+
+        else
+            FORTRAN_LIB="-lmpichf90 -pgf90libs"
+
+        fi
+    ;;
+    cray)
+    ;;
+    gnu)
+        if test "$ok" = "yes"; then
+	        FORTRAN_LIB="-lmpi_mpifh -lgfortran"
+
+        else
+	        FORTRAN_LIB="-lgfortran -lmpichf90"
+
+        fi
+    ;;
+    *)
+esac
+
+# check whether to use OpenMP
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMP library" >&5
+$as_echo_n "checking whether to use OpenMP library... " >&6; }
+# Check whether --enable-openmp was given.
+if test "${enable_openmp+set}" = set; then :
+  enableval=$enable_openmp; ok=$enableval
 else
   ok=no
 fi
@@ -2800,40 +2837,39 @@ fi
 $as_echo "$ok" >&6; }
 if test "$ok" = "yes"; then
 
-$as_echo "#define GNU 1" >>confdefs.h
+$as_echo "#define OPENMP 1" >>confdefs.h
 
-	eval "ARRAY${N}='-DGNU'"
-        N=`expr $N + 1`
-	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
-	FORTRAN_LIB="-lgfortran -lmpi"
-
-	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
-        FORTRAN_LIB="-lgfortran"
-
-	CCLD="$FC"
-
-	else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMPI" >&5
-$as_echo_n "checking whether to use OpenMPI... " >&6; }
-        # Check whether --enable-openmpi was given.
-if test "${enable_openmpi+set}" = set; then :
-  enableval=$enable_openmpi; ok=$enableval
-else
-  ok=no
-fi
-
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-        if test "$ok" = "yes"; then
-	        FORTRAN_LIB="-lmpi_mpifh -lgfortran"
-
-        else
-	        FORTRAN_LIB="-lgfortran -lmpichf90"
-
-        fi
-	CCLD="$CC"
-
-	fi
+    eval "ARRAY${N}='-DOPENMP -O0'"
+    N=`expr $N + 1`
+    case $compiler in
+        ibm)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-qsmp=omp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        intel)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-openmp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        pgi)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-mp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        cray)
+        ;;
+        gnu)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-fopenmp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        *)
+    esac
 fi
 
 # check whether to enable single precision
@@ -3086,26 +3122,6 @@ $as_echo "#define NBL_Z \$nblval" >>confdefs.h
 else
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-fi
-
-# check whether to use OpenMP
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMP library" >&5
-$as_echo_n "checking whether to use OpenMP library... " >&6; }
-# Check whether --enable-openmp was given.
-if test "${enable_openmp+set}" = set; then :
-  enableval=$enable_openmp; ok=$enableval
-else
-  ok=no
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ok" >&5
-$as_echo "$ok" >&6; }
-if test "$ok" = "yes"; then
-
-$as_echo "#define OPENMP 1" >>confdefs.h
-
-      eval "ARRAY${N}='-DOPENMP'"
-      N=`expr $N + 1`
 fi
 
 # check whether to use FFTW

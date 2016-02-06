@@ -18,93 +18,138 @@ AC_MSG_CHECKING([whether to use IBM compiler])
 AC_ARG_ENABLE(ibm, [AC_HELP_STRING([--enable-ibm], [compile P3DFFT using IBM compiler])], enableibm=$enableval, enableibm=no)
 AC_MSG_RESULT([$enableibm])
 if test "$enableibm" = "yes"; then
-        AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
+    AC_DEFINE(IBM, 1, [Define if you want to compile P3DFFT using IBM compiler])
 	AC_DEFINE(CC, "mpfort", [overriding mpicc to link C programs (only for IBM)])
 	eval "ARRAY${N}='-DIBM'"
-        N=`expr $N + 1`
+    N=`expr $N + 1`
 	AC_SUBST(CCLD,"$FC")
+    compiler="ibm"
 fi
 # check whether to compile using Intel
 AC_MSG_CHECKING([whether to use Intel compiler])
-AC_ARG_ENABLE(intel, [AC_HELP_STRING([--enable-intel], [compile P3DFFT using Intel compiler])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-        AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
+AC_ARG_ENABLE(intel, [AC_HELP_STRING([--enable-intel], [compile P3DFFT using Intel compiler])], enableintel=$enableval, enableintel=no)
+AC_MSG_RESULT([$enableintel])
+if test "$enableintel" = "yes"; then
+    AC_DEFINE(INTEL, 1, [Define if you want to compile P3DFFT using Intel compiler])
 	eval "ARRAY${N}='-DINTEL'"
 	N=`expr $N + 1`
-	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
-	   AC_SUBST(FORTRAN_LIB,"-lmpi -limf -lifcore")
+	AC_SUBST(CCLD,"$CC")
+    compiler="intel"
+fi
+
+# check whether to compile using PGI
+AC_MSG_CHECKING([whether to use PGI compiler])
+AC_ARG_ENABLE(pgi, [AC_HELP_STRING([--enable-pgi], [compile P3DFFT using PGI compiler])], enablepgi=$enableval, enablepgi=no)
+AC_MSG_RESULT([$enablepgi])
+if test "$enablepgi" = "yes"; then
+    #	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
+    AC_DEFINE(PGI, 1, [Define if you want to compile P3DFFT using PGI compiler])
+	eval "ARRAY${N}='-DPGI'"
+    N=`expr $N + 1`
+	AC_SUBST(CCLD,"$CC")
+    compiler="pgi"
+fi
+
+# check whether to compile using Cray
+AC_MSG_CHECKING([whether to use Cray compiler])
+AC_ARG_ENABLE(cray, [AC_HELP_STRING([--enable-cray], [compile P3DFFT using CRAY compiler])], enablecray=$enableval, enablecray=no)
+AC_MSG_RESULT([$enablecray])
+if test "$enablecray" = "yes"; then
+   	AC_DEFINE(CRAY, 1, [Define if you want to compile P3DFFT using CRAY compiler])
+    eval FCFLAGS="\$FCFLAGS' -em -ef'"
+    eval "ARRAY${N}='-DCRAY'"
+    N=`expr $N + 1`
+    FORTRAN_LIB=""
+	AC_SUBST(CCLD,"$CC")
+    compiler="cray"
+fi
+
+# check whether to compile using GNU
+AC_MSG_CHECKING([whether to use GNU compiler])
+AC_ARG_ENABLE(gnu, [AC_HELP_STRING([--enable-gnu], [compile P3DFFT using GNU compiler])], enablegnu=$enableval, enablegnu=no)
+AC_MSG_RESULT([$enablegnu])
+if test "$enablegnu" = "yes"; then
+    AC_DEFINE(GNU, 1, [Define if you want to compile P3DFFT using GNU compiler])
+	eval "ARRAY${N}='-DGNU'"
+    N=`expr $N + 1`
+	if (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
+	    AC_SUBST(CCLD,"$FC")
 	else
-        AC_MSG_CHECKING([whether to use OpenMPI])
-        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
-        AC_MSG_RESULT([$ok])
+	    AC_SUBST(CCLD,"$CC")
+	fi
+    compiler="gnu"
+fi
+
+# check whether to use OpenMPI
+AC_MSG_CHECKING([whether to use OpenMPI])
+AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+case $compiler in
+    ibm)
+    ;;
+    intel)
         if test "$ok" = "yes"; then
 	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore")
         else
 	        AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
         fi
-	fi
-	AC_SUBST(CCLD,"$CC")
-#       FORTRAN_LIB="-lmpi_f90 -limf -lifcore"
-fi
-
-# check whether to compile using PGI
-AC_MSG_CHECKING([whether to use PGI compiler])
-AC_ARG_ENABLE(pgi, [AC_HELP_STRING([--enable-pgi], [compile P3DFFT using PGI compiler])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-#	AC_SUBST(LDFLAGS,"$LDFLAGS -pgf90libs")
-        AC_DEFINE(PGI, 1, [Define if you want to compile P3DFFT using PGI compiler])
-	eval "ARRAY${N}='-DPGI'"
-        N=`expr $N + 1`
-        AC_MSG_CHECKING([whether to use OpenMPI])
-        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
-        AC_MSG_RESULT([$ok])
+    ;;
+    pgi)
         if test "$ok" = "yes"; then
-	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -pgf90libs")
+            AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -pgf90libs")
         else
             AC_SUBST(FORTRAN_LIB,"-lmpichf90 -pgf90libs")
         fi
-	AC_SUBST(CCLD,"$CC")
-fi
-
-# check whether to compile using Cray
-AC_MSG_CHECKING([whether to use Cray compiler])
-AC_ARG_ENABLE(cray, [AC_HELP_STRING([--enable-cray], [compile P3DFFT using CRAY compiler])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-   	AC_DEFINE(CRAY, 1, [Define if you want to compile P3DFFT using CRAY compiler])
-    	eval FCFLAGS="\$FCFLAGS' -em -ef'"
-    	eval "ARRAY${N}='-DCRAY'"
-        N=`expr $N + 1`
-        FORTRAN_LIB=""
-	AC_SUBST(CCLD,"$CC")
-fi
-
-# check whether to compile using GNU
-AC_MSG_CHECKING([whether to use GNU compiler])
-AC_ARG_ENABLE(gnu, [AC_HELP_STRING([--enable-gnu], [compile P3DFFT using GNU compiler])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-        AC_DEFINE(GNU, 1, [Define if you want to compile P3DFFT using GNU compiler])
-	eval "ARRAY${N}='-DGNU'"
-        N=`expr $N + 1`
-	if (( `echo $HOST | grep -c "blacklight"` > 0 )); then
-	AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpi")
-	elif (( `echo $HOSTNAME | grep -c "mira\|cetus\|vesta"` > 0 )); then
-        AC_SUBST(FORTRAN_LIB,"-lgfortran")
-	AC_SUBST(CCLD,"$FC")
-	else
-        AC_MSG_CHECKING([whether to use OpenMPI])
-        AC_ARG_ENABLE(openmpi, [AC_HELP_STRING([--enable-openmpi], [use the OpenMPI MPI implementation])], ok=$enableval, ok=no)
-        AC_MSG_RESULT([$ok])
+    ;;
+    cray)
+    ;;
+    gnu)
         if test "$ok" = "yes"; then
 	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -lgfortran")
         else
 	        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
         fi
-	AC_SUBST(CCLD,"$CC")
-	fi
+    ;;
+    *)
+esac
+
+# check whether to use OpenMP
+AC_MSG_CHECKING([whether to use OpenMP library])
+AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
+AC_MSG_RESULT([$ok])
+if test "$ok" = "yes"; then
+    AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
+    eval "ARRAY${N}='-DOPENMP -O0'"
+    N=`expr $N + 1`
+    case $compiler in
+        ibm)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-qsmp=omp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        intel)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-openmp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        pgi)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-mp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        cray)
+        ;;
+        gnu)
+            if test "$ok" = "yes"; then
+                eval "ARRAY${N}='-fopenmp'"
+                N=`expr $N + 1`
+            fi
+        ;;
+        *)
+    esac
 fi
 
 # check whether to enable single precision
@@ -233,16 +278,6 @@ if test "$nblval" != ""; then
         N=`expr $N + 1`
 else
         AC_MSG_RESULT([no])
-fi
-
-# check whether to use OpenMP
-AC_MSG_CHECKING([whether to use OpenMP library])
-AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP library (disabled by default)])], ok=$enableval, ok=no)
-AC_MSG_RESULT([$ok])
-if test "$ok" = "yes"; then
-      AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
-      eval "ARRAY${N}='-DOPENMP'"
-      N=`expr $N + 1`
 fi
 
 # check whether to use FFTW
