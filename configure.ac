@@ -3,6 +3,7 @@
 
 AC_PREREQ(2.59)
 AC_INIT(P3DFFT, 2.6, dmitry@sdsc.edu)
+LT_INIT
 AM_INIT_AUTOMAKE(no-dependencies)
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
