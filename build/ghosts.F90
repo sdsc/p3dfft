@@ -244,10 +244,10 @@
 
       	goverlap = goverlap_in
 
-      	call get_mpi_info(mpi_taskid, mpi_tasks, mpi_comm)
+      	call p3dfft_get_mpi_info(mpi_taskid, mpi_tasks, mpi_comm)
 
-      	call get_dims(gproc_rstart, gproc_rend, gproc_rsize, 1)
-      	call get_dims(mstart, mend, msize, 3)
+      	call p3dfft_get_dims(gproc_rstart, gproc_rend, gproc_rsize, 1)
+      	call p3dfft_get_dims(mstart, mend, msize, 3)
 
       	if(     goverlap .gt. gproc_rsize(1)			 &
       	   .or. goverlap .gt. gproc_rsize(2)			 &
@@ -617,7 +617,7 @@
       		stop
       	endif
 
-      	call get_dims(mstart, mend, msize, 3)
+      	call p3dfft_get_dims(mstart, mend, msize, 3)
       	gsize_mem = int(msize(1)+2*goverlap,8)	 &
       	           *int(msize(2)+2*goverlap,8)	 &
       	           *int(msize(3)+2*goverlap,8)
