@@ -1,10 +1,10 @@
 
 P3DFFT - Highly scalable parallel 3D Fast Fourier Transforms library
 
-Version 2.6
+Version 2.7
 
-Copyright (C) 2006-2013 Dmitry Pekurovsky
-Copyright (C) 2006-2013 University of California
+Copyright (C) 2006-2015 Dmitry Pekurovsky
+Copyright (C) 2006-2015 University of California
 Copyright (C) 2010-2011 Jens Henrik Goebbert
 San Diego Supercomputer Center/UC SanDiego
 
@@ -73,7 +73,7 @@ build/
   ./configure from the top level directory. Then type "make" 
   and then "make install". For further instructions
   on building the library see the P3DFFT User Guide, or visit the web site 
-  http://code.google.com/p/p3dfft. You can also see a list of options
+  https://github.com/sdsc/p3dfft/wiki/install. You can also see a list of options
   by typing "./configure --help". 
 sample/
   This directory has example programs in both FORTRAN and C, in 
@@ -94,8 +94,8 @@ Feedback
 ------------
 
 Please send your feedback, including bugs and suggestions, to 
-Dmitry Pekurovsky, dmitry@sdsc.edu, or visit the P3DFFT web site 
-at http://code.google.com/p/p3dfft and open an issue ticket. 
+Dmitry Pekurovsky, dmitry@sdsc.edu, or open an issue on github 
+(https://github.com/sdsc/p3dfft/issues/new). 
 
 
 
