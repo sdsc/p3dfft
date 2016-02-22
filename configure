@@ -2839,7 +2839,7 @@ if test "$ok" = "yes"; then
 
 $as_echo "#define OPENMP 1" >>confdefs.h
 
-    eval "ARRAY${N}='-DOPENMP -O0'"
+    eval "ARRAY${N}='-DOPENMP'"
     N=`expr $N + 1`
     case $compiler in
         ibm)
