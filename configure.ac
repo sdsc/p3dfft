@@ -119,7 +119,7 @@ AC_ARG_ENABLE(openmp, [AC_HELP_STRING([--enable-openmp], [for using the OpenMP l
 AC_MSG_RESULT([$ok])
 if test "$ok" = "yes"; then
     AC_DEFINE(OPENMP, 1, [Define if you want to use the OpenMP library])
-    eval "ARRAY${N}='-DOPENMP -O0'"
+    eval "ARRAY${N}='-DOPENMP'"
     N=`expr $N + 1`
     case $compiler in
         ibm)
