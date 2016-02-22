@@ -208,6 +208,7 @@
          position = 1
 !$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
          do i=0,jproc-1
+            position = i*KfCntMax/(mytype*2)  + 1 
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize

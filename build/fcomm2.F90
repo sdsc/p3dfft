@@ -203,9 +203,11 @@
 
 
 ! Pack send buffers for exchanging y and z for all x at once 
+
      call pack_fcomm2(buf1,source) 
       
 ! Exchange y-z buffers in columns of processors
+
 
       t = t - MPI_Wtime()
 
@@ -224,6 +226,7 @@
          position = 1
 !$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
          do i=0,jproc-1
+	    position = i*KfCntMax/(mytype*2)  + 1 
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize
@@ -232,7 +235,7 @@
                   enddo
                enddo
             enddo
-            position = (i+1)*KfCntMax/(mytype*2)+1
+!            position = (i+1)*KfCntMax/(mytype*2)+1
          enddo
 
          tc = tc + MPI_Wtime()
