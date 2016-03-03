@@ -300,7 +300,9 @@
       return
       end subroutine
 
+!=============================================================
       subroutine reorder_trans_f2(A,B,C,op)
+!=============================================================
 
       use fft_spec
       implicit none
@@ -376,7 +378,7 @@
                      enddo
                   enddo
                  do y=nyhc+1,nyc,NBy2
-                    y2 = min(y+NBy2-1,ny_fft)
+                    y2 = min(y+NBy2-1,nyc)
                     do iz=z,z2
                         do iy=y,y2
 			   C(iz,iy) = A(iy+dny,x,iz)

@@ -31,7 +31,7 @@
       use, intrinsic :: iso_c_binding
       real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -268,7 +268,7 @@
 
       real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -416,7 +416,7 @@
       use, intrinsic :: iso_c_binding
       real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -439,7 +439,7 @@
 
       real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif

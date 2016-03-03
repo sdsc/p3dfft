@@ -30,7 +30,7 @@
       use, intrinsic :: iso_c_binding
       real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -344,7 +344,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
       real(mytype),TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
