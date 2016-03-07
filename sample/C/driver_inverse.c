@@ -26,24 +26,24 @@
 */
 
 /*
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array of complex numbers with a 
-! 3D sine/cosine wave, then performs inverse FFT transform, and checks that 
-! the results are correct. This sample program also demonstrates 
+! This program initializes a 3D array of complex numbers with a
+! 3D sine/cosine wave, then performs inverse FFT transform, and checks that
+! the results are correct. This sample program also demonstrates
 ! how to work with complex arrays in wavenumber space, declared as real.
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,ny,nz,Ndim,Nrep. Here Nx,ny,nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
 ! (1 or 2), and Nrep is the number of repititions. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -79,7 +79,7 @@ int main(int argc,char **argv)
    float cdiff,ccdiff,prec;
 #endif
    FILE *fp;
-   unsigned char op_f[3]="fft", op_b[3]="tff";
+   unsigned char op_f[]="fft", op_b[]="tff";
    int memsize[3];
 
 #ifndef SINGLE_PREC
@@ -102,9 +102,9 @@ int main(int argc,char **argv)
      gt[i] = gt1[i] = 0.0;
      gt2[i] = 1E10;
    }
-        
-   set_timers();
- 
+
+   Cset_timers();
+
    if(proc_id == 0) {
      if((fp=fopen("stdin", "r"))==NULL){
         printf("Cannot open file. Setting to default nx=ny=nz=128, ndim=2, n=1.\n");
@@ -113,6 +113,7 @@ int main(int argc,char **argv)
         fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
         fclose(fp);
      }
+     printf("P3DFFT test, inverse, 3D wave input\n");
 #ifndef SINGLE_PREC
      printf("Double precision\n (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
 #else
@@ -124,7 +125,7 @@ int main(int argc,char **argv)
    MPI_Bcast(&nz,1,MPI_INT,0,MPI_COMM_WORLD);
    MPI_Bcast(&n,1,MPI_INT,0,MPI_COMM_WORLD);
    MPI_Bcast(&ndim,1,MPI_INT,0,MPI_COMM_WORLD);
-   
+
    if(ndim == 1) {
      dims[0] = 1; dims[1] = nproc;
    }
@@ -135,11 +136,11 @@ int main(int argc,char **argv)
          printf("Reading proc. grid from file dims\n");
        fscanf(fp,"%d %d\n",dims,dims+1);
        fclose(fp);
-       if(dims[0]*dims[1] != nproc) 
+       if(dims[0]*dims[1] != nproc)
           dims[1] = nproc / dims[0];
      }
      else {
-       if(proc_id == 0) 
+       if(proc_id == 0)
           printf("Creating proc. grid with mpi_dims_create\n");
        dims[0]=dims[1]=0;
        MPI_Dims_create(nproc,2,dims);
@@ -150,19 +151,19 @@ int main(int argc,char **argv)
      }
    }
 
-   if(proc_id == 0) 
+   if(proc_id == 0)
       printf("Using processor grid %d x %d\n",dims[0],dims[1]);
 
    /* Initialize P3DFFT */
    Cp3dfft_setup(dims,nx,ny,nz,MPI_Comm_c2f(MPI_COMM_WORLD),nx,ny,nz,1,memsize);
    /* Get dimensions for input array - complex numbers, Z-pencil shape.
-      Stride-1 dimension could be X or Z, depending on how the library 
+      Stride-1 dimension could be X or Z, depending on how the library
       was compiled (stride1 option).
       Note : returns Fortran-style dimensions, i.e. starting with 1. */
    conf = 2;
    Cp3dfft_get_dims(istart,iend,isize,conf);
    /* Get dimensions for input array - real numbers, X-pencil shape.
-      Note that we are following the Fortran ordering, i.e. 
+      Note that we are following the Fortran ordering, i.e.
       the dimension  with stride-1 is X. */
    conf = 1;
    Cp3dfft_get_dims(fstart,fend,fsize,conf);
@@ -176,10 +177,10 @@ int main(int argc,char **argv)
    B = (float *) malloc(sizeof(float) * fsize[0]*fsize[1]*fsize[2]);
 #endif
 
-   if(A == NULL) 
+   if(A == NULL)
      printf("%d: Error allocating array A (%d)\n",proc_id,isize[0]*isize[1]*isize[2]*2);
 
-   if(B == NULL) 
+   if(B == NULL)
      printf("%d: Error allocating array B (%d)\n",proc_id,fsize[0]*fsize[1]*fsize[2]);
 
 #ifdef STRIDE1
@@ -199,7 +200,7 @@ int main(int argc,char **argv)
    rtime1 = 0.0;
    for(m=0;m < n;m++) {
 
-     if(proc_id == 0) 
+     if(proc_id == 0)
         printf("Iteration %d\n",m);
 
      /* Compute backward transform on A, store results in B */
@@ -208,22 +209,22 @@ int main(int argc,char **argv)
      Cp3dfft_btran_c2r(A,B,op_b);
      rtime1 = rtime1 + MPI_Wtime();
 
-     if(proc_id == 0) 
+     if(proc_id == 0)
        printf("Results of inverse transform: \n");
      print_all(B,proc_id,Nglob);
 
-   } 
-   
+   }
+
    /* free work space */
   Cp3dfft_clean();
-  
+
   /* Check results */
   cdiff = 0.0; p = B;
   for(z=0;z < fsize[2];z++)
-    for(y=0;y < fsize[1];y++)  
+    for(y=0;y < fsize[1];y++)
       for(x=0;x < fsize[0];x++) {
-	 if(x +fstart[0] == nx) 
-	   if(y +fstart[1] == 3 && z+fstart[2] == 4) 
+	 if(x +fstart[0] == nx)
+	   if(y +fstart[1] == 3 && z+fstart[2] == 4)
 	     cdiff = max(fabs((*p) + Nglob*0.25),cdiff);
 	   else if(y +fstart[1]== 3 && z+fstart[2] == nz-2)
 	     cdiff = max(fabs((*p) - Nglob*0.25),cdiff);
@@ -276,7 +277,7 @@ int main(int argc,char **argv)
     gt[i] = gt[i]/ ((double) nproc);
   }
 
-  if(proc_id == 0) { 
+  if(proc_id == 0) {
      printf("Time per loop=%lg\n",rtime2/((double) n));
      for(i=0;i < 12;i++) {
        printf("timer[%d] (avg/max/min): %lE %lE %lE\n",i+1,gt[i],gt1[i],gt2[i]);
@@ -292,7 +293,7 @@ void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #else
   void init_wave1(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #endif
-  
+
   int x,y,z;
   double sinyz,*sinx,*cosx,*siny,*sinz,twopi;
 
@@ -313,7 +314,7 @@ void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
    }
 
    for(x=0;x < isize[2];x++)
-     for(y=0;y < isize[1];y++) 
+     for(y=0;y < isize[1];y++)
        for(z=0;z < isize[0];z++) {
 	 *A++ = cosx[x]*siny[y]*sinz[z];
 	 *A++ = sinx[x]*siny[y]*sinz[z];
@@ -326,7 +327,7 @@ void init_wave1(double *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #else
     void init_wave2(float *A,int isize[3],int istart[3],int nx,int ny,int nz) {
 #endif
-  
+
   int x,y,z;
   double sinyz,*sinx,*cosx,*siny,*sinz,twopi;
 
@@ -414,4 +415,4 @@ void print_all_init(float *A,int proc_id,long int Nglob)
     }
 }
 
-  
+

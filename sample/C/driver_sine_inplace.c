@@ -26,26 +26,26 @@
 */
 
 /*
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array with a 3D sine wave, then 
-! performs forward 3D Fourier transform IN PLACE, then backward 
-! transform IN PLACE, and checks that 
-! the results are correct, namely the same as in the start except 
+! This program initializes a 3D array with a 3D sine wave, then
+! performs forward 3D Fourier transform IN PLACE, then backward
+! transform IN PLACE, and checks that
+! the results are correct, namely the same as in the start except
 ! for a normalization factor. It can be used both as a correctness
-! test and for timing the library functions. 
+! test and for timing the library functions.
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
 ! (1 or 2), and Nrep is the number of repititions. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -76,7 +76,7 @@ int main(int argc,char **argv)
    double *sinx,*siny,*sinz,factor;
    double rtime1,rtime2,gt[12],gt1[12],gt2[12],timers[12];
    FILE *fp;
-   unsigned char op_f[3]="fft", op_b[3]="tff";
+   unsigned char op_f[]="fft", op_b[]="tff";
    int memsize[3];
 
 #ifndef SINGLE_PREC
@@ -97,8 +97,8 @@ int main(int argc,char **argv)
      gt1[i] = 0.0;
      gt2[i] = 1E10;
    }
-  
-   set_timers();
+
+   Cset_timers();
 
    if(proc_id == 0) {
      if((fp=fopen("stdin", "r"))==NULL){
@@ -108,6 +108,7 @@ int main(int argc,char **argv)
         fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
         fclose(fp);
      }
+     printf("P3DFFT test, 3D wave input, in-place transform\n");
 #ifndef SINGLE_PREC
      printf("Double precision\n (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
 #else
@@ -119,7 +120,7 @@ int main(int argc,char **argv)
    MPI_Bcast(&nz,1,MPI_INT,0,MPI_COMM_WORLD);
    MPI_Bcast(&n,1,MPI_INT,0,MPI_COMM_WORLD);
    MPI_Bcast(&ndim,1,MPI_INT,0,MPI_COMM_WORLD);
-   
+
    if(ndim == 1) {
      dims[0] = 1; dims[1] = nproc;
    }
@@ -130,11 +131,11 @@ int main(int argc,char **argv)
          printf("Reading proc. grid from file dims\n");
        fscanf(fp,"%d %d\n",dims,dims+1);
        fclose(fp);
-       if(dims[0]*dims[1] != nproc) 
+       if(dims[0]*dims[1] != nproc)
           dims[1] = nproc / dims[0];
      }
      else {
-       if(proc_id == 0) 
+       if(proc_id == 0)
           printf("Creating proc. grid with mpi_dims_create\n");
        dims[0]=dims[1]=0;
        MPI_Dims_create(nproc,2,dims);
@@ -145,20 +146,20 @@ int main(int argc,char **argv)
      }
    }
 
-   if(proc_id == 0) 
+   if(proc_id == 0)
       printf("Using processor grid %d x %d\n",dims[0],dims[1]);
 
    /* Initialize P3DFFT */
    Cp3dfft_setup(dims,nx,ny,nz,MPI_Comm_c2f(MPI_COMM_WORLD),nx,ny,nz,1,memsize);
    /* Get dimensions for input array - real numbers, X-pencil shape.
-      Note that we are following the Fortran ordering, i.e. 
+      Note that we are following the Fortran ordering, i.e.
       the dimension  with stride-1 is X. */
    conf = 1;
    Cp3dfft_get_dims(istart,iend,isize,conf);
    conf = 2;
    Cp3dfft_get_dims(fstart,fend,fsize,conf);
    /* Get dimensions for output array - complex numbers, Z-pencil shape.
-      Stride-1 dimension could be X or Z, depending on how the library 
+      Stride-1 dimension could be X or Z, depending on how the library
       was compiled (stride1 option) */
 
    sinx = malloc(sizeof(double)*nx);
@@ -183,7 +184,7 @@ int main(int argc,char **argv)
    A = (float *) malloc(sizeof(float) * nm);
 #endif
 
-   if(A == NULL) 
+   if(A == NULL)
      printf("%d: Error allocating array A (%d)\n",proc_id,nm);
 
    p = A;
@@ -203,7 +204,7 @@ int main(int argc,char **argv)
    rtime1 = 0.0;
    for(m=0;m < n;m++) {
 
-     if(proc_id == 0) 
+     if(proc_id == 0)
         printf("Iteration %d\n",m);
 
      MPI_Barrier(MPI_COMM_WORLD);
@@ -212,7 +213,7 @@ int main(int argc,char **argv)
      Cp3dfft_ftran_r2c(A,A,op_f);
      rtime1 = rtime1 + MPI_Wtime();
 
-     if(proc_id == 0) 
+     if(proc_id == 0)
         printf("Result of forward transform\n");
 
      print_all(A,Ntot,proc_id,Nglob);
@@ -225,11 +226,11 @@ int main(int argc,char **argv)
      Cp3dfft_btran_c2r(A,A,op_b);
      rtime1 = rtime1 + MPI_Wtime();
 
-   } 
+   }
 
    /* Free work space */
   Cp3dfft_clean();
-  
+
   /* Check results */
   cdiff = 0.0; p = A;
   for(z=0;z < isize[2];z++)
