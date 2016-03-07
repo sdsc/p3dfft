@@ -168,7 +168,7 @@
 
       do i=0,jproc-1
 #ifdef USE_EVEN
-         position = i*KfCntMax*nv/(mytype*2)+1
+         position = (i*nv)*KfCntMax/(mytype*2)+1
 #else
          position = JrSndStrt(i)*nv/(mytype*2)+1 
 #endif

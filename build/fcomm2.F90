@@ -166,11 +166,11 @@
 
          do i=0,jproc-1
 #ifdef USE_EVEN
-            position = i*KfCntMax*nv/(mytype*2)+1
+            position = (i*nv+j-1)*KfCntMax/(mytype*2)+1
 #else
             position = KfRcvStrt(i)*nv/(mytype*2)+1 
-#endif
  	    position = position + (j-1)*iisize*jjsize*kjsz(i)
+#endif
 
             do z=kjst(i),kjen(i)
                do y=1,jjsize
