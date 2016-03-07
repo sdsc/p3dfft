@@ -26,22 +26,22 @@
 */
 
 /*
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array with a 3D sine wave, then 
+! This program initializes a 3D array with a 3D sine wave, then
 ! performs 3D FFT forward transform, and computes power spectrum.
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
 ! (1 or 2), and Nrep is the number of repititions. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -73,7 +73,7 @@ int main(int argc,char **argv)
    int fstart[3],fsize[3],fend[3];
    int iproc,jproc,ng[3],kmax,iex,conf,m,n;
    long int Ntot;
-   unsigned char op_f[3]="fft";
+   unsigned char op_f[]="fft";
 
 #ifndef SINGLE_PREC
    double pi,twopi,sinyz,cdiff,ccdiff,ans;
@@ -106,8 +106,8 @@ int main(int argc,char **argv)
      gt2[i] = 1E10;
    }
 
-   set_timers();
- 
+   Cset_timers();
+
    if(proc_id == 0) {
      if((fp=fopen("stdin", "r"))==NULL){
         printf("Cannot open file. Setting to default nx=ny=nz=128, ndim=2, n=1.\n");
@@ -116,6 +116,7 @@ int main(int argc,char **argv)
         fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
         fclose(fp);
      }
+     printf("P3DFFT test, 3D wave input, spectrum output\n");
 #ifndef SINGLE_PREC
      printf("Double precision\n (%d %d %d) grid\n %d proc. dimensions\n",nx,ny,nz,ndim);
 #else
@@ -127,7 +128,7 @@ int main(int argc,char **argv)
    MPI_Bcast(&nz,1,MPI_INT,0,MPI_COMM_WORLD);
    /*    MPI_Bcast(&n,1,MPI_INT,0,MPI_COMM_WORLD);*/
    MPI_Bcast(&ndim,1,MPI_INT,0,MPI_COMM_WORLD);
-   
+
    if(ndim == 1) {
      dims[0] = 1; dims[1] = nproc;
    }
@@ -138,11 +139,11 @@ int main(int argc,char **argv)
          printf("Reading proc. grid from file dims\n");
        fscanf(fp,"%d %d\n",dims,dims+1);
        fclose(fp);
-       if(dims[0]*dims[1] != nproc) 
+       if(dims[0]*dims[1] != nproc)
           dims[1] = nproc / dims[0];
      }
      else {
-       if(proc_id == 0) 
+       if(proc_id == 0)
           printf("Creating proc. grid with mpi_dims_create\n");
        dims[0]=dims[1]=0;
        MPI_Dims_create(nproc,2,dims);
@@ -153,7 +154,7 @@ int main(int argc,char **argv)
      }
    }
 
-   if(proc_id == 0) 
+   if(proc_id == 0)
       printf("Using processor grid %d x %d\n",dims[0],dims[1]);
 
    /* Initialize P3DFFT */
@@ -202,7 +203,7 @@ int main(int argc,char **argv)
 
    /*
    for(z=0;z < isize[2];z++)
-     for(y=0;y < isize[1];y++) 
+     for(y=0;y < isize[1];y++)
        for(x=0;x < isize[0];x++) {
           r = rand()/RAND_MAX;
 	  *p1++ =  r;
@@ -230,11 +231,11 @@ int main(int argc,char **argv)
 #endif
 
 #ifdef STRIDE1
-   ng[0] = nz;	  
+   ng[0] = nz;
    ng[1] = ny;
    ng[2] = nx;
 #else
-   ng[0] = nx;	  
+   ng[0] = nx;
    ng[1] = ny;
    ng[2] = nz;
 #endif
@@ -254,7 +255,7 @@ int main(int argc,char **argv)
    free(E);
 
   get_timers(timers);
-  
+
    /* Gather timing statistics */
   MPI_Reduce(&rtime1,&rtime2,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
 
@@ -270,7 +271,7 @@ int main(int argc,char **argv)
     gt[i] = gt[i]/ ((double) nproc);
   }
 
-  if(proc_id == 0) { 
+  if(proc_id == 0) {
      printf("Time per loop=%lg\n",rtime2/((double) n));
      for(i=0;i < 12;i++) {
        printf("timer[%d] (avg/max/min): %lE %lE %lE\n",i+1,gt[i],gt1[i],gt2[i]);
@@ -320,20 +321,20 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
 #ifdef STRIDE1
     for(x=0;x < sz[2]*2;x++) {
 
-	  /* Array B is floats storing complex numbers, so two elements 
+	  /* Array B is floats storing complex numbers, so two elements
 	     share one kx */
       kx = x/2 + (st[2]-1);
-      
+
       for(y=0;y < sz[1];y++) {
 	ky = y +st[1]-1;
 	if(ky > ng[1]/2)
 	  ky = ng[1] - ky;
-	
+
 	for(z=0;z < sz[0];z++) {
 	  kz = z +st[0]-1;
 	  if(kz > ng[0]/2)
 	    kz = ng[0] - kz;
-    
+
 	  k2 = kx *kx +ky *ky + kz*kz;
 #ifndef SINGLE_PREC
 	  ik = sqrt((double) k2)+0.5;
@@ -351,7 +352,7 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
       kz = z +st[2]-1;
       if(kz > ng[2]/2)
 	kz = ng[2] - kz;
-      
+
       for(y=0;y < sz[1];y++) {
 	ky = y +st[1]-1;
 	if(ky > ng[1]/2)
@@ -359,10 +360,10 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
 
 	for(x=0;x < sz[0]*2;x++) {
 
-	  /* Array B is floats storing complex numbers, so two elements 
+	  /* Array B is floats storing complex numbers, so two elements
 	     share one kx */
 	  kx = x/2 + (st[0]-1);
-    
+
 	  k2 = kx *kx +ky *ky + kz*kz;
 #ifndef SINGLE_PREC
 	  ik = sqrt((double) k2)+0.5;
@@ -382,4 +383,4 @@ void compute_spectrum(float *B,int *st,int *sz,int *en,int *ng,float *E,int kmax
 
   }
 
-  
+
