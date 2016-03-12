@@ -111,7 +111,7 @@ int main(int argc,char **argv)
          fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
          fclose(fp);
       }
-     printf("P3DFFT test, random input\n")
+     printf("P3DFFT test, random input\n");
 #ifndef SINGLE_PREC
      printf("Double precision\n (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
 #else
