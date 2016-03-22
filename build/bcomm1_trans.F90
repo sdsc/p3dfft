@@ -184,11 +184,11 @@
             do i=0,jproc-1
             
 #ifdef USE_EVEN
-               pos0 = (i*nv + j-1) * KfCntMax/ (mytype*2) + (x-1)*jjsize 
+               pos0 = i*nv * KfCntMax/ (mytype*2) + (x-1)*jjsize 
 #else
                pos0 = JrSndStrt(i) *nv/ (mytype*2) + (x-1)*jjsize 
-               pos0 = pos0 +(j-1)*kjsz(i)*iisize*jjsize
 #endif
+               pos0 = pos0 +(j-1)*kjsz(i)*iisize*jjsize
 	       
 	       pos1 = pos0
 
@@ -326,11 +326,11 @@
             
 
 #ifdef USE_EVEN
-               pos0 = (i*nv + j-1) * KfCntMax/ (mytype*2) + (x-1)*jjsize 
+               pos0 = i*nv * KfCntMax/ (mytype*2) + (x-1)*jjsize 
 #else
                pos0 = JrSndStrt(i) *nv/ (mytype*2) + (x-1)*jjsize 
-               pos0 = pos0 +(j-1)*kjsz(i)*iisize*jjsize
 #endif
+               pos0 = pos0 +(j-1)*kjsz(i)*iisize*jjsize
 	       pos1 = pos0 
                do z=kjst(i),kjen(i),NBz
                   z2 = min(z+NBz-1,kjen(i))

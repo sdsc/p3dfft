@@ -189,7 +189,7 @@
          do i=0,jproc-1
 
 #ifdef USE_EVEN
- 	      pos1 = pos0 + (i * nv + j-1) * KfCntMax / (mytype*2) 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #else
  	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #endif
@@ -241,7 +241,7 @@
 
 	      pos0 = pos0 + iisize*jjsize*dnz
 #ifdef USE_EVEN
- 	      pos1 = pos0 + (i * nv + j-1) * KfCntMax / (mytype*2) 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #else
  	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #endif
@@ -276,11 +276,12 @@
        do x=1,iisize
 
          do i=0,jproc-1
+	    pos0 = (x-1)*jjsize
 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1) *KfCntMax / (mytype*2) + (x-1)*jjsize 
+            pos1 = pos0 + (i * nv +j-1) *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else         
-	    pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize+ (j-1)*iisize*jjsize*kjsz(i)
+	    pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -289,19 +290,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
            enddo 
        enddo	
 
@@ -335,13 +336,14 @@
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
       do x=1,iisize
+         pos0 = (x-1)*jjsize
 
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1)*KfCntMax / (mytype*2) + (x-1)*jjsize 
+           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else         
-	   pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize + (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -350,19 +352,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         dest(iz,iy,x) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
            enddo 
         enddo
       enddo
@@ -370,13 +372,14 @@
       else
       
       do x=1,iisize
-
+         pos0 = (x-1)*jjsize
+      
          do i=0,jproc-1
-
+	 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1)*KfCntMax / (mytype*2) + (x-1)*jjsize 
+            pos1 = pos0 + i * nv *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else         
-	   pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize+ (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -385,19 +388,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
             enddo
          enddo
 
