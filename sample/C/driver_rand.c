@@ -111,12 +111,13 @@ int main(int argc,char **argv)
          fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
          fclose(fp);
       }
-     printf("P3DFFT test, random input\n")
+      printf("P3DFFT test, random input\n");
 #ifndef SINGLE_PREC
-     printf("Double precision\n (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
+     printf("Double precision\n");
 #else
-     printf("Single precision\n (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
+     printf("Single precision\n");
 #endif
+     printf(" (%d %d %d) grid\n %d proc. dimensions\n%d repetitions\n",nx,ny,nz,ndim,n);
    }
    MPI_Bcast(&nx,1,MPI_INT,0,MPI_COMM_WORLD);
    MPI_Bcast(&ny,1,MPI_INT,0,MPI_COMM_WORLD);
