@@ -111,11 +111,7 @@ int main(int argc,char **argv)
          fscanf(fp,"%d %d %d %d %d\n",&nx,&ny,&nz,&ndim,&n);
          fclose(fp);
       }
-<<<<<<< HEAD
-      printf("P3DFFT test, random input\n");
-=======
      printf("P3DFFT test, random input\n");
->>>>>>> 5e6159cb320dbab4a37ac5c0930f91cb16c60935
 #ifndef SINGLE_PREC
      printf("Double precision\n");
 #else
