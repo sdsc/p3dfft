@@ -186,14 +186,14 @@
 
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
+
          do i=0,jproc-1
 
 #ifdef USE_EVEN
- 	      pos0 = (x-1)*jjsize + (i * nv + j-1) * KfCntMax / (mytype*2) 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize 
 #else
- 	      pos0 = (x-1)*jjsize + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) +(x-1)*jjsize
 #endif
-	   pos1 = pos0
 
            if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
 ! Just copy the data
@@ -242,9 +242,9 @@
 
 	      pos0 = pos0 + iisize*jjsize*dnz
 #ifdef USE_EVEN
- 	      pos1 = pos0 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #else
- 	      pos1 = pos0 
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
 #endif
 
 	      do z=nzhc+1,kjen(i),NBz
@@ -276,12 +276,14 @@
  
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) collapse(2)
        do x=1,iisize
+
          do i=0,jproc-1
+	    pos0 = (x-1)*jjsize
 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1) *KfCntMax / (mytype*2) + (x-1)*jjsize 
+            pos1 = pos0 + (i * nv +j-1) *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else         
-	    pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize+ (j-1)*iisize*jjsize*kjsz(i)
+	    pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -290,19 +292,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
            enddo 
        enddo	
 
@@ -337,12 +339,13 @@
 
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
+         
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1)*KfCntMax / (mytype*2) + (x-1)*jjsize 
+           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else         
-	   pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize + (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -351,19 +354,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         dest(iz,iy,x) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
            enddo 
         enddo
       enddo
@@ -372,13 +375,13 @@
       
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
+         
          do i=0,jproc-1
-
-
+	 
 #ifdef USE_EVEN
-            pos0 = (i * nv +j-1)*KfCntMax / (mytype*2) + (x-1)*jjsize 
+            pos1 = pos0 + i * nv *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else         
-	   pos0 = nv * KfRcvStrt(i) / (mytype*2) + (x-1)*jjsize+ (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #endif 
 
             do z=kjst(i),kjen(i),NBz
@@ -387,19 +390,19 @@
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
-                  pos1 = pos0 +y
+                  pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos1 
+                     position = pos2 
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
                         position = position + 1
                      enddo
-                     pos1 = pos1 + iisize * jjsize
+                     pos2 = pos2 + iisize * jjsize
                   enddo
                enddo
-               pos0 = pos0 + jjsize*iisize*NBz
+               pos1 = pos1 + jjsize*iisize*NBz
             enddo
          enddo
 
@@ -448,13 +451,8 @@
 
       tc = tc - MPI_Wtime()
 
-#ifdef DEBUG
-       print *,taskid,': fcomm2_trans: packing'
-#endif      
-
-
-!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
-      do i=0,jproc-1
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
+     do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(mytype*2)  + 1 
 #else
@@ -513,10 +511,6 @@
       tc = tc + MPI_Wtime()
       t = t - MPI_Wtime()
 
-#ifdef DEBUG
-       print *,taskid,': fcomm2_trans: initiating exchange'
-#endif      
-
 #ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax, mpi_byte, buf2,KfCntMax, mpi_byte,mpi_comm_col,ierr)
 #else      
@@ -526,10 +520,6 @@
 #endif
 
       t = MPI_Wtime() + t
-
-#ifdef DEBUG
-       print *,taskid,': fcomm2_trans: unpacking'
-#endif      
 
      if(jjsize .gt. 0) then
 

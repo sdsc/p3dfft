@@ -337,6 +337,8 @@
 
       endif
 
+!      print *,'padi=',padi
+
 ! Initialize FFTW and allocate buffers for communication
       nm = nxhp * jisize * (kjsize+padi) 
       nv_preset = 1
