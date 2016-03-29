@@ -212,10 +212,12 @@ int main(int argc,char **argv)
      Cp3dfft_ftran_r2c(A,B,op_f);
      rtime1 = rtime1 + MPI_Wtime();
 
+     /*
      if(proc_id == 0)
         printf("Result of forward transform\n");
 
      print_all(B,Ntot,proc_id,Nglob);
+     */
      /* normalize */
      mult_array(B,Ntot,factor);
 

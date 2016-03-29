@@ -250,11 +250,11 @@
          rtime1 = rtime1 + MPI_wtime()
          
          do j=1,nv
-            if(proc_id .eq. 0) then
-               print *,'Result of forward transform, var.',j
-            endif
-            call print_all(A(fstart(1),fstart(2),fstart(3),j),Ntot, &
-                 proc_id,Nglob)
+!            if(proc_id .eq. 0) then
+!               print *,'Result of forward transform, var.',j
+!            endif
+!            call print_all(A(fstart(1),fstart(2),fstart(3),j),Ntot, &
+!                 proc_id,Nglob)
             call mult_array(A(fstart(1),fstart(2),fstart(3),j), Ntot,factor)
 	 enddo
     
