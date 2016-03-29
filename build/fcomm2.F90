@@ -93,15 +93,15 @@
       integer nv,j,i,position,pos0,pos1,x,y,z,dny
 
       dny = ny_fft-nyc
-      position = 1
       do j=1,nv
 
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = (i * nv +(j-1))* KfCntMax/(mytype*2)  + 1 
+         pos0 = i * nv * KfCntMax/(mytype*2)
 #else
-         pos0 = (nv * KfSndStrt(i) + (j-1)*KfSndCnts(i))/(mytype*2)+ 1 
+         pos0 = nv * KfSndStrt(i)/(mytype*2)
 #endif
+	pos0 = pos0 + (j-1)*KfSndCnts(i)/(mytype*2)+ 1 
 
 
 ! If clearly in the first half of ny
@@ -166,11 +166,11 @@
 
          do i=0,jproc-1
 #ifdef USE_EVEN
-            position = (i*nv+j-1)*KfCntMax/(mytype*2)+1
+            position = i*nv*KfCntMax/(mytype*2)+1
 #else
             position = KfRcvStrt(i)*nv/(mytype*2)+1 
- 	    position = position + (j-1)*iisize*jjsize*kjsz(i)
 #endif
+ 	    position = position + (j-1)*iisize*jjsize*kjsz(i)
 
             do z=kjst(i),kjen(i)
                do y=1,jjsize
