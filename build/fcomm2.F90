@@ -100,11 +100,12 @@
 
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = (i * nv +(j-1))* KfCntMax/(mytype*2)  + 1 
+        pos0 = i * nv * KfCntMax/(mytype*2) 
 #else
-         pos0 = (nv * KfSndStrt(i) + (j-1)*KfSndCnts(i))/(mytype*2)+ 1 
+        pos0 = nv * KfSndStrt(i) /(mytype*2) 
 #endif
-
+ 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(mytype*2)+ 1 
+	
 
 ! If clearly in the first half of ny
 
