@@ -220,10 +220,10 @@
          
          rtime1 = rtime1 + MPI_wtime()
 
-         if(proc_id .eq. 0) then
-            print *,'Result of forward transform:'
-            call print_all(AEND,Ntot,proc_id,Nglob)
-         endif
+!         if(proc_id .eq. 0) then
+!            print *,'Result of forward transform:'
+!            call print_all(AEND,Ntot,proc_id,Nglob)
+!         endif
 
 ! Normalize
          call mult_array(AEND, Ntot,factor)
