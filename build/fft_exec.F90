@@ -35,7 +35,7 @@
 
       integer xsize_in,zsize_in,xsize_out,zsize_out,stride1_in,stride2_in
       integer stride1_out,stride2_out,ny,m,z_in,z_out
-      complex(mytype) In(xsize_in,ny,0:zsize_in-1),Out(xsize_out,ny,0:zsize_out-1)
+      complex(p3dfft_type) In(xsize_in,ny,0:zsize_in-1),Out(xsize_out,ny,0:zsize_out-1)
 
       call exec_f_c1(In(1,1,z_in),stride1_in,stride2_in,Out(1,1,z_out),stride1_out,stride2_out,ny,m)
 
@@ -52,7 +52,7 @@
 
       integer xsize_in,zsize_in,xsize_out,zsize_out,stride1_in,stride2_in
       integer stride1_out,stride2_out,ny,m,z_in,z_out
-      complex(mytype) In(xsize_in,ny,0:zsize_in-1),Out(xsize_out,ny,0:zsize_out-1)
+      complex(p3dfft_type) In(xsize_in,ny,0:zsize_in-1),Out(xsize_out,ny,0:zsize_out-1)
 
       call exec_b_c1(In(1,1,z_in),stride1_in,stride2_in,Out(1,1,z_out),stride1_out,stride2_out,ny,m)
 
@@ -71,7 +71,7 @@
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
       integer omp_get_thread_num
 
 #ifdef FFTW
@@ -85,7 +85,7 @@
 #endif
       stx = startx_b_c1(tid)
       sty = starty_b_c1(tid)
-      plan = plan1_bc(tid) 
+      plan = plan1_bc(tid)
 
 #ifndef SINGLE_PREC
          call dfftw_execute_dft(plan,X(stx),Y(sty))
@@ -98,10 +98,10 @@
 
 #ifndef SINGLE_PREC
       call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #else
       call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #endif
 
 #else
@@ -119,7 +119,7 @@
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m
       integer*8 plan
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 #ifdef FFTW
 
@@ -134,10 +134,10 @@
 
 #ifndef SINGLE_PREC
       call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #else
       call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #endif
 
 #else
@@ -155,7 +155,7 @@
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
       integer omp_get_thread_num
 
 #ifdef FFTW
@@ -180,10 +180,10 @@
 
 #ifndef SINGLE_PREC
       call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #else
       call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #endif
 
 #else
@@ -202,7 +202,7 @@
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
@@ -214,7 +214,7 @@
 #endif
       stx = startx_b_c2_dif(tid)
       sty = starty_b_c2_dif(tid)
-      plan = plan2_bc_dif(tid) 
+      plan = plan2_bc_dif(tid)
 #ifndef SINGLE_PREC
          call dfftw_execute_dft(plan,X(stx),Y(sty))
 #else
@@ -226,10 +226,10 @@
 
 #ifndef SINGLE_PREC
       call dcft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #else
       call scft (0,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
-              caux1,cnaux,caux2,cnaux)       
+              caux1,cnaux,caux2,cnaux)
 #endif
 
 #else
@@ -248,8 +248,8 @@
 
       integer dimx,dimy,N,m,tid
       integer*8 plan,stx,sty
-      complex(mytype) X((N/2+1)*m)
-      real(mytype) Y(N*m)
+      complex(p3dfft_type) X((N/2+1)*m)
+      real(p3dfft_type) Y(N*m)
       integer omp_get_thread_num
 
 #ifdef FFTW
@@ -262,7 +262,7 @@
 #endif
       stx = startx_bcr(tid)
       sty = starty_bcr(tid)
-      plan = plan1_bcr(tid) 
+      plan = plan1_bcr(tid)
 #ifndef SINGLE_PREC
       call dfftw_execute_dft_c2r(plan,X(stx),Y(sty))
 #else
@@ -274,10 +274,10 @@
 
 #ifndef SINGLE_PREC
       call dcrft(0,X,dimx,Y,dimy,N,m,-1,1.0d0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)  
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #else
       call scrft(0,X,dimx,Y,dimy,N,m,-1,1.0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)  
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #endif
 #else
       Error: unknown FFT library
@@ -288,7 +288,7 @@
 
 ! Execute forward complex-to-complex 1D FFT
 
-      subroutine exec_f_c1(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
+      subroutine exec_f_c1(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
 
       use fft_spec
       use p3dfft
@@ -297,7 +297,7 @@
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 
 #ifdef FFTW
@@ -311,10 +311,10 @@
 
 
 !       do tid=0,num_thr-1
-       
+
       stx = startx_f_c1(tid)
       sty = starty_f_c1(tid)
-      plan = plan1_fc(tid) 
+      plan = plan1_fc(tid)
 
 !      print *,'Thread ',tid,': stx,sty,plan=',stx,sty,plan
 
@@ -337,13 +337,13 @@
               caux1,cnaux,caux2,cnaux)
 #endif
 #else
-      Error: undefined FFT library 
+      Error: undefined FFT library
 #endif
 
       return
       end
 
-      subroutine exec_f_c2_same(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
+      subroutine exec_f_c2_same(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
 
       use fft_spec
       use p3dfft
@@ -352,7 +352,7 @@
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
 
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
@@ -364,7 +364,7 @@
 #endif
       stx = startx_f_c2_same(tid)
       sty = starty_f_c2_same(tid)
-      plan = plan2_fc_same(tid) 
+      plan = plan2_fc_same(tid)
 
 #ifndef SINGLE_PREC
       call dfftw_execute_dft(plan,X(stx),Y(sty))
@@ -383,13 +383,13 @@
               caux1,cnaux,caux2,cnaux)
 #endif
 #else
-      Error: undefined FFT library 
+      Error: undefined FFT library
 #endif
 
       return
       end
 
-      subroutine exec_f_c2_dif(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
+      subroutine exec_f_c2_dif(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
 
       use fft_spec
       use p3dfft
@@ -397,7 +397,7 @@
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,tid
       integer*8 plan,stx,sty
-      complex(mytype) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
+      complex(p3dfft_type) X(N*stride_x1+m*stride_x2),Y(N*stride_y1+m*stride_y2)
       integer omp_get_thread_num
 
 #ifdef FFTW
@@ -410,7 +410,7 @@
 #endif
       stx = startx_f_c2_dif(tid)
       sty = starty_f_c2_dif(tid)
-      plan = plan2_fc_dif(tid) 
+      plan = plan2_fc_dif(tid)
 
 #ifndef SINGLE_PREC
       call dfftw_execute_dft(plan,X(stx),Y(sty))
@@ -429,7 +429,7 @@
               caux1,cnaux,caux2,cnaux)
 #endif
 #else
-      Error: undefined FFT library 
+      Error: undefined FFT library
 #endif
 
       return
@@ -444,8 +444,8 @@
 
       integer dimx,dimy,N,m,tid
       integer*8 plan,stx,sty
-      real(mytype) X(N*m)
-      complex(mytype) Y((N/2+1)*m)
+      real(p3dfft_type) X(N*m)
+      complex(p3dfft_type) Y((N/2+1)*m)
       integer omp_get_thread_num
 
 #ifdef FFTW
@@ -459,7 +459,7 @@
 #endif
       stx = startx_frc(tid)
       sty = starty_frc(tid)
-      plan = plan1_frc(tid) 
+      plan = plan1_frc(tid)
 #ifndef SINGLE_PREC
       call dfftw_execute_dft_r2c(plan,X(stx),Y(sty))
 #else
@@ -472,10 +472,10 @@
 
 #ifndef SINGLE_PREC
       call drcft(0,X,dimx,Y,dimy,N,m,1,1.0d0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)     
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #else
       call srcft(0,X,dimx,Y,dimy,N,m,1,1.0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)     
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #endif
 #else
       Error: undefined FFT library
@@ -493,13 +493,13 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m,tid
       integer*8 plan,stx,sty
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -510,8 +510,8 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 #endif
       stx = startx_ctrans_same(tid)
       sty = starty_ctrans_same(tid)
-      plan = plan_ctrans_same(tid) 
- 
+      plan = plan_ctrans_same(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
@@ -521,7 +521,7 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dcosf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -531,7 +531,7 @@ subroutine exec_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -542,13 +542,13 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -559,8 +559,8 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 #endif
       stx = startx_ctrans_dif(tid)
       sty = starty_ctrans_dif(tid)
-      plan = plan_ctrans_dif(tid) 
- 
+      plan = plan_ctrans_dif(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
@@ -570,7 +570,7 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dcosf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -580,7 +580,7 @@ subroutine exec_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -592,13 +592,13 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -609,8 +609,8 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 #endif
       stx = startx_ctrans_same(tid)
       sty = starty_ctrans_same(tid)
-      plan = plan_ctrans_same(tid) 
- 
+      plan = plan_ctrans_same(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
     call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
@@ -622,7 +622,7 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dcosf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -638,7 +638,7 @@ subroutine exec_ctrans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 !                   Y(2), stride_y1, stride_y2, &
 !                   nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -650,13 +650,13 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -667,8 +667,8 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 #endif
       stx = startx_ctrans_dif(tid)
       sty = starty_ctrans_dif(tid)
-      plan = plan_ctrans_dif(tid) 
- 
+      plan = plan_ctrans_dif(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
     call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
@@ -680,7 +680,7 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dcosf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -696,7 +696,7 @@ subroutine exec_ctrans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 !                   Y(2), stride_y1, stride_y2, &
 !                   nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -713,13 +713,13 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -730,8 +730,8 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 #endif
       stx = startx_strans_same(tid)
       sty = starty_strans_same(tid)
-      plan = plan_strans_same(tid) 
- 
+      plan = plan_strans_same(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
@@ -741,7 +741,7 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dsinf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -751,7 +751,7 @@ subroutine exec_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -762,13 +762,13 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -779,8 +779,8 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 #endif
       stx = startx_strans_dif(tid)
       sty = starty_strans_dif(tid)
-      plan = plan_strans_dif(tid) 
- 
+      plan = plan_strans_dif(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
 #else
@@ -790,7 +790,7 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dsinf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -800,7 +800,7 @@ subroutine exec_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -812,25 +812,25 @@ subroutine exec_strans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
 #ifdef OPENMP
-      tid = omp_get_thread_num() 
+      tid = omp_get_thread_num()
 #else
       tid = 0
 #endif
       stx = startx_strans_same(tid)
       sty = starty_strans_same(tid)
-      plan = plan_strans_same(tid) 
- 
+      plan = plan_strans_same(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
     call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
@@ -842,7 +842,7 @@ subroutine exec_strans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dsinf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -858,7 +858,7 @@ subroutine exec_strans_r2_complex_same (X, stride_x1, stride_x2, Y, stride_y1, s
                    Y(2), stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif
@@ -870,13 +870,13 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
     use fft_spec
     use p3dfft
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2,tid
       integer*8 plan,stx,sty
       integer omp_get_thread_num
- 
+
 #ifdef FFTW
 !$OMP PARALLEL private(tid,stx,sty,plan)
 
@@ -887,8 +887,8 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 #endif
       stx = startx_strans_dif(tid)
       sty = starty_strans_dif(tid)
-      plan = plan_strans_dif(tid) 
- 
+      plan = plan_strans_dif(tid)
+
 #ifndef SINGLE_PREC
     call dfftw_execute_r2r (plan, X(stx), Y(sty))
     call dfftw_execute_r2r (plan, X(stx+1), Y(sty+1))
@@ -901,7 +901,7 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
 
 #elif defined ESSL
     nm2 = (N-1) * 2
- 
+
 #ifndef SINGLE_PREC
     call dsinf (0, X, stride_x1, stride_x2, &
                    Y, stride_y1, stride_y2, &
@@ -917,7 +917,7 @@ subroutine exec_strans_r2_complex_dif (X, stride_x1, stride_x2, Y, stride_y1, st
                    Y(2), stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #else
     Error: undefined FFT library
 #endif

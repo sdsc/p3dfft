@@ -23,24 +23,24 @@
 !
 !----------------------------------------------------------------------------
 
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array of complex numbers with a 
-! 3D sine/cosine wave, then performs inverse FFT transform, and checks that 
-! the results are correct. This sample program also demonstrates 
+! This program initializes a 3D array of complex numbers with a
+! 3D sine/cosine wave, then performs inverse FFT transform, and checks that
+! the results are correct. This sample program also demonstrates
 ! how to work with complex arrays in wavenumber space, declared as real.
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
 ! (1 or 2), and Nrep is the number of repititions. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -56,14 +56,14 @@
       integer fstatus
       logical flg_inplace
 
-      real(mytype), dimension(:,:,:),  allocatable :: Fin
-      real(mytype), dimension(:,:,:),  allocatable :: Beg
-      real(mytype),dimension(:),allocatable:: sinx,siny,sinz
-      real(mytype),dimension(:),allocatable:: cosx,cosy,cosz
-      real(mytype) twopi
+      real(p3dfft_type), dimension(:,:,:),  allocatable :: Fin
+      real(p3dfft_type), dimension(:,:,:),  allocatable :: Beg
+      real(p3dfft_type),dimension(:),allocatable:: sinx,siny,sinz
+      real(p3dfft_type),dimension(:),allocatable:: cosx,cosy,cosz
+      real(p3dfft_type) twopi
 
       integer(i8) Ntot
-      real(mytype) factor
+      real(p3dfft_type) factor
       real(r8) rtime1,rtime2,Nglob,prec
       real(r8) gt(12,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
@@ -83,21 +83,21 @@
       gt=0.0
       gtcomm=0.0
 
-      if (proc_id.eq.0) then 
+      if (proc_id.eq.0) then
          open (unit=3,file='stdin',status='old', &
                access='sequential',form='formatted', iostat=fstatus)
          if (fstatus .eq. 0) then
             write(*, *) ' Reading from input file stdin'
-         endif 
+         endif
          ndim = 2
 
         read (3,*) nx, ny, nz, ndim,n
 	print *,'P3DFFT test, inverse, 3D wave input'
         write (*,*) "procs=",nproc," nx=",nx, &
                 " ny=", ny," nz=", nz,"ndim=",ndim," repeat=", n
-        if(mytype .eq. 4) then
+        if(p3dfft_type .eq. 4) then
            print *,'Single precision version'
-        else if(mytype .eq. 8) then
+        else if(p3dfft_type .eq. 8) then
            print *,'Double precision version'
         endif
        endif
@@ -150,8 +150,8 @@
 ! depending on how the library was compiled)
       call p3dfft_get_dims(istart,iend,isize,2)
 
-! Get dimensions for the C2R-transformed array of real numbers in X-pencils 
-! 
+! Get dimensions for the C2R-transformed array of real numbers in X-pencils
+!
       call p3dfft_get_dims(fstart,fend,fsize,1)
 
 
@@ -179,11 +179,11 @@
       allocate (cosz(nz))
 
       if(isize(1) .eq. nz) then
-! i.e. the library was compiled with --enable-stride1 option and Z is the 
+! i.e. the library was compiled with --enable-stride1 option and Z is the
 ! fastest running index.
 
          call init_wave1(BEG)
-         
+
       else
 
          call init_wave2(BEG)
@@ -194,16 +194,16 @@
 ! Repeat n times
 
       Ntot = fsize(1)*fsize(2)*fsize(3)
-      Nglob = nx * ny 
+      Nglob = nx * ny
       Nglob = Nglob * nz
 
-      rtime1 = 0.0               
+      rtime1 = 0.0
 
       do  m=1,n
          if(proc_id .eq. 0) then
             print *,'Iteration ',m
          endif
-         
+
          FIN = 0.0d0
 
 ! Barrier for correct timing
@@ -213,14 +213,14 @@
 ! Call Inverse transform (call a wrapper routine since first argument is
 ! a real array posing as complex)
          call btran_c2r (BEG,FIN,'tff')
-         
+
          rtime1 = rtime1 + MPI_wtime()
-         
+
          if(proc_id .eq. 0) then
             print *,'Result of inverse transform:'
          endif
          call print_all_real(FIN,Ntot,proc_id,Nglob)
-                  
+
       end do
 
 ! Free work space
@@ -228,7 +228,7 @@
 
 ! Check results: we expect four non-zero values
      call check_res(FIN)
-      
+
       deallocate(sinx,siny,sinz,cosx,cosy,cosz)
       deallocate(BEG,FIN)
 
@@ -271,14 +271,14 @@
 
       call MPI_FINALIZE (ierr)
 
-      contains 
+      contains
 
 !=========================================================
       subroutine check_res(FIN)
 !=========================================================
 
-      real(mytype) FIN(fstart(1):fend(1),fstart(2):fend(2),fstart(3):fend(3))
-      real(mytype) cdiff,ccdiff,prec,tmp
+      real(p3dfft_type) FIN(fstart(1):fend(1),fstart(2):fend(2),fstart(3):fend(3))
+      real(p3dfft_type) cdiff,ccdiff,prec,tmp
 
       cdiff = 0.0d0
       tmp = 0.0d0
@@ -322,11 +322,11 @@
          enddo
       enddo
 
-      call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
+      call MPI_Reduce(cdiff,ccdiff,1,p3dfft_mpireal,MPI_MAX,0, &
         MPI_COMM_WORLD,ierr)
 
       if(proc_id .eq. 0) then
-         if(mytype .eq. 8) then
+         if(p3dfft_type .eq. 8) then
             prec = 1e-14
          else
             prec = 1e-5
@@ -350,7 +350,7 @@
 
            implicit none
 
-          real(mytype) A((2*istart(1)-1):(2*iend(1)),istart(2):iend(2),istart(3):iend(3))
+          real(p3dfft_type) A((2*istart(1)-1):(2*iend(1)),istart(2):iend(2),istart(3):iend(3))
           integer x,y,z
 
          do z=istart(1),iend(1)
@@ -376,10 +376,10 @@
          end subroutine
 
          subroutine init_wave2(A)
-           
+
            implicit none
 
-          real(mytype) A((2*istart(1)-1):(2*iend(1)),istart(2):iend(2),istart(3):iend(3))
+          real(p3dfft_type) A((2*istart(1)-1):(2*iend(1)),istart(2):iend(2),istart(3):iend(3))
           integer x,y,z
 
          do x=istart(1),iend(1)
@@ -410,8 +410,8 @@
       use p3dfft
 
       integer(i8) nar,i
-      complex(mytype) X(nar)
-      real(mytype) f
+      complex(p3dfft_type) X(nar)
+      real(p3dfft_type) f
 
       do i=1,nar
          X(i) = X(i) * f
@@ -432,7 +432,7 @@
       integer x,y,z,proc_id
       integer(i8) i,Nar
       real(r8) Nglob
-      real(mytype), target :: Ar(1,1,*)
+      real(p3dfft_type), target :: Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,1)
@@ -455,7 +455,7 @@
 
       integer x,y,z,proc_id
       integer(i8) i,Nar
-      complex(mytype) Ar(1,1,*)
+      complex(p3dfft_type) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
       real(r8) Nglob
 

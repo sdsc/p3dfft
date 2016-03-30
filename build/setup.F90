@@ -59,7 +59,7 @@
       logical periodic(2),remain_dims(2)
       integer impid, ippid, jmpid, jppid
       integer(i8) n1,n2,pad1,padd
-      real(mytype), allocatable :: R(:)
+      real(p3dfft_type), allocatable :: R(:)
       integer, optional, intent (out) :: memsize (3)
       integer, optional, intent (in) :: nxcut,nycut,nzcut
       logical, optional, intent(in) :: overwrite
@@ -74,17 +74,17 @@
 
       if(mpi_set) then
          print *,'P3DFFT Setup error: the problem is already initialized. '
-         print *,'Currently multiple setups not supported.'       
+         print *,'Currently multiple setups not supported.'
          print *,'Quit the library using p3dfft_clean before initializing another setup'
          call MPI_ABORT(MPI_COMM_WORLD, 0)
       endif
 
       if(present(overwrite)) then
-         OW = overwrite	     
+         OW = overwrite
       else
          OW = .true.
       endif
-      
+
 
       timers = 0.0
 
@@ -97,17 +97,17 @@
 	nxc = nxcut
       else
         nxc = nx
-      endif	
+      endif
       if(present(nycut)) then
 	nyc = nycut
       else
         nyc = ny
-      endif	
+      endif
       if(present(nzcut)) then
 	nzc = nzcut
       else
         nzc = nz
-      endif	
+      endif
 
       nxh=nx/2
       nxhp=nxh+1
@@ -128,8 +128,8 @@
          call MPI_ABORT(MPI_COMM_WORLD, 0)
       endif
 
-#ifdef STRIDE1      
-      if(taskid .eq. 0) then 
+#ifdef STRIDE1
+      if(taskid .eq. 0) then
          print *,'Using stride-1 layout'
       endif
 #endif
@@ -138,7 +138,7 @@
       jproc = dims(2)
 
 #ifndef DIMS_C
-!       i = dims(1)  
+!       i = dims(1)
 !       dims(1) = dims(2)
 !       dims(2) = i
 	mydims(1) = dims(2)
@@ -219,8 +219,8 @@
       allocate (kjen(0:jproc-1))
 !
 !Mapping 3-D data arrays onto 2-D process grid
-! (nx+2,ny,nz) => (iproc,jproc)      
-! 
+! (nx+2,ny,nz) => (iproc,jproc)
+!
       call MapDataToProc(nxhpc,iproc,iist,iien,iisz)
       call MapDataToProc(ny,iproc,jist,jien,jisz)
       call MapDataToProc(nyc,jproc,jjst,jjen,jjsz)
@@ -258,17 +258,17 @@
 
 #ifdef USE_EVEN
 
-      IfCntMax = iisz(iproc-1)*jisz(iproc-1)*kjsize*mytype*2
-      KfCntMax = iisize * jjsz(jproc-1) * kjsz(jproc-1)*mytype*2
-      if(mod(ny,jproc) .ne. 0 .or. mod(nz,jproc) .ne. 0) then 
+      IfCntMax = iisz(iproc-1)*jisz(iproc-1)*kjsize*p3dfft_type*2
+      KfCntMax = iisize * jjsz(jproc-1) * kjsz(jproc-1)*p3dfft_type*2
+      if(mod(ny,jproc) .ne. 0 .or. mod(nz,jproc) .ne. 0) then
          KfCntUneven = .true.
       else
          KfCntUneven = .false.
       endif
-    IiCntMax = iiisz (iproc-1) * jisize * kjsize * mytype
-    IJCntMax = ijsz (iproc-1) * jisize * kjsize * mytype
-    JICntMax = jisz (iproc-1) * iiisize * kjsize * mytype
-    KjCntMax = kjsz (iproc-1) * jisize * ijsize * mytype
+    IiCntMax = iiisz (iproc-1) * jisize * kjsize * p3dfft_type
+    IJCntMax = ijsz (iproc-1) * jisize * kjsize * p3dfft_type
+    JICntMax = jisz (iproc-1) * iiisize * kjsize * p3dfft_type
+    KjCntMax = kjsz (iproc-1) * jisize * ijsize * p3dfft_type
 #endif
 
 
@@ -282,25 +282,25 @@
 #ifdef NBL_X
       NBx = NBL_X
 #else
-      NBx=CB/(4*mytype*Ny)
+      NBx=CB/(4*p3dfft_type*Ny)
 #endif
 
 #ifdef NBL_Y1
       NBy1=NBL_Y1
 #else
-      NBy1 = CB/(4*mytype*iisize)
+      NBy1 = CB/(4*p3dfft_type*iisize)
 #endif
 
 #ifdef NBL_Y2
       NBy2=NBL_Y2
 #else
-      NBy2 = CB/(4*mytype*Nz)
+      NBy2 = CB/(4*p3dfft_type*Nz)
 #endif
 
 #ifdef NBL_Z
       NBz=NBL_Z
 #else
-      NBz = (CB/Nx)*(numtasks/(2*mytype*Ny))
+      NBz = (CB/Nx)*(numtasks/(2*p3dfft_type*Ny))
 #endif
 
       if(NBx .eq. 0) then
@@ -315,10 +315,10 @@
       if(NBz .eq. 0) then
          NBz = 1
       endif
-      
+
       if(taskid .eq. 0) then
          print *,'Using loop block sizes ',NBx,NBy1,NBy2,NBz
-      endif  
+      endif
 
 #endif
 
@@ -326,7 +326,7 @@
 ! We may need to pad arrays due to uneven size
       padd = max(iisize*jjsize*nz_fft,iisize*ny_fft*kjsize) - nxhp*jisize*kjsize
       padi = padd
-      if(padi .le. 0) then 
+      if(padi .le. 0) then
          padi=0
       else
          if(mod(padi,nxhp*jisize) .eq. 0) then
@@ -340,9 +340,9 @@
 !      print *,'padi=',padi
 
 ! Initialize FFTW and allocate buffers for communication
-      nm = nxhp * jisize * (kjsize+padi) 
+      nm = nxhp * jisize * (kjsize+padi)
       nv_preset = 1
-      if(nm .gt. 0) then       
+      if(nm .gt. 0) then
         allocate(buf1(nm),stat=err)
         if(err .ne. 0) then
            print *,'p3dfft_setup: Error allocating buf1 (',nm
@@ -358,7 +358,7 @@
         buf1 = 0.0
         R = 0.0
 
-! For FFT libraries that allocate work space implicitly such as through 
+! For FFT libraries that allocate work space implicitly such as through
 ! plans (e.g. FFTW) initialize here
 
         call init_plan
@@ -374,8 +374,8 @@
      endif
 
 #ifdef USE_EVEN
-      n1 = IfCntMax * iproc /(mytype*2)
-      n2 = KfCntMax * jproc / (mytype*2)
+      n1 = IfCntMax * iproc /(p3dfft_type*2)
+      n2 = KfCntMax * jproc / (p3dfft_type*2)
       n1 = max(n1,n2)
       if(n1 .gt. nm) then
          deallocate(buf1)
@@ -386,9 +386,9 @@
 #endif
 
 !#ifdef USE_EVEN
-!       
-!     n1 = IfCntMax * iproc / (mytype*2)
-!     n2 = KfCntMax * jproc / (mytype*2)
+!
+!     n1 = IfCntMax * iproc / (p3dfft_type*2)
+!     n2 = KfCntMax * jproc / (p3dfft_type*2)
 !     allocate(buf_x(n1))
 !     allocate(buf_z(n2))
 !     n1 = max(n1,n2)
@@ -402,64 +402,64 @@
 ! Displacements and buffer counts for mpi_alltoallv
 
       allocate (IfSndStrt(0:iproc-1))
-      allocate (IfSndCnts(0:iproc-1))     
+      allocate (IfSndCnts(0:iproc-1))
       allocate (IfRcvStrt(0:iproc-1))
       allocate (IfRcvCnts(0:iproc-1))
 
       allocate (KfSndStrt(0:jproc-1))
-      allocate (KfSndCnts(0:jproc-1))     
+      allocate (KfSndCnts(0:jproc-1))
       allocate (KfRcvStrt(0:jproc-1))
       allocate (KfRcvCnts(0:jproc-1))
 
       allocate (JrSndStrt(0:jproc-1))
-      allocate (JrSndCnts(0:jproc-1))     
+      allocate (JrSndCnts(0:jproc-1))
       allocate (JrRcvStrt(0:jproc-1))
       allocate (JrRcvCnts(0:jproc-1))
 
       allocate (KrSndStrt(0:iproc-1))
-      allocate (KrSndCnts(0:iproc-1))     
+      allocate (KrSndCnts(0:iproc-1))
       allocate (KrRcvStrt(0:iproc-1))
       allocate (KrRcvCnts(0:iproc-1))
 
 
 !   start pointers and types of send  for the 1st forward transpose
       do i=0,iproc-1
-         IfSndStrt(i) = (iist(i) -1)* jisize*kjsize*mytype*2
-         IfSndCnts(i) = iisz(i) * jisize*kjsize*mytype*2
+         IfSndStrt(i) = (iist(i) -1)* jisize*kjsize*p3dfft_type*2
+         IfSndCnts(i) = iisz(i) * jisize*kjsize*p3dfft_type*2
 
 !   start pointers and types of recv for the 1st forward transpose
-         IfRcvStrt(i) = (jist(i) -1) * iisize*kjsize*mytype*2
-         IfRcvCnts(i) = jisz(i) * iisize*kjsize*mytype*2
+         IfRcvStrt(i) = (jist(i) -1) * iisize*kjsize*p3dfft_type*2
+         IfRcvCnts(i) = jisz(i) * iisize*kjsize*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 2nd forward transpose
       do i=0,jproc-1
-         KfSndStrt(i) = (jjst(i) -1)*iisize*kjsize*mytype*2
-         KfSndCnts(i) = iisize*kjsize*jjsz(i)*mytype*2
+         KfSndStrt(i) = (jjst(i) -1)*iisize*kjsize*p3dfft_type*2
+         KfSndCnts(i) = iisize*kjsize*jjsz(i)*p3dfft_type*2
 
 !   start pointers and types of recv for the 2nd forward transpose
-         KfRcvStrt(i) = (kjst(i) -1) * iisize * jjsize*mytype*2
-         KfRcvCnts(i) = iisize*jjsize*kjsz(i)*mytype*2
+         KfRcvStrt(i) = (kjst(i) -1) * iisize * jjsize*p3dfft_type*2
+         KfRcvCnts(i) = iisize*jjsize*kjsz(i)*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 1st inverse transpose
       do i=0,jproc-1
-         JrSndStrt(i) = (kjst(i) -1) * iisize * jjsize*mytype*2
-         JrSndCnts(i) = iisize*jjsize*kjsz(i)*mytype*2
+         JrSndStrt(i) = (kjst(i) -1) * iisize * jjsize*p3dfft_type*2
+         JrSndCnts(i) = iisize*jjsize*kjsz(i)*p3dfft_type*2
 
 !   start pointers and types of recv for the 1st inverse transpose
-         JrRcvStrt(i) = (jjst(i) -1)*iisize*kjsize*mytype*2
-         JrRcvCnts(i) = jjsz(i) * iisize * kjsize*mytype*2
+         JrRcvStrt(i) = (jjst(i) -1)*iisize*kjsize*p3dfft_type*2
+         JrRcvCnts(i) = jjsz(i) * iisize * kjsize*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 2nd inverse transpose
       do i=0,iproc-1
-         KrSndStrt(i) = (jist(i) -1) * iisize*kjsize*mytype*2
-         KrSndCnts(i) = jisz(i) * iisize*kjsize*mytype*2
+         KrSndStrt(i) = (jist(i) -1) * iisize*kjsize*p3dfft_type*2
+         KrSndCnts(i) = jisz(i) * iisize*kjsize*p3dfft_type*2
 
 !   start pointers and types of recv for the 2nd inverse transpose
-         KrRcvStrt(i) = (iist(i) -1) * jisize*kjsize*mytype*2
-         KrRcvCnts(i) = jisize*iisz(i)*kjsize*mytype*2
+         KrRcvStrt(i) = (iist(i) -1) * jisize*kjsize*p3dfft_type*2
+         KrRcvCnts(i) = jisize*iisz(i)*kjsize*p3dfft_type*2
       enddo
 
 ! Displacements and buffer counts for mpi_alltoallv in transpose-functions(..)
@@ -476,21 +476,21 @@
 !   start pointers and size for the x<->y transpose
     do i = 0, iproc - 1
 !        x->y
-      IiStrt (i) = (iiist(i)-1) * jisize * kjsize * mytype
-      IiCnts (i) = iiisz (i) * jisize * kjsize * mytype
+      IiStrt (i) = (iiist(i)-1) * jisize * kjsize * p3dfft_type
+      IiCnts (i) = iiisz (i) * jisize * kjsize * p3dfft_type
 
-      JiStrt (i) = (jist(i)-1) * iiisize * kjsize * mytype
-      JiCnts (i) = jisz (i) * iiisize * kjsize * mytype
+      JiStrt (i) = (jist(i)-1) * iiisize * kjsize * p3dfft_type
+      JiCnts (i) = jisz (i) * iiisize * kjsize * p3dfft_type
     end do
 
 !   start pointers and size for the x<->z transpose
     do i = 0, jproc - 1
 !        x->z
-      IjStrt (i) = (ijst(i)-1) * jisize * kjsize * mytype
-      IjCnts (i) = ijsz (i) * jisize * kjsize * mytype
+      IjStrt (i) = (ijst(i)-1) * jisize * kjsize * p3dfft_type
+      IjCnts (i) = ijsz (i) * jisize * kjsize * p3dfft_type
 
-      KjStrt (i) = (kjst(i)-1) * jisize * ijsize * mytype
-      KjCnts (i) = kjsz (i) * jisize * ijsize * mytype
+      KjStrt (i) = (kjst(i)-1) * jisize * ijsize * p3dfft_type
+      KjCnts (i) = kjsz (i) * jisize * ijsize * p3dfft_type
     end do
 
 !   create proc_dims = send information of each pencil-dimensions to all procs
@@ -527,14 +527,14 @@
 
       if(pad1 .le. 0) then
         pad1 = 0
-      endif  
+      endif
 
       padi=pad1
       if(mod(padi,nx*jisize) .ne. 0) then
          padi = padi / (nx*jisize) + 1
       else
          padi = padi / (nx*jisize)
-      endif   
+      endif
 
 
 	maxisize = nx
@@ -549,10 +549,10 @@
 
       end subroutine p3dfft_setup
 
-!==================================================================       
+!==================================================================
       subroutine MapDataToProc (data,proc,st,en,sz)
 !========================================================
-!    
+!
        implicit none
        integer data,proc,st(0:proc-1),en(0:proc-1),sz(0:proc-1)
        integer i,size,nl,nu
@@ -574,7 +574,7 @@
          sz(i) = size
          en(i) = en(i-1) + size
       enddo
-      en(proc-1)= data 
+      en(proc-1)= data
       sz(proc-1)= data-st(proc-1)+1
 
       end subroutine

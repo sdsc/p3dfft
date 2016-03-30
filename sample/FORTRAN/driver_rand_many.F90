@@ -23,29 +23,29 @@
 !
 !----------------------------------------------------------------------------
 
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array with random numbers, then 
-! performs forward transform, backward transform, and checks that 
-! the results are correct, namely the same as in the start except 
+! This program initializes a 3D array with random numbers, then
+! performs forward transform, backward transform, and checks that
+! the results are correct, namely the same as in the start except
 ! for a normalization factor. It can be used both as a correctness
-! test and for timing the library functions. 
+! test and for timing the library functions.
 !
-! This is a test program for MULTIVARIABLE routines of P3DFFT, 
+! This is a test program for MULTIVARIABLE routines of P3DFFT,
 ! such as ftran_r2c_many, btran_c2r_many etc
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nv,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
-! (1 or 2), and Nrep is the number of repititions. Nv is the 
+! (1 or 2), and Nrep is the number of repititions. Nv is the
 ! number of variables. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -61,13 +61,13 @@
       integer fstatus
       logical flg_inplace
 
-      real(mytype), dimension(:,:,:,:),  allocatable :: B,CP
-      complex(mytype), dimension(:,:,:,:),  allocatable :: A
-      real(mytype) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
+      real(p3dfft_type), dimension(:,:,:,:),  allocatable :: B,CP
+      complex(p3dfft_type), dimension(:,:,:,:),  allocatable :: A
+      real(p3dfft_type) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
 
       integer(i8) Ntot
-      real(mytype) factor
-      real(mytype),dimension(:,:),allocatable:: sinx,siny,sinz
+      real(p3dfft_type) factor
+      real(p3dfft_type),dimension(:,:),allocatable:: sinx,siny,sinz
       real(r8) rtime1,rtime2,Nglob,prec
       real(r8) gt(12,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
@@ -88,21 +88,21 @@
       gt=0.0
       gtcomm = 0.0
 
-      if (proc_id.eq.0) then 
+      if (proc_id.eq.0) then
          open (unit=3,file='stdin',status='old', &
                access='sequential',form='formatted', iostat=fstatus)
          if (fstatus .eq. 0) then
             write(*, *) ' Reading from input file stdin'
-         endif 
+         endif
          ndim = 2
 
         read (3,*) nx, ny, nz, ndim,nv,n
 	print *,'P3DFFT test, random input, multivariable version'
         write (*,*) "procs=",nproc," nx=",nx, &
                 " ny=", ny," nz=", nz,"ndim=",ndim,"num. var.=",nv," repeat=", n
-        if(mytype .eq. 4) then
+        if(p3dfft_type .eq. 4) then
            print *,'Single precision version'
-        else if(mytype .eq. 8) then
+        else if(p3dfft_type .eq. 8) then
            print *,'Double precision version'
         endif
        endif
@@ -189,7 +189,7 @@
       allocate (sinz(nz,nv))
 
       do j=1,nv
-         
+
          do z=istart(3),iend(3)
             sinz(z,j)=sin(j*(z-1)*twopi/nz)
          enddo
@@ -229,26 +229,26 @@
 ! Repeat n times
 
       Ntot = fsize(1)*fsize(2)*fsize(3)
-      Nglob = nx * ny 
+      Nglob = nx * ny
       Nglob = Nglob * nz
       factor = 1.0d0/Nglob
 
-      rtime1 = 0.0               
+      rtime1 = 0.0
 
       do  m=1,n
          if(proc_id .eq. 0) then
             print *,'Iteration ',m
          endif
-         
+
 ! Barrier for correct timing
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
          rtime1 = rtime1 - MPI_wtime()
 ! Forward transform
          call p3dfft_ftran_r2c_many (B,isize(1)*isize(2)*isize(3),A, &
                             fsize(1)*fsize(2)*fsize(3),nv,'fft')
-         
+
          rtime1 = rtime1 + MPI_wtime()
-         
+
          do j=1,nv
 !            if(proc_id .eq. 0) then
 !               print *,'Result of forward transform, var.',j
@@ -257,15 +257,15 @@
 !                 proc_id,Nglob)
             call mult_array(A(fstart(1),fstart(2),fstart(3),j), Ntot,factor)
 	 enddo
-    
+
 ! Barrier for correct timing
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
          rtime1 = rtime1 - MPI_wtime()
-! Backward transform     
+! Backward transform
          call p3dfft_btran_c2r_many (A,fsize(1)*fsize(2)*fsize(3),B, &
-                 isize(1)*isize(2)*isize(3),nv,'tff')       
+                 isize(1)*isize(2)*isize(3),nv,'tff')
          rtime1 = rtime1 + MPI_wtime()
-         
+
       end do
 
 ! Free work space
@@ -286,11 +286,11 @@
 !               print *,'x,y,z,j,cdiff=',x,y,z,j,cdiff
             endif
  20   continue
-      call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
+      call MPI_Reduce(cdiff,ccdiff,1,p3dfft_mpireal,MPI_MAX,0, &
         MPI_COMM_WORLD,ierr)
 
       if(proc_id .eq. 0) then
-         if(mytype .eq. 8) then
+         if(p3dfft_type .eq. 8) then
             prec = 1e-14
          else
             prec = 1e-5
@@ -345,16 +345,16 @@
 
       call MPI_FINALIZE (ierr)
 
-      contains 
+      contains
 !=========================================================
 
       subroutine mult_array(X,nar,f)
-      
+
       use p3dfft
 
       integer(i8) nar,i
-      complex(mytype) X(nar)
-      real(mytype) f
+      complex(p3dfft_type) X(nar)
+      real(p3dfft_type) f
 
       do i=1,nar
          X(i) = X(i) * f
@@ -373,8 +373,8 @@
 
       integer x,y,z,proc_id
       integer(i8) i,Nar
-      real(r8) Nglob	
-      complex(mytype) Ar(1,1,*)
+      real(r8) Nglob
+      complex(p3dfft_type) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,2)
@@ -403,8 +403,8 @@
 
       integer x,y,z,proc_id
       integer(i8) i,Nar
-      real(r8) Nglob	
-      real(mytype) Ar(1,1,*)
+      real(r8) Nglob
+      real(p3dfft_type) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,1)

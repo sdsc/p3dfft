@@ -29,24 +29,24 @@
       subroutine p3dfft_ftran_r2c_many_w (XgYZ,dim_in,XYZg,dim_out,nv,op) BIND(C,NAME='p3dfft_ftran_r2c_many')
 !========================================================
       use, intrinsic :: iso_c_binding
-      real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
+      real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
-      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
+      complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
       integer dim_in,dim_out,nv
       character, dimension(*), target :: op
       character(4), pointer :: lcl_op
       call c_f_pointer(c_loc(op), lcl_op)
 
-      call p3dfft_ftran_r2c_many (XgYZ,dim_in,XYZg,dim_out,nv,lcl_op) 
+      call p3dfft_ftran_r2c_many (XgYZ,dim_in,XYZg,dim_out,nv,lcl_op)
 
       end subroutine
 
 ! Forward R2C transform of multiple variables (nv)
 !========================================================
-      subroutine p3dfft_ftran_r2c_many (XgYZ,dim_in,XYZg,dim_out,nv,op) 
+      subroutine p3dfft_ftran_r2c_many (XgYZ,dim_in,XYZg,dim_out,nv,op)
 !========================================================
 
       use fft_spec
@@ -54,8 +54,8 @@
 
       integer dim_in,dim_out
 
-      real(mytype), TARGET :: XgYZ(dim_in,nv)
-      complex(mytype), TARGET :: XYZg(dim_out,nv)
+      real(p3dfft_type), TARGET :: XgYZ(dim_in,nv)
+      complex(p3dfft_type), TARGET :: XYZg(dim_out,nv)
 
       integer x,y,z,i,nx,ny,nz,ierr,dnz,nv,j,err,n1,n2,dny
       integer(i8) Nl
@@ -64,14 +64,14 @@
          print *,'P3DFFT error: call setup before other routines'
          return
       endif
-      
+
       if(dim_in .lt. nx_fft*jisize*kjsize) then
          print *,taskid,': ftran error: input array dimensions are too low: ',dim_in,' while expecting ',nx_fft*jisize*kjsize
-      endif	 
+      endif
 
       if(dim_out .lt. nzc*jjsize*iisize) then
          print *,taskid,': ftran error: output array dimensions are too low: ',dim_out,' while expecting ',nzc*jjsize*iisize
-      endif	 
+      endif
 
 !     preallocate memory for FFT-Transforms
 
@@ -87,8 +87,8 @@
        buf = 0.d0
 
 #ifdef USE_EVEN
-        n1 = nv * IfCntMax * iproc /(mytype*2)
-        n2 = nv * KfCntMax * jproc / (mytype*2)
+        n1 = nv * IfCntMax * iproc /(p3dfft_type*2)
+        n2 = nv * KfCntMax * jproc / (p3dfft_type*2)
         n1 = max(n1,n2)
         allocate(buf1(n1))
         allocate(buf2(n1))
@@ -97,7 +97,7 @@
 	  print *,'nm=',nm
 	endif
         allocate(buf1(nm*nv))
-        allocate(buf2(nm*nv))        	
+        allocate(buf2(nm*nv))
 #endif
       endif
 
@@ -123,15 +123,15 @@
 
       endif
 
-! Exchange data in rows 
+! Exchange data in rows
 
-      if(iproc .gt. 1) then 
+      if(iproc .gt. 1) then
 
 #ifdef DEBUG
 	print *,taskid,': Calling fcomm1'
 #endif
          call fcomm1_many(buf2,buf,nv,timers(1),timers(6))
-         
+
       else
 
 #ifdef STRIDE1
@@ -194,7 +194,7 @@
          call fcomm2_many(buf,buf,iisize*jjsize*nz,nv,timers(2),timers(8))
 
 ! In forward transform we can safely use output array as one of the buffers
-! This speeds up FFTW since it is non-stride-1 transform and it is 
+! This speeds up FFTW since it is non-stride-1 transform and it is
 ! faster than done in-place
 
 #ifdef DEBUG
@@ -204,12 +204,12 @@
 	    call ztran_f_same_many(buf,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
             call seg_copy_z_f_many(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz,dim_out,nv)
             call seg_copy_z_f_many(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz,dim_out,nv)
-	endif	
+	endif
       else
         call fcomm2_many(buf,XYZg,dim_out,nv,timers(2),timers(8))
 
 ! In forward transform we can safely use output array as one of the buffers
-! This speeds up FFTW since it is non-stride-1 transform and it is 
+! This speeds up FFTW since it is non-stride-1 transform and it is
 ! faster than done in-place
 
 #ifdef DEBUG
@@ -218,13 +218,13 @@
          if(iisize * jjsize .gt. 0) then
 	    call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
         endif
-     endif	
+     endif
 
 #endif
 
       else
 
-         timers(8) = timers(8) - MPI_Wtime()	
+         timers(8) = timers(8) - MPI_Wtime()
 
 #ifdef STRIDE1
          call reorder_trans_f2_many(buf,XYZg,buf1,dim_out,nv,op)
@@ -255,7 +255,7 @@
       endif
 
 !      deallocate(buf)
- 
+
       call mpi_barrier(mpi_comm_world,ierr)
 
      return
@@ -266,28 +266,28 @@
       subroutine p3dfft_ftran_cheby_many_w (XgYZ,dim_in,XYZg,dim_out,nv,Lz) BIND(C,NAME='p3dfft_cheby_many')
 !========================================================
 
-      real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
+      real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
-      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
+      complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
       integer dim_in,dim_out,nv
-      real(mytype) Lz
+      real(p3dfft_type) Lz
 
-      call p3dfft_cheby_many (XgYZ,dim_in,XYZg,dim_out,nv,Lz) 
+      call p3dfft_cheby_many (XgYZ,dim_in,XYZg,dim_out,nv,Lz)
 
       end subroutine
 
-! Chebyshev transform (2D R2C forward FFT + Chebyshev) for multiple variables 
+! Chebyshev transform (2D R2C forward FFT + Chebyshev) for multiple variables
 !========================================================
-	subroutine p3dfft_cheby_many(in,dim_in,out,dim_out,nv,Lz) 
+	subroutine p3dfft_cheby_many(in,dim_in,out,dim_out,nv,Lz)
 !========================================================
 
 	integer dim_in,dim_out,nv,j
-	real(mytype) Lz
-      	real(mytype), dimension(dim_in,nv), target	::	in
-        complex(mytype), dimension (dim_out,nv), target :: out				
+	real(p3dfft_type) Lz
+      	real(p3dfft_type), dimension(dim_in,nv), target	::	in
+        complex(p3dfft_type), dimension (dim_out,nv), target :: out
 
     	call p3dfft_ftran_r2c_many(in,dim_in,out,dim_out,nv,'ffc')
 
@@ -304,47 +304,47 @@
 	subroutine p3dfft_cheby_w(in,out,Lz) BIND(C,NAME='p3dfft_cheby')
 !========================================================
 
-      	real(mytype), dimension(nx_fft,     &
+      	real(p3dfft_type), dimension(nx_fft,     &
                                 jisize,     &
                                 kjsize), target	::	in
 
 #ifdef STRIDE1
-      	complex(mytype), dimension(nzc, &
+      	complex(p3dfft_type), dimension(nzc, &
                                 jjsize,&
                                 iisize), target	::	out
 #else
-      	complex(mytype), dimension(iisize, &
+      	complex(p3dfft_type), dimension(iisize, &
                                 jjsize,    &
                                 nzc), target	::	out
 #endif
-	real(mytype) Lz
+	real(p3dfft_type) Lz
 
-	call p3dfft_cheby(in,out,Lz) 
+	call p3dfft_cheby(in,out,Lz)
 
 	end subroutine
 
-! Chebyshev transform (2D R2C forward FFT + Chebyshev) for a single variable 
+! Chebyshev transform (2D R2C forward FFT + Chebyshev) for a single variable
 !==============================================================
-	subroutine p3dfft_cheby(in,out,Lz) 
+	subroutine p3dfft_cheby(in,out,Lz)
 !========================================================
 
 !     !	function args
-      	real(mytype), dimension(nx_fft,     &
+      	real(p3dfft_type), dimension(nx_fft,     &
                                 jisize,     &
                                 kjsize), target	::	in
 
 #ifdef STRIDE1
-      	complex(mytype), dimension(nzc, &
+      	complex(p3dfft_type), dimension(nzc, &
                                 jjsize,&
                                 iisize), target	::	out
-      	complex(mytype) Old, New, Tmp
+      	complex(p3dfft_type) Old, New, Tmp
 #else
-      	complex(mytype), dimension(iisize, &
+      	complex(p3dfft_type), dimension(iisize, &
                                 jjsize,    &
                                 nzc), target	::	out
-      	complex(mytype),dimension(:,:),pointer :: ptrOld, ptrNew, ptrTmp
+      	complex(p3dfft_type),dimension(:,:),pointer :: ptrOld, ptrNew, ptrTmp
 #endif
-      	real(mytype) :: Lfactor,Lz
+      	real(p3dfft_type) :: Lfactor,Lz
 	integer k,nz,i,j
 
 	nz = nzc
@@ -360,7 +360,7 @@
 ! first and last cheby-coeff needs to gets multiplied by factor 0.5
 ! because of relation between cheby and discrete cosinus transforms
 
-  
+
 	do i=1,iisize
 	   do j=1,jjsize
     	     Old = out(nzc-1,j,i)
@@ -414,40 +414,40 @@
       subroutine p3dfft_ftran_r2c_w (XgYZ,XYZg,op) BIND(C,NAME='p3dfft_ftran_r2c')
 !========================================================
       use, intrinsic :: iso_c_binding
-      real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
+      real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
-      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
+      complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
       integer dim_in,dim_out,nv
       character, dimension(*), target :: op
       character(4), pointer :: lcl_op
       call c_f_pointer(c_loc(op), lcl_op)
 
-      call p3dfft_ftran_r2c (XgYZ,XYZg,lcl_op) 
+      call p3dfft_ftran_r2c (XgYZ,XYZg,lcl_op)
 
       end subroutine
 
 ! Forward R2C transform of 1 variable
 !========================================================
-      subroutine p3dfft_ftran_r2c (XgYZ,XYZg,op) 
+      subroutine p3dfft_ftran_r2c (XgYZ,XYZg,op)
 !========================================================
 
       use fft_spec
       implicit none
 
-      real(mytype), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
+      real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(mytype), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
-      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
+      complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
 
       integer x,y,z,i,nx,ny,nz,ierr,dnz,dny
       integer(i8) Nl
       character(len=3) op
-      
+
       if(.not. mpi_set) then
          print *,'P3DFFT error: call setup before other routines'
          return
@@ -479,15 +479,15 @@
       endif
 
 
-! Exchange data in rows 
+! Exchange data in rows
 
-      if(iproc .gt. 1) then 
+      if(iproc .gt. 1) then
 
 #ifdef DEBUG
 	print *,taskid,': Calling fcomm1'
 #endif
          call fcomm1(buf2,buf,timers(1),timers(6))
-         
+
       else
 
 #ifdef STRIDE1
@@ -552,7 +552,7 @@
          call fcomm2(buf,buf,timers(2),timers(8))
 
 ! In forward transform we can safely use output array as one of the buffers
-! This speeds up FFTW since it is non-stride-1 transform and it is 
+! This speeds up FFTW since it is non-stride-1 transform and it is
 ! faster than done in-place
 
 #ifdef DEBUG
@@ -561,21 +561,21 @@
          if(iisize * jjsize .gt. 0) then
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(buf,iisize*jjsize, 1, buf,iisize*jjsize, 1,nz,iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_f_c2_same(buf,iisize*jjsize, 1,buf,iisize*jjsize, 1,nz,iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 'c') then
                call init_ctrans_r2(buf,2*iisize*jjsize, 1, buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_ctrans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 's') then
                call init_strans_r2(buf,2*iisize*jjsize, 1, buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_strans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
@@ -587,12 +587,12 @@
 	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
 	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
 
-	endif	
+	endif
       else
         call fcomm2(buf,XYZg,timers(2),timers(8))
 
 ! In forward transform we can safely use output array as one of the buffers
-! This speeds up FFTW since it is non-stride-1 transform and it is 
+! This speeds up FFTW since it is non-stride-1 transform and it is
 ! faster than done in-place
 
 #ifdef DEBUG
@@ -601,21 +601,21 @@
          if(iisize * jjsize .gt. 0) then
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_f_c2_same(XYZg,iisize*jjsize, 1,XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 'c') then
                call init_ctrans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_ctrans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 's') then
                call init_strans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_strans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
@@ -625,14 +625,14 @@
             endif
 
         endif
-     endif	
+     endif
 
 
 #endif
 
       else
 
-         timers(8) = timers(8) - MPI_Wtime()	
+         timers(8) = timers(8) - MPI_Wtime()
 
 #ifdef STRIDE1
          call reorder_trans_f2(buf,XYZg,buf1,op)
@@ -647,21 +647,21 @@
 
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_f_c2_same(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 'c') then
                call init_ctrans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_ctrans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 's') then
                call init_strans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_strans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
@@ -681,21 +681,21 @@
 
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_f_c2_same(XYZg,iisize*jjsize, 1,XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 'c') then
                call init_ctrans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_ctrans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 's') then
                call init_strans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
               call exec_strans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
@@ -730,10 +730,10 @@ subroutine p3dfft_ftran_r2c_1d (rXgYZ, cXgYZ)
   use fft_spec
   implicit none
 
-  real (mytype), target :: rXgYZ (NX_fft, jistart:jiend, kjstart:kjend)
-  real (mytype), target :: cXgYZ (NX_fft+2, jistart:jiend, kjstart:kjend)
+  real (p3dfft_type), target :: rXgYZ (NX_fft, jistart:jiend, kjstart:kjend)
+  real (p3dfft_type), target :: cXgYZ (NX_fft+2, jistart:jiend, kjstart:kjend)
 
-!      complex(mytype), allocatable :: XYgZ(:,:,:)
+!      complex(p3dfft_type), allocatable :: XYgZ(:,:,:)
   integer x, y, z, i, err, nx, ny, nz
 
   if ( .not. mpi_set) then
@@ -760,8 +760,8 @@ end subroutine p3dfft_ftran_r2c_1d
 subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 
   integer str1,str2,n,m,nv,j,dim
-  real(mytype) source(dim,nv)
-  complex(mytype) dest(n/2+1,m,nv)
+  real(p3dfft_type) source(dim,nv)
+  complex(p3dfft_type) dest(n/2+1,m,nv)
 
   do j=1,nv
     call exec_f_r2c(source(1,j),str1,dest(1,1,j),str2,n,m)
@@ -773,7 +773,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
          subroutine f_c1_many(A,str1,str2,n,m,dim,nv)
 
 	   integer n,m,nv,j,str1,str2,dim
-	   complex(mytype) A(dim,nv)
+	   complex(p3dfft_type) A(dim,nv)
 
 	 do j=1,nv
            call exec_f_c1(A(1,j),str1,str2,A(1,j),str1,str2,n,m)
@@ -783,14 +783,14 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 	 end subroutine
 
          subroutine ztran_f_same_many(A,str1,str2,n,m,dim,nv,op)
-	
+
 	   integer str1,str2,n,m,nv,j,ierr,dim
-	   complex(mytype) A(dim,nv)
+	   complex(p3dfft_type) A(dim,nv)
 	   character(len=3) op
 
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(A,str1,str2,A,str1,str2,n,m)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
                  call exec_f_c2_same(A(1,j),str1,str2,A(1,j),str1,str2,n,m)
@@ -799,7 +799,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 
 	    else if(op(3:3) == 'c') then
                call init_ctrans_r2(A,str1,str2,A,str1,str2,n,m)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
                  call exec_ctrans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
@@ -808,7 +808,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 
 	    else if(op(3:3) == 's') then
                call init_strans_r2(A,str1,str2,A,str1,str2,n,m)
-         
+
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
                  call exec_strans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)

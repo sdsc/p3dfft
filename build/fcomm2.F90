@@ -39,14 +39,14 @@
       integer rcvcnts(0:jproc-1)
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
-      complex(mytype) source(iisize,ny_fft,kjsize,nv)
-      complex(mytype) dest(dim_out,nv)
+      complex(p3dfft_type) source(iisize,ny_fft,kjsize,nv)
+      complex(p3dfft_type) dest(dim_out,nv)
 
 
-! Pack send buffers for exchanging y and z for all x at once 
+! Pack send buffers for exchanging y and z for all x at once
 
       call pack_fcomm2_many(buf1,source,nv)
-      
+
 ! Exchange y-z buffers in columns of processors
 
       t = t - MPI_Wtime()
@@ -78,8 +78,8 @@
 
          tc = tc + MPI_Wtime()
 
-      
-         
+
+
       return
       end subroutine
 
@@ -88,8 +88,8 @@
       use fft_spec
       implicit none
 
-      complex(mytype) source(iisize,ny_fft,kjsize,nv)
-      complex(mytype) sndbuf(iisize*ny_fft*kjsize*nv)
+      complex(p3dfft_type) source(iisize,ny_fft,kjsize,nv)
+      complex(p3dfft_type) sndbuf(iisize*ny_fft*kjsize*nv)
       integer nv,j,i,position,pos0,pos1,x,y,z,dny
 
       dny = ny_fft-nyc
@@ -100,12 +100,12 @@
 
       do i=0,jproc-1
 #ifdef USE_EVEN
-        pos0 = i * nv * KfCntMax/(mytype*2) 
+        pos0 = i * nv * KfCntMax/(p3dfft_type*2)
 #else
-        pos0 = nv * KfSndStrt(i) /(mytype*2) 
+        pos0 = nv * KfSndStrt(i) /(p3dfft_type*2)
 #endif
- 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(mytype*2)+ 1 
-	
+ 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(p3dfft_type*2)+ 1
+
 
 ! If clearly in the first half of ny
 
@@ -117,7 +117,7 @@
                      sndbuf(position) = source(x,y,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 ! If clearly in the second half of ny
@@ -129,7 +129,7 @@
                      sndbuf(position) = source(x,y,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 
@@ -143,13 +143,13 @@
                      sndbuf(position) = source(x,y,z,j)
                      position = position+1
                   enddo
-	       enddo	
+	       enddo
                do y=ny_fft-nyhc+1,jjen(i)+dny
                   do x=1,iisize
                      sndbuf(position) = source(x,y,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
          endif
 
@@ -164,15 +164,15 @@
       implicit none
       integer j,i,x,y,z,nv
       integer*8 position
-      complex(mytype) dest(iisize,jjsize,nz_fft)
+      complex(p3dfft_type) dest(iisize,jjsize,nz_fft)
 
 
-!$OMP PARALLEL DO private(i,position,x,y,z) 
+!$OMP PARALLEL DO private(i,position,x,y,z)
          do i=0,jproc-1
 #ifdef USE_EVEN
-            position = i*KfCntMax*nv/(mytype*2)+1
+            position = i*KfCntMax*nv/(p3dfft_type*2)+1
 #else
-            position = KfRcvStrt(i)*nv/(mytype*2)+1 
+            position = KfRcvStrt(i)*nv/(p3dfft_type*2)+1
 #endif
  	    position = position + (j-1)*iisize*jjsize*kjsz(i)
 
@@ -194,8 +194,8 @@
 
       implicit none
 
-      complex(mytype) source(iisize,ny_fft,kjsize)
-      complex(mytype) dest(iisize,jjsize,nz_fft)
+      complex(p3dfft_type) source(iisize,ny_fft,kjsize)
+      complex(p3dfft_type) dest(iisize,jjsize,nz_fft)
 
       real(r8) t,tc
       integer x,z,y,i,j,ierr,xs,ys,y2,z2,iy,iz,dny
@@ -203,10 +203,10 @@
 
 
 
-! Pack send buffers for exchanging y and z for all x at once 
+! Pack send buffers for exchanging y and z for all x at once
 
-     call pack_fcomm2(buf1,source) 
-      
+     call pack_fcomm2(buf1,source)
+
 ! Exchange y-z buffers in columns of processors
 
 
@@ -225,9 +225,9 @@
          tc = tc - MPI_Wtime()
 
          position = 1
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z)
          do i=0,jproc-1
-	    position = i*KfCntMax/(mytype*2)  + 1 
+	    position = i*KfCntMax/(p3dfft_type*2)  + 1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize
@@ -236,7 +236,7 @@
                   enddo
                enddo
             enddo
-!            position = (i+1)*KfCntMax/(mytype*2)+1
+!            position = (i+1)*KfCntMax/(p3dfft_type*2)+1
          enddo
 
          tc = tc + MPI_Wtime()
@@ -255,25 +255,25 @@
       call mpi_alltoallv(buf1,KfSndCnts, KfSndStrt,mpi_byte, &
            dest,KfRcvCnts, KfRcvStrt,mpi_byte,mpi_comm_col,ierr)
       t = MPI_Wtime() + t
-         
+
 #endif
       return
       end subroutine
 
       subroutine pack_fcomm2(buf1,source)
 
-      complex(mytype) source(iisize,ny_fft,kjsize)
-      complex(mytype) buf1(iisize*ny_fft*kjsize)
+      complex(p3dfft_type) source(iisize,ny_fft,kjsize)
+      complex(p3dfft_type) buf1(iisize*ny_fft*kjsize)
       integer i,dny,position,pos0,x,y,z
 
       dny = ny_fft-nyc
       position = 1
-!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i*KfCntMax/(mytype*2)  + 1 
+         pos0 = i*KfCntMax/(p3dfft_type*2)  + 1
 #else
-         pos0 = KfSndStrt(i)/(mytype*2)+ 1 
+         pos0 = KfSndStrt(i)/(p3dfft_type*2)+ 1
 #endif
 
 ! If clearly in the first half of ny
@@ -286,7 +286,7 @@
                      buf1(position) = source(x,y,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 ! If clearly in the second half of ny
@@ -298,7 +298,7 @@
                      buf1(position) = source(x,y,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 
@@ -312,13 +312,13 @@
                      buf1(position) = source(x,y,z)
                      position = position+1
                   enddo
-	       enddo	
+	       enddo
                do y=ny_fft-nyhc+1,jjen(i)+dny
                   do x=1,iisize
                      buf1(position) = source(x,y,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
          endif
 

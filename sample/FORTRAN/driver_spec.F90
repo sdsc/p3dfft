@@ -23,22 +23,22 @@
 !
 !----------------------------------------------------------------------------
 
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array with RANDOM NUMBERS, then 
+! This program initializes a 3D array with RANDOM NUMBERS, then
 ! performs a forward FFT transform, and computes POWER SPECTRUM.
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
 ! (1 or 2), and Nrep is the number of repititions. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -54,18 +54,18 @@
       integer fstatus
       logical flg_inplace
 
-      real(mytype), dimension(:,:,:),  allocatable :: BEG
-      complex(mytype), dimension(:,:,:),  allocatable :: AEND
+      real(p3dfft_type), dimension(:,:,:),  allocatable :: BEG
+      complex(p3dfft_type), dimension(:,:,:),  allocatable :: AEND
 
       integer(i8) Ntot
-      real(mytype) factor
+      real(p3dfft_type) factor
       real(r8) rtime1,rtime2
       real(r8) gt(12,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id
       integer istart(3),iend(3),isize(3)
       integer fstart(3),fend(3),fsize(3)
       integer iproc,jproc,ng(3),kmax,k
-      real(mytype), allocatable :: E(:)
+      real(p3dfft_type), allocatable :: E(:)
       logical iex
 	integer memsize(3)
 
@@ -77,21 +77,21 @@
       gt=0.0
       gtcomm=0.0
 
-      if (proc_id.eq.0) then 
+      if (proc_id.eq.0) then
          open (unit=3,file='stdin',status='old', &
                access='sequential',form='formatted', iostat=fstatus)
          if (fstatus .eq. 0) then
             write(*, *) ' Reading from input file stdin'
-         endif 
+         endif
          ndim = 2
 
         read (3,*) nx, ny, nz, ndim
 	print *,'P3DFFT test, 3D wave input, spectrum output'
         write (*,*) "procs=",nproc," nx=",nx, &
                 " ny=", ny," nz=", nz,"ndim=",ndim
-        if(mytype .eq. 4) then
+        if(p3dfft_type .eq. 4) then
            print *,'Single precision version'
-        else if(mytype .eq. 8) then
+        else if(p3dfft_type .eq. 8) then
            print *,'Double precision version'
         endif
        endif
@@ -127,7 +127,7 @@
              dims(1) = dims(2)
              dims(2) = nproc / dims(1)
           endif
-       endif  
+       endif
 
       endif
 
@@ -188,10 +188,10 @@
 
 ! Do forward Fourier transform
       call p3dfft_ftran_r2c (BEG,AEND,'fft')
-         
+
       rtime1 = rtime1 + MPI_wtime()
 
-         
+
 ! Normalize
       call mult_array(AEND, Ntot,factor)
 
@@ -257,16 +257,16 @@
 
       call MPI_FINALIZE (ierr)
 
-      contains 
+      contains
 !=========================================================
 
       subroutine compute_spectrum(B,st,sz,en,ng,E,kmax,root)
 
       use p3dfft
-      
+
       integer st(3),sz(3),en(3),ng(3),root
-      complex(mytype) B(sz(1),sz(2),sz(3))
-      real(mytype) E(0:kmax),el(0:kmax),k2
+      complex(p3dfft_type) B(sz(1),sz(2),sz(3))
+      real(p3dfft_type) E(0:kmax),el(0:kmax),k2
       integer kmax,nl(3),x,y,z,i,ik,kx,ky,kz,cx,cy,cz
 
       if(4.0 * kmax**2 .lt. (en(1)-1)**2 +(en(2)-1)**2+(en(3)-1)**2) then
@@ -279,7 +279,7 @@
          E(ik) = 0.0
       enddo
 
-#ifdef STRIDE1 
+#ifdef STRIDE1
             do x=st(3),en(3)
                kx = x-1
 
@@ -296,12 +296,12 @@
                      else
                         kz = z-1
                      endif
-                     
+
                k2 = kx**2 + ky**2 + kz**2
                ik = sqrt(k2) + 0.5
 
                el(ik) = el(ik) + k2 * real(B(z-st(1)+1,y-st(2)+1,x-st(3)+1) * &
-                   conjg(B(z-st(1)+1,y-st(2)+1,x-st(3)+1))) 
+                   conjg(B(z-st(1)+1,y-st(2)+1,x-st(3)+1)))
 
             enddo
          enddo
@@ -328,16 +328,16 @@
                k2 = kx**2 + ky**2 + kz**2
                ik = sqrt(k2) + 0.5
                el(ik) = el(ik) + k2 * real(B(x-st(1)+1,y-st(2)+1,z-st(3)+1) * &
-                   conjg(B(x-st(1)+1,y-st(2)+1,z-st(3)+1))) 
+                   conjg(B(x-st(1)+1,y-st(2)+1,z-st(3)+1)))
 
             enddo
          enddo
       enddo
 #endif
 
-      call mpi_reduce(el,E,kmax+1,mpireal,MPI_SUM,root,MPI_COMM_WORLD,ierr)
+      call mpi_reduce(el,E,kmax+1,p3dfft_mpireal,MPI_SUM,root,MPI_COMM_WORLD,ierr)
 
-      return 
+      return
       end subroutine
 
 
@@ -347,8 +347,8 @@
       use p3dfft
 
       integer(i8) nar,i
-      complex(mytype) X(nar)
-      real(mytype) f
+      complex(p3dfft_type) X(nar)
+      real(p3dfft_type) f
 
       do i=1,nar
          X(i) = X(i) * f

@@ -24,14 +24,14 @@
 !----------------------------------------------------------------------------
 
       subroutine ftran_r2c_many(IN,dim_in,OUT,dim_out,nv,op)
-      
+
       use p3dfft
 
       integer dim_in,dim_out
-      real(mytype), TARGET :: IN(dim_in,nv)
-      complex(mytype), TARGET :: OUT(dim_out,nv)
-!      real(mytype) IN(nx_fft,jistart:jiend,kjstart:kjend)
-!      complex(mytype) OUT(iistart:iiend,jjstart:jjend,nz_fft)
+      real(p3dfft_type), TARGET :: IN(dim_in,nv)
+      complex(p3dfft_type), TARGET :: OUT(dim_out,nv)
+!      real(p3dfft_type) IN(nx_fft,jistart:jiend,kjstart:kjend)
+!      complex(p3dfft_type) OUT(iistart:iiend,jjstart:jjend,nz_fft)
 !      logical flg_inplace
       character(len=3) op
       integer nv
@@ -42,14 +42,14 @@
       end
 
       subroutine btran_c2r_many(IN,dim_in,OUT,dim_out,nv,op)
-      
+
       use p3dfft
 
       integer dim_in,dim_out
-      real(mytype), TARGET :: OUT(dim_out,nv)
-      complex(mytype), TARGET :: IN(dim_in,nv)
-!      real(mytype) OUT(nx_fft,jistart:jiend,kjstart:kjend)
-!      complex(mytype) IN(iistart:iiend,jjstart:jjend,nz_fft)
+      real(p3dfft_type), TARGET :: OUT(dim_out,nv)
+      complex(p3dfft_type), TARGET :: IN(dim_in,nv)
+!      real(p3dfft_type) OUT(nx_fft,jistart:jiend,kjstart:kjend)
+!      complex(p3dfft_type) IN(iistart:iiend,jjstart:jjend,nz_fft)
 !      logical flg_inplace
       character(len=3) op
       integer nv
@@ -60,13 +60,13 @@
       end
 
       subroutine ftran_r2c(IN,OUT,op)
-      
+
       use p3dfft
 
-      real(mytype), TARGET :: IN(1,1,*)
-      complex(mytype), TARGET :: OUT(1,1,*)
-!      real(mytype) IN(nx_fft,jistart:jiend,kjstart:kjend)
-!      complex(mytype) OUT(iistart:iiend,jjstart:jjend,nz_fft)
+      real(p3dfft_type), TARGET :: IN(1,1,*)
+      complex(p3dfft_type), TARGET :: OUT(1,1,*)
+!      real(p3dfft_type) IN(nx_fft,jistart:jiend,kjstart:kjend)
+!      complex(p3dfft_type) OUT(iistart:iiend,jjstart:jjend,nz_fft)
 !      logical flg_inplace
       character(len=3) op
       integer nv
@@ -77,13 +77,13 @@
       end
 
       subroutine btran_c2r(IN,OUT,op)
-      
+
       use p3dfft
 
-      real(mytype), TARGET :: OUT(1,1,*)
-      complex(mytype), TARGET :: IN(1,1,*)
-!      real(mytype) OUT(nx_fft,jistart:jiend,kjstart:kjend)
-!      complex(mytype) IN(iistart:iiend,jjstart:jjend,nz_fft)
+      real(p3dfft_type), TARGET :: OUT(1,1,*)
+      complex(p3dfft_type), TARGET :: IN(1,1,*)
+!      real(p3dfft_type) OUT(nx_fft,jistart:jiend,kjstart:kjend)
+!      complex(p3dfft_type) IN(iistart:iiend,jjstart:jjend,nz_fft)
 !      logical flg_inplace
       character(len=3) op
       integer nv

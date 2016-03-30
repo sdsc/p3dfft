@@ -3,7 +3,7 @@
 ! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
 ! This program initializes a 3D array with a 3D sine wave, then
-! performs forward cosine transform, differentiation by Chebyshev method, 
+! performs forward cosine transform, differentiation by Chebyshev method,
 ! backward transform, and checks that
 ! the results are correct. It can be used both as a correctness
 ! test and for timing the library functions.
@@ -30,11 +30,11 @@
       integer i,j,k,n,m,x,y,z, msize(3)
       integer fstatus
       integer*8 mem_rsize1d,mem_csize1d
-      real(mytype) pi
+      real(p3dfft_type) pi
       logical iex
       real(8) timer,rtime2
 
-      complex(mytype), dimension(:,:,:), allocatable, target::mem
+      complex(p3dfft_type), dimension(:,:,:), allocatable, target::mem
 
       integer*8 Ntot
       integer ierr,nu,ndim,dims(2),nproc,proc_id
@@ -49,8 +49,8 @@
       common /p3dfftsets/ istart,iend,isize,fstart,fend,fsize,proc_id
 
 
-      real(mytype), dimension(:), allocatable :: coordX, coordY, coordZ
-      real(mytype) :: Lx,Ly,Lz
+      real(p3dfft_type), dimension(:), allocatable :: coordX, coordY, coordZ
+      real(p3dfft_type) :: Lx,Ly,Lz
       common /Lxyz/ Lx,Ly,Lz
 
       call MPI_INIT (ierr)
@@ -64,21 +64,21 @@
          ny   = 32; Ly = 4.d0*pi
          nz   = 33; Lz = 2.d0
 
-      if (proc_id.eq.0) then 
+      if (proc_id.eq.0) then
 	print *,'P3DFFT test, Chebyshev'
          open (unit=3,file='stdin',status='old',  &
               access='sequential',form='formatted', iostat=fstatus)
          if (fstatus .eq. 0) then
             write(*, *) ' Reading from input file stdin'
-         endif 
+         endif
          ndim = 2
 
         read (3,*) nx, ny, nz, ndim,n
         write (*,*) "procs=",nproc," nx=",nx,  &
                " ny=", ny," nz=", nz,"ndim=",ndim," repeat=", n
-        if(mytype .eq. 4) then
+        if(p3dfft_type .eq. 4) then
            print *,'Single precision version'
-        else if(mytype .eq. 8) then
+        else if(p3dfft_type .eq. 8) then
            print *,'Double precision version'
         endif
        endif
@@ -196,20 +196,20 @@
       	common /p3dfftsets/istart,iend,isize,fstart,fend,fsize,proc_id
         real(8) timer
 
-      	real(mytype) :: Lx,Ly,Lz
+      	real(p3dfft_type) :: Lx,Ly,Lz
       	common /Lxyz/ Lx,Ly,Lz
 
       	integer nx,ny,nz
       	common /grid/ nx,ny,nz
 
 !     !	function args
-      	real(mytype), dimension(istart(1):iend(1), &
+      	real(p3dfft_type), dimension(istart(1):iend(1), &
                                istart(2):iend(2), &
                                istart(3):iend(3)) ::	rmem
-      	complex(mytype), dimension(fstart(1):fend(1), &
+      	complex(p3dfft_type), dimension(fstart(1):fend(1), &
                                fstart(2):fend(2),  &
                               fstart(3):fend(3)) ::	cmem
-      	real(mytype), intent(in) :: coordX(nx), coordY(ny), coordZ(nz)
+      	real(p3dfft_type), intent(in) :: coordX(nx), coordY(ny), coordZ(nz)
 
       	double precision  :: delta,prec
       	double precision  :: maxdelta1, maxdelta01
@@ -224,7 +224,7 @@
         enddo
 
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
-        timer = timer - MPI_Wtime() 
+        timer = timer - MPI_Wtime()
 
         call p3dfft_cheby(rmem,cmem,Lz)
 
@@ -272,7 +272,7 @@
       	call MPI_reduce(maxdelta1,maxdelta01,1,MPI_DOUBLE_PRECISION,MPI_MAX,0,MPI_COMM_WORLD,ierr)
       	if(proc_id .eq. 0) then
            write(*,*) '  FFT(chebyshev) partial3D error in Z : ',maxdelta01
-         if(mytype .eq. 8) then
+         if(p3dfft_type .eq. 8) then
             prec = 1e-14
          else
             prec = 1e-5

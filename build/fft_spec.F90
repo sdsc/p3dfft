@@ -58,6 +58,6 @@
       integer :: cnaux,rnaux1,rnaux2
       real(r8),save,allocatable :: caux1(:),caux2(:),raux1(:),raux2(:)
       real(r8),save :: raux3(1)
-#endif         
-      
+#endif
+
       end module

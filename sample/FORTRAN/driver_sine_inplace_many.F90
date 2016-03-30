@@ -23,29 +23,29 @@
 !
 !----------------------------------------------------------------------------
 
-! This sample program illustrates the 
-! use of P3DFFT library for highly scalable parallel 3D FFT. 
+! This sample program illustrates the
+! use of P3DFFT library for highly scalable parallel 3D FFT.
 !
-! This program initializes a 3D array with a 3D sine wave, then 
-! performs forward transform, backward transform, and checks that 
-! the results are correct, namely the same as in the start except 
+! This program initializes a 3D array with a 3D sine wave, then
+! performs forward transform, backward transform, and checks that
+! the results are correct, namely the same as in the start except
 ! for a normalization factor. It can be used both as a correctness
-! test and for timing the library functions. 
+! test and for timing the library functions.
 !
-! This is a test program for MULTIVARIABLE routines of P3DFFT, 
+! This is a test program for MULTIVARIABLE routines of P3DFFT,
 ! such as ftran_r2c_many, btran_c2r_many etc
 !
-! The program expects 'stdin' file in the working directory, with 
+! The program expects 'stdin' file in the working directory, with
 ! a single line of numbers : Nx,Ny,Nz,Ndim,Nv,Nrep. Here Nx,Ny,Nz
 ! are box dimensions, Ndim is the dimentionality of processor grid
-! (1 or 2), and Nrep is the number of repititions. Nv is the 
+! (1 or 2), and Nrep is the number of repititions. Nv is the
 ! number of variables. Optionally
-! a file named 'dims' can also be provided to guide in the choice 
-! of processor geometry in case of 2D decomposition. It should contain 
+! a file named 'dims' can also be provided to guide in the choice
+! of processor geometry in case of 2D decomposition. It should contain
 ! two numbers in a line, with their product equal to the total number
 ! of tasks. Otherwise processor grid geometry is chosen automatically.
-! For better performance, experiment with this setting, varying 
-! iproc and jproc. In many cases, minimizing iproc gives best results. 
+! For better performance, experiment with this setting, varying
+! iproc and jproc. In many cases, minimizing iproc gives best results.
 ! Setting it to 1 corresponds to one-dimensional decomposition.
 !
 ! If you have questions please contact Dmitry Pekurovsky, dmitry@sdsc.edu
@@ -61,13 +61,13 @@
       integer fstatus
       logical flg_inplace
 
-      real(mytype), dimension(:,:),  allocatable :: B
-!      complex(mytype), dimension(:,:,:,:),  allocatable :: AEND
-      real(mytype) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
+      real(p3dfft_type), dimension(:,:),  allocatable :: B
+!      complex(p3dfft_type), dimension(:,:,:,:),  allocatable :: AEND
+      real(p3dfft_type) pi,twopi,sinyz,diff,cdiff,ccdiff,ans
 
       integer(i8) Ntot
-      real(mytype) factor
-      real(mytype),dimension(:,:),allocatable:: sinx,siny,sinz
+      real(p3dfft_type) factor
+      real(p3dfft_type),dimension(:,:),allocatable:: sinx,siny,sinz
       real(i8) rtime1,rtime2,Nglob,prec
       real(i8) gt(12,3),gtcomm(3),tc
       integer ierr,nu,ndim,dims(2),nproc,proc_id,j,nv
@@ -90,21 +90,21 @@
       gt=0.0
       gtcomm=0.0
 
-      if (proc_id.eq.0) then 
+      if (proc_id.eq.0) then
          open (unit=3,file='stdin',status='old', &
                access='sequential',form='formatted', iostat=fstatus)
          if (fstatus .eq. 0) then
             write(*, *) ' Reading from input file stdin'
-         endif 
+         endif
          ndim = 2
 
         read (3,*) nx, ny, nz, ndim,nv,n
 	print *,'P3DFFT test, 3D wave input, multivariable version'
         write (*,*) "procs=",nproc," nx=",nx, &
                 " ny=", ny," nz=", nz,"ndim=",ndim,"n var.=",nv," repeat=", n
-        if(mytype .eq. 4) then
+        if(p3dfft_type .eq. 4) then
            print *,'Single precision version'
-        else if(mytype .eq. 8) then
+        else if(p3dfft_type .eq. 8) then
            print *,'Double precision version'
         endif
        endif
@@ -164,9 +164,9 @@
       call p3dfft_get_dims(istart,iend,isize,1)
 
 ! Get dimensions for the R2C-forward-transformed array of complex numbers
-!   Z-pencils (depending on how the library was compiled, the first 
+!   Z-pencils (depending on how the library was compiled, the first
 !   dimension could be either X or Z)
-! 
+!
       call p3dfft_get_dims(fstart,fend,fsize,2)
 !
 ! Initialize the array to be transformed
@@ -220,25 +220,25 @@
 ! Repeat n times
 
       Ntot = fsize(1)*fsize(2)*fsize(3)
-      Nglob = nx * ny 
+      Nglob = nx * ny
       Nglob = Nglob * nz
       factor = 1.0d0/Nglob
 
-      rtime1 = 0.0               
+      rtime1 = 0.0
 
       do  m=1,n
          if(proc_id .eq. 0) then
             print *,'Iteration ',m
          endif
-         
+
 ! Barrier for correct timing
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
          rtime1 = rtime1 - MPI_wtime()
 ! Forward transform
          call ftran_r2c_many (B,size,B,size/2,nv,'fft')
-         
+
          rtime1 = rtime1 + MPI_wtime()
-         
+
          do j=1,nv
             if(proc_id .eq. 0) then
                print *,'Result of forward transform, var.',j
@@ -246,14 +246,14 @@
             call print_all_real(B(1,j),Ntot, proc_id,Nglob)
             call mult_array_real(B(1,j), Ntot,factor)
 	 enddo
-    
+
 ! Barrier for correct timing
          call MPI_Barrier(MPI_COMM_WORLD,ierr)
          rtime1 = rtime1 - MPI_wtime()
-! Backward transform     
-         call btran_c2r_many (B,size/2,B,size,nv,'tff')       
+! Backward transform
+         call btran_c2r_many (B,size/2,B,size,nv,'tff')
          rtime1 = rtime1 + MPI_wtime()
-         
+
       end do
 
 ! Free work space
@@ -305,7 +305,7 @@
 
       call MPI_FINALIZE (ierr)
 
-      contains 
+      contains
 
 
       subroutine print_all_real(Ar,Nar,proc_id,Nglob)
@@ -315,7 +315,7 @@
       integer x,y,z,proc_id
       integer(i8) i,Nar
       real(r8) Nglob
-      real(mytype), target :: Ar(Nar*2)
+      real(p3dfft_type), target :: Ar(Nar*2)
       integer Fstart(3),Fend(3),Fsize(3)
 
       call p3dfft_get_dims(Fstart,Fend,Fsize,2)
@@ -333,10 +333,10 @@
 
       subroutine check_res(B,j,Nglob)
 
-      real(mytype) B(istart(1):iend(1),istart(2):iend(2),istart(3):iend(3))
+      real(p3dfft_type) B(istart(1):iend(1),istart(2):iend(2),istart(3):iend(3))
       integer nv,j,x,y,z
 !      integer, dimension(3) :: isize
-      real(mytype) cdiff,sinyz,ans,ccdiff
+      real(p3dfft_type) cdiff,sinyz,ans,ccdiff
       real(r8) prec,Nglob
 
          cdiff=0.0d0
@@ -349,13 +349,13 @@
                      cdiff = abs(B(x,y,z)-ans)
                   endif
  20      continue
-         call MPI_Reduce(cdiff,ccdiff,1,mpireal,MPI_MAX,0, &
+         call MPI_Reduce(cdiff,ccdiff,1,p3dfft_mpireal,MPI_MAX,0, &
                    MPI_COMM_WORLD,ierr)
 
          if (proc_id.eq.0) write (6,*) 'Var. ',j,': max diff =',ccdiff
 
       if(proc_id .eq. 0) then
-         if(mytype .eq. 8) then
+         if(p3dfft_type .eq. 8) then
             prec = 1e-14
          else
             prec = 1e-5
@@ -374,22 +374,22 @@
 !=========================================================
 	subroutine init_ar(B,j)
 
-	real(mytype) B(istart(1):iend(1),istart(2):iend(2),istart(3):iend(3))
+	real(p3dfft_type) B(istart(1):iend(1),istart(2):iend(2),istart(3):iend(3))
 	integer x,y,z,j
-	real(mytype) sinyz	 
-        
+	real(p3dfft_type) sinyz
+
          do z=istart(3),iend(3)
             do y=istart(2),iend(2)
                sinyz=siny(y,j)*sinz(z,j)
                do x=istart(1),iend(1)
-                  B(x,y,z)=sinx(x,j)*sinyz 
+                  B(x,y,z)=sinx(x,j)*sinyz
                enddo
             enddo
          enddo
 
 	 return
 	 end subroutine
-	 
+
 
 
       subroutine mult_array(X,nar,f)
@@ -397,8 +397,8 @@
       use p3dfft
 
       integer(i8) nar,i
-      complex(mytype) X(nar)
-      real(mytype) f
+      complex(p3dfft_type) X(nar)
+      real(p3dfft_type) f
 
       do i=1,nar
          X(i) = X(i) * f
@@ -413,8 +413,8 @@
       use p3dfft
 
       integer(i8) nar,i
-      real(mytype) X(nar*2)
-      real(mytype) f
+      real(p3dfft_type) X(nar*2)
+      real(p3dfft_type) f
 
       do i=1,nar*2
          X(i) = X(i) * f
@@ -434,7 +434,7 @@
 
       integer x,y,z,proc_id
       integer(i8) i,Nar
-      complex(mytype) Ar(1,1,*)
+      complex(p3dfft_type) Ar(1,1,*)
       integer Fstart(3),Fend(3),Fsize(3)
       real(r8) Nglob
 

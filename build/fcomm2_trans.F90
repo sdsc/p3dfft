@@ -36,9 +36,9 @@
 
 ! Assume stride1
       integer nz,dim_out
-      complex(mytype) source(ny_fft,iisize,kjsize,nv)
-      complex(mytype) dest(dim_out,nv)
-      complex(mytype) buf3(nz_fft,jjsize)
+      complex(p3dfft_type) source(ny_fft,iisize,kjsize,nv)
+      complex(p3dfft_type) dest(dim_out,nv)
+      complex(p3dfft_type) buf3(nz_fft,jjsize)
 
       real(r8) t,tc
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l,dny,dnz,nv,j
@@ -50,7 +50,7 @@
       integer rcvstrt(0:jproc-1)
 
 
-! Pack send buffers for exchanging y and z for all x at once 
+! Pack send buffers for exchanging y and z for all x at once
 
 
       tc = tc - MPI_Wtime()
@@ -62,7 +62,7 @@
 
 #ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax*nv, mpi_byte, buf2,KfCntMax*nv, mpi_byte,mpi_comm_col,ierr)
-#else      
+#else
 ! Exchange y-z buffers in columns of processors
 
       sndcnts = KfSndCnts * nv
@@ -78,14 +78,14 @@
      if(jjsize .gt. 0) then
 
       tc = - MPI_Wtime() + tc
-	
+
       do j=1,nv
          call unpack_fcomm2_trans(dest(1,j),buf2,buf3,j,nv,op)
       enddo
 
       tc = tc + MPI_Wtime()
 
-     endif	
+     endif
 
       return
       end subroutine
@@ -95,17 +95,17 @@
       use fft_spec
       implicit none
 
-      complex(mytype) source(ny_fft,iisize,kjsize,nv)
-      complex(mytype) sndbuf(iisize*kjsize*ny_fft*nv)
+      complex(p3dfft_type) source(ny_fft,iisize,kjsize,nv)
+      complex(p3dfft_type) sndbuf(iisize*kjsize*ny_fft*nv)
       integer nv,j,i,x,y,z,pos0,position,dny,pos1
 
       dny = ny_fft-nyc
-!$OMP PARALLEL DO private(i,j,pos0,pos1,position,x,y,z) 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i * nv *KfCntMax/(mytype*2)  + 1 
+         pos0 = i * nv *KfCntMax/(p3dfft_type*2)  + 1
 #else
-         pos0 = KfSndStrt(i)*nv /(mytype*2)+ 1 
+         pos0 = KfSndStrt(i)*nv /(p3dfft_type*2)+ 1
 #endif
 
         do j=1,nv
@@ -122,7 +122,7 @@
                      sndbuf(position) = source(y,x,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 ! If clearly in the second half of ny
@@ -134,7 +134,7 @@
                      sndbuf(position) = source(y,x,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 
@@ -152,7 +152,7 @@
                      sndbuf(position) = source(y,x,z,j)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
          endif
 
@@ -166,12 +166,12 @@
       use fft_spec
       implicit none
 
-      complex(mytype) dest(nzc,jjsize,iisize)
-      complex(mytype) buf3(nz_fft,jjsize)
+      complex(p3dfft_type) dest(nzc,jjsize,iisize)
+      complex(p3dfft_type) buf3(nz_fft,jjsize)
 #ifdef USE_EVEN
-      complex(mytype) recvbuf(KfCntMax*nv*jproc/(mytype*2))
+      complex(p3dfft_type) recvbuf(KfCntMax*nv*jproc/(p3dfft_type*2))
 #else
-      complex(mytype) recvbuf(nzc*jjsize*iisize*nv)
+      complex(p3dfft_type) recvbuf(nzc*jjsize*iisize*nv)
 #endif
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l,dny,dnz,nv,j,nz,dim_out
       integer(i8) position,pos1,pos0,pos2
@@ -190,9 +190,9 @@
          do i=0,jproc-1
 
 #ifdef USE_EVEN
- 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) +(x-1)*jjsize
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i) +(x-1)*jjsize
 #endif
 
            if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
@@ -202,7 +202,7 @@
 
                  do y=1,jjsize,NBy2
                     y2 = min(y+NBy2-1,jjsize)
-                    pos2 = pos1 + y 
+                    pos2 = pos1 + y
 
                     do iz=z,z2
                        position = pos2
@@ -217,15 +217,15 @@
                  pos1 = pos1 + iisize*jjsize*NBz
               enddo
 
-	    else 
-! Copy some data, then insert zeros to restore full dimension, then again 
-! copy some data if needed	
+	    else
+! Copy some data, then insert zeros to restore full dimension, then again
+! copy some data if needed
                do z=kjst(i),nzhc,NBz
        	          z2 = min(z+NBz-1,nzhc)
 
                  do y=1,jjsize,NBy2
                     y2 = min(y+NBy2-1,jjsize)
-                    pos2 = pos1 + y 
+                    pos2 = pos1 + y
 
                     do iz=z,z2
                        position = pos2
@@ -242,9 +242,9 @@
 
 	      pos0 = pos0 + iisize*jjsize*dnz
 #ifdef USE_EVEN
- 	      pos1 = pos0 + i * nv * KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
+ 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i) 
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif
 
 	      do z=nzhc+1,kjen(i),NBz
@@ -252,7 +252,7 @@
 
                  do y=1,jjsize,NBy2
                     y2 = min(y+NBy2-1,jjsize)
-                    pos2 = pos1 + y 
+                    pos2 = pos1 + y
 
                     do iz=z,z2
                        position = pos2
@@ -270,10 +270,10 @@
 
 	enddo
 
-       enddo	
+       enddo
 
      else
- 
+
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) collapse(2)
        do x=1,iisize
 
@@ -281,21 +281,21 @@
 	    pos0 = (x-1)*jjsize
 
 #ifdef USE_EVEN
-            pos1 = pos0 + (i * nv +j-1) *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
-#else         
-	    pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)
-#endif 
+            pos1 = pos0 + (i * nv +j-1) *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+#else
+	    pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+#endif
 
             do z=kjst(i),kjen(i),NBz
                z2 = min(z+NBz-1,kjen(i))
-            
+
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
                   pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos2 
+                     position = pos2
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
@@ -305,16 +305,16 @@
                   enddo
                enddo
                pos1 = pos1 + jjsize*iisize*NBz
-           enddo 
-       enddo	
+           enddo
+       enddo
 
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
              call exec_f_c2_same(buf3, 1,nz_fft, &
 			  buf3, 1,nz_fft,nz_fft,jjsize)
-	else if(op(3:3) == 'c') then	
+	else if(op(3:3) == 'c') then
              call exec_ctrans_r2_complex_same(buf3, 2,2*nz_fft, &
 			  buf3, 2,2*nz_fft,nz_fft,jjsize)
-	else if(op(3:3) == 's') then	
+	else if(op(3:3) == 's') then
              call exec_strans_r2_complex_same(buf3, 2,2*nz_fft, &
 		          buf3, 2,2*nz_fft,nz_fft,jjsize)
  	else
@@ -322,7 +322,7 @@
 	   call MPI_abort(MPI_COMM_WORLD,ierr)
 	endif
 
-	do y=1,jjsize	
+	do y=1,jjsize
 	   do z=1,nzhc
 	      dest(z,y,x) = buf3(z,y)
 	   enddo
@@ -339,25 +339,25 @@
 
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
-         
+
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
-#else         
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
-#endif 
+           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+#else
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+#endif
 
             do z=kjst(i),kjen(i),NBz
                z2 = min(z+NBz-1,kjen(i))
-            
+
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
                   pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos2 
+                     position = pos2
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         dest(iz,iy,x) = recvbuf(position)
@@ -367,33 +367,33 @@
                   enddo
                enddo
                pos1 = pos1 + jjsize*iisize*NBz
-           enddo 
+           enddo
         enddo
       enddo
 
       else
-      
+
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
-         
+
          do i=0,jproc-1
-	 
+
 #ifdef USE_EVEN
-            pos1 = pos0 + i * nv *KfCntMax / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
-#else         
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (mytype*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
-#endif 
+            pos1 = pos0 + i * nv *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+#else
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+#endif
 
             do z=kjst(i),kjen(i),NBz
                z2 = min(z+NBz-1,kjen(i))
-            
+
                do y=1,jjsize,NBy2
                   y2 = min(y+NBy2-1,jjsize)
 
                   pos2 = pos1 +y
 
                   do iz=z,z2
-                     position = pos2 
+                     position = pos2
                      do iy=y,y2
 ! Here we are sure that dest and buf are different
                         buf3(iz,iy) = recvbuf(position)
@@ -409,10 +409,10 @@
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
              call exec_f_c2_dif(buf3, 1,nz_fft, &
 			  dest(1,1,x), 1,nz_fft,nz_fft,jjsize)
-	else if(op(3:3) == 'c') then	
+	else if(op(3:3) == 'c') then
              call exec_ctrans_r2_complex_dif(buf3, 2,2*nz_fft, &
 			  dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
-	else if(op(3:3) == 's') then	
+	else if(op(3:3) == 's') then
              call exec_strans_r2_complex_dif(buf3, 2,2*nz_fft, &
 		          dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
  	else
@@ -435,9 +435,9 @@
       implicit none
 
 ! Assume stride1
-      complex(mytype) source(ny_fft,iisize,kjsize)
-      complex(mytype) dest(nzc,jjsize,iisize)
-      complex(mytype) buf3(nz_fft,jjsize)
+      complex(p3dfft_type) source(ny_fft,iisize,kjsize)
+      complex(p3dfft_type) dest(nzc,jjsize,iisize)
+      complex(p3dfft_type) buf3(nz_fft,jjsize)
 
       real(r8) t,tc
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l,dny,dnz
@@ -445,7 +445,7 @@
       character(len=3) op
 
 
-! Pack send buffers for exchanging y and z for all x at once 
+! Pack send buffers for exchanging y and z for all x at once
 
       dny = ny_fft-nyc
 
@@ -454,9 +454,9 @@
 !$OMP PARALLEL DO private(i,pos0,position,x,y,z)
      do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i*KfCntMax/(mytype*2)  + 1 
+         pos0 = i*KfCntMax/(p3dfft_type*2)  + 1
 #else
-         pos0 = KfSndStrt(i)/(mytype*2)+ 1 
+         pos0 = KfSndStrt(i)/(p3dfft_type*2)+ 1
 #endif
 
 ! Pack the sendbuf, omitting the center ny-nyc elements in Y dimension
@@ -471,7 +471,7 @@
                      buf1(position) = source(y,x,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 ! If clearly in the second half of ny
@@ -483,7 +483,7 @@
                      buf1(position) = source(y,x,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
 
 
@@ -501,7 +501,7 @@
                      buf1(position) = source(y,x,z)
                      position = position+1
                   enddo
-               enddo	
+               enddo
             enddo
          endif
 
@@ -513,7 +513,7 @@
 
 #ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax, mpi_byte, buf2,KfCntMax, mpi_byte,mpi_comm_col,ierr)
-#else      
+#else
 ! Exchange y-z buffers in columns of processors
 
       call mpi_alltoallv(buf1,KfSndCnts, KfSndStrt,mpi_byte,buf2,KfRcvCnts, KfRcvStrt,mpi_byte,mpi_comm_col,ierr)

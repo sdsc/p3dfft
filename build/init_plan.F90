@@ -32,19 +32,19 @@
       implicit none
 
       integer(i8) n2
-!      complex(mytype) A(n2),C(n2)
-!      real(mytype) B(n2*2)
-       real(mytype), allocatable :: B(:)
-       complex(mytype), allocatable :: A(:),C(:)
+!      complex(p3dfft_type) A(n2),C(n2)
+!      real(p3dfft_type) B(n2*2)
+       real(p3dfft_type), allocatable :: B(:)
+       complex(p3dfft_type), allocatable :: A(:),C(:)
        integer omp_get_num_threads,omp_get_thread_num,l,m,tid,ierr
 
 #ifdef OPENMP
-       
-!$OMP PARALLEL 
-!$OMP MASTER      
+
+!$OMP PARALLEL
+!$OMP MASTER
       num_thr = omp_get_num_threads()
 !$OMP END MASTER
-!$OMP END PARALLEL 
+!$OMP END PARALLEL
 
 #else
       num_thr = 1
@@ -52,12 +52,12 @@
 
       if(taskid .eq. 0) then
          print *,'Running on ',num_thr,'threads'
-      endif	 
-      
+      endif
+
       call init_work(nx_fft,ny_fft,nz_fft)
 
 #ifdef FFTW
-        allocate(plan1_frc(0:num_thr-1),plan1_bcr(0:num_thr-1),plan1_fc(0:num_thr-1),plan1_bc(0:num_thr-1))	
+        allocate(plan1_frc(0:num_thr-1),plan1_bcr(0:num_thr-1),plan1_fc(0:num_thr-1),plan1_bc(0:num_thr-1))
 	allocate(plan_ctrans_same(0:num_thr-1), plan_strans_same(0:num_thr-1))
 	allocate(plan_ctrans_dif(0:num_thr-1), plan_strans_dif(0:num_thr-1))
 	allocate(plan2_bc_same(0:num_thr-1),plan2_fc_same(0:num_thr-1),plan2_bc_dif(0:num_thr-1),plan2_fc_dif(0:num_thr-1))
@@ -79,17 +79,17 @@
       startx_bcr(0) = 1
       starty_bcr(0) = 1
       do tid=0,l-1
-         startx_frc(tid+1) = startx_frc(tid) + (m+1)*nx_fft 		
-         starty_frc(tid+1) = starty_frc(tid) + (m+1)*nxhp 		
-         starty_bcr(tid+1) = starty_bcr(tid) + (m+1)*nx_fft 		
-         startx_bcr(tid+1) = startx_bcr(tid) + (m+1)*nxhp 		
-      enddo		         
+         startx_frc(tid+1) = startx_frc(tid) + (m+1)*nx_fft
+         starty_frc(tid+1) = starty_frc(tid) + (m+1)*nxhp
+         starty_bcr(tid+1) = starty_bcr(tid) + (m+1)*nx_fft
+         startx_bcr(tid+1) = startx_bcr(tid) + (m+1)*nxhp
+      enddo
       do tid=l,num_thr-2
          startx_frc(tid+1) = startx_frc(tid) + m*nx_fft
          starty_frc(tid+1) = starty_frc(tid) + m*nxhp
          starty_bcr(tid+1) = starty_bcr(tid) + m*nx_fft
          startx_bcr(tid+1) = startx_bcr(tid) + m*nxhp
-      enddo		         
+      enddo
 
 #ifdef DEBUG
 	print *,taskid,': doing plan_f_r2c and plan_b_c2r'
@@ -101,31 +101,31 @@
 
       do tid=0,num_thr-1
 #ifndef SINGLE_PREC
-      if(tid .lt. l) then	
+      if(tid .lt. l) then
          call dfftw_plan_many_dft_r2c(plan1_frc(tid),1,nx_fft,m+1, &
-           B,NULL,1,nx_fft, A,NULL,1,nxhp,fftw_flag) 
+           B,NULL,1,nx_fft, A,NULL,1,nxhp,fftw_flag)
          call dfftw_plan_many_dft_c2r(plan1_bcr(tid),1,nx_fft,m+1, &
               A,NULL,1,nxhp, B,NULL,1,nx_fft,fftw_flag)
-      else	       
+      else
          call dfftw_plan_many_dft_r2c(plan1_frc(tid),1,nx_fft,m, &
            B,NULL,1,nx_fft, A,NULL,1,nxhp,fftw_flag)
          call dfftw_plan_many_dft_c2r(plan1_bcr(tid),1,nx_fft,m, &
               A,NULL,1,nxhp, B,NULL,1,nx_fft,fftw_flag)
       endif
 #else
-      if(tid .lt. l) then	
+      if(tid .lt. l) then
          call sfftw_plan_many_dft_r2c(plan1_frc(tid),1,nx_fft,m+1, &
            B,NULL,1,nx_fft, A,NULL,1,nxhp,fftw_flag)
          call sfftw_plan_many_dft_c2r(plan1_bcr(tid),1,nx_fft,m+1, &
               A,NULL,1,nxhp, B,NULL,1,nx_fft,fftw_flag)
-      else	       
+      else
          call sfftw_plan_many_dft_r2c(plan1_frc(tid),1,nx_fft,m, &
            B,NULL,1,nx_fft, A,NULL,1,nxhp,fftw_flag)
          call sfftw_plan_many_dft_c2r(plan1_bcr(tid),1,nx_fft,m, &
               A,NULL,1,nxhp, B,NULL,1,nx_fft,fftw_flag)
       endif
 #endif
-      enddo	
+      enddo
 
       deallocate(A,B)
 
@@ -139,8 +139,8 @@
 	call mpi_barrier(mpi_comm_world,ierr)
 #endif
 
-     if(iisize*kjsize .gt. 0) then 
-     
+     if(iisize*kjsize .gt. 0) then
+
       l = mod(iisize*kjsize,num_thr)
       m = iisize*kjsize/num_thr
 
@@ -149,17 +149,17 @@
       startx_b_c1(0) = 1
       starty_b_c1(0) = 1
       do tid=0,l-1
-         startx_f_c1(tid+1) = startx_f_c1(tid) + (m+1)*ny_fft 		
-         starty_f_c1(tid+1) = starty_f_c1(tid) + (m+1)*ny_fft 		
-         starty_b_c1(tid+1) = starty_b_c1(tid) + (m+1)*ny_fft 		
-         startx_b_c1(tid+1) = startx_b_c1(tid) + (m+1)*ny_fft 		
-      enddo		         
+         startx_f_c1(tid+1) = startx_f_c1(tid) + (m+1)*ny_fft
+         starty_f_c1(tid+1) = starty_f_c1(tid) + (m+1)*ny_fft
+         starty_b_c1(tid+1) = starty_b_c1(tid) + (m+1)*ny_fft
+         startx_b_c1(tid+1) = startx_b_c1(tid) + (m+1)*ny_fft
+      enddo
       do tid=l,num_thr-2
          startx_f_c1(tid+1) = startx_f_c1(tid) + m*ny_fft
          starty_f_c1(tid+1) = starty_f_c1(tid) + m*ny_fft
          starty_b_c1(tid+1) = starty_b_c1(tid) + m*ny_fft
          startx_b_c1(tid+1) = startx_b_c1(tid) + m*ny_fft
-      enddo		         
+      enddo
 
 !!$OMP PARALLEL private(tid,A)
 !      tid = omp_get_thread_num()
@@ -209,11 +209,11 @@
       endif
 #endif
 
-     enddo	
+     enddo
 
      deallocate(A)
 ! !$OMP END PARALLEL
-     endif	
+     endif
 
      if(jjsize .gt. 0) then
 
@@ -301,7 +301,7 @@
                               A, NULL, 2,2*nz_fft, &
                               C, NULL, 2,2*nz_fft, FFTW_RODFT00, fftw_flag)
 #endif
-     enddo	
+     enddo
 
      deallocate(A,C)
 ! !$OMP END PARALLEL
@@ -326,13 +326,13 @@
          starty_f_c1(tid+1) = starty_f_c1(tid) + (m+1)
          starty_b_c1(tid+1) = starty_b_c1(tid) + (m+1)
          startx_b_c1(tid+1) = startx_b_c1(tid) + (m+1)
-      enddo		         
+      enddo
       do tid=l,num_thr-2
          startx_f_c1(tid+1) = startx_f_c1(tid) + m
          starty_f_c1(tid+1) = starty_f_c1(tid) + m
          starty_b_c1(tid+1) = starty_b_c1(tid) + m
          startx_b_c1(tid+1) = startx_b_c1(tid) + m
-      enddo		         
+      enddo
 
 !!$OMP PARALLEL private(tid,A)
 !      tid = omp_get_thread_num()
@@ -371,7 +371,7 @@
        print *,'plan1_fc=',plan1_fc
        print *,'plan1_bc=',plan1_bc
        print *,'plan1_frc=',plan1_frc
-#endif 
+#endif
 	deallocate(A)
 
 ! !$OMP END PARALLEL
@@ -401,7 +401,7 @@
 	 startx_strans_same(tid+1) = startx_strans_same(tid) + (m+1)*2
 	 starty_ctrans_same(tid+1) = starty_ctrans_same(tid) + (m+1)*2
 	 starty_strans_same(tid+1) = starty_strans_same(tid) + (m+1)*2
-      enddo		         
+      enddo
       do tid=l,num_thr-2
          startx_f_c2_same(tid+1) = startx_f_c2_same(tid) + m
          starty_f_c2_same(tid+1) = starty_f_c2_same(tid) + m
@@ -411,7 +411,7 @@
 	 startx_strans_same(tid+1) = startx_strans_same(tid) + m*2
 	 starty_ctrans_same(tid+1) = starty_ctrans_same(tid) + m*2
 	 starty_strans_same(tid+1) = starty_strans_same(tid) + m*2
-      enddo		         
+      enddo
 
 !!$OMP PARALLEL private(tid,A)
 !      tid = omp_get_thread_num()

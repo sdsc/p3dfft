@@ -32,17 +32,17 @@
       implicit none
 
       integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2,dny,j,nv,dim
-!      complex(mytype) source(iisize,jjsize,nz_fft,nv)
-      complex(mytype) source(dim,nv)
-      complex(mytype) dest(iisize,ny_fft,kjsize,nv)
+!      complex(p3dfft_type) source(iisize,jjsize,nz_fft,nv)
+      complex(p3dfft_type) source(dim,nv)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize,nv)
       real(r8) t,tc
       integer(i8) position,pos1
       integer sndcnts(0:jproc-1)
       integer rcvcnts(0:jproc-1)
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
-      
-      
+
+
 !     Pack the data for sending
 
       tc = tc - MPI_Wtime()
@@ -52,13 +52,13 @@
       tc = tc + MPI_Wtime()
 
 !     Exchange data in columns
-      t = t - MPI_Wtime() 
+      t = t - MPI_Wtime()
 
-#ifdef USE_EVEN  
+#ifdef USE_EVEN
       call mpi_alltoall(buf1,KfCntMax *nv,mpi_byte, &
               buf2,KfCntMax *nv,mpi_byte,mpi_comm_col,ierr)
-                  
-#else      
+
+#else
       sndcnts = JrSndCnts * nv
       sndstrt = JrSndStrt * nv
       rcvcnts = JrRcvCnts * nv
@@ -66,14 +66,14 @@
 
       call mpi_alltoallv(buf1,SndCnts, SndStrt,mpi_byte, &
            buf2,RcvCnts, RcvStrt,mpi_byte,mpi_comm_col,ierr)
-#endif      
+#endif
 
-      t = t + MPI_Wtime() 
+      t = t + MPI_Wtime()
 
 ! Unpack receive buffers into dest
-      
+
       call unpack_bcomm1_many(dest,buf2,nv)
-      
+
       return
       end subroutine
 
@@ -81,8 +81,8 @@
       subroutine unpack_bcomm1_many(dest,buf2,nv)
 !========================================================
 
-      complex(mytype) dest(iisize,ny_fft,kjsize,nv)
-      complex(mytype) buf2(iisize*ny_fft*kjsize*nv)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize,nv)
+      complex(p3dfft_type) buf2(iisize*ny_fft*kjsize*nv)
       integer i,j,position,pos0,pos1,x,y,z,dny,nv
 
       position=1
@@ -91,11 +91,11 @@
       do j=1,nv
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i * nv * KfCntMax/(mytype*2)
+         pos0 = i * nv * KfCntMax/(p3dfft_type*2)
 #else
-         pos0 = nv * KfSndStrt(i)/(mytype*2)
+         pos0 = nv * KfSndStrt(i)/(p3dfft_type*2)
 #endif
- 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(mytype*2)+ 1 
+ 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(p3dfft_type*2)+ 1
 
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
@@ -119,9 +119,9 @@
                      position = position +1
                   enddo
                enddo
-            enddo         
+            enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)  
+! If spanning the first and second half of nz (i.e. jproc is odd)
          else
 	    do z=1,kjsize
                position = pos0 +(z-1)*jjsz(i)*iisize
@@ -151,7 +151,7 @@
          enddo
       enddo
 
-      end subroutine      
+      end subroutine
 
 
 !========================================================
@@ -159,7 +159,7 @@
 !========================================================
 
       integer j,nv
-      complex(mytype) A(iisize,jjsize,nz_fft)
+      complex(p3dfft_type) A(iisize,jjsize,nz_fft)
       integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2,dny
       integer(i8) position,pos1
       integer sndcnts(0:jproc-1)
@@ -167,12 +167,12 @@
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
 
-!$OMP PARALLEL DO private(i,position,x,y,z) 
+!$OMP PARALLEL DO private(i,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
-         position = i*KfCntMax*nv/(mytype*2)+1
+         position = i*KfCntMax*nv/(p3dfft_type*2)+1
 #else
-         position = JrSndStrt(i)*nv/(mytype*2)+1 
+         position = JrSndStrt(i)*nv/(p3dfft_type*2)+1
 #endif
          position = position + (j-1)*iisize*jjsize*kjsz(i)
 
@@ -194,12 +194,12 @@
 !========================================================
       implicit none
 
-      complex(mytype) source(iisize,jjsize,nz_fft)
-      complex(mytype) dest(iisize,ny_fft,kjsize)
+      complex(p3dfft_type) source(iisize,jjsize,nz_fft)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize)
       real(r8) t,tc
       integer x,y,z,i,j,ierr,xs,ys,iy,iz,y2,z2,dny
       integer(i8) position,pos1,pos0
-      
+
 !     Pack the data for sending
 
 #ifdef USE_EVEN
@@ -207,9 +207,9 @@
       if(KfCntUneven) then
          tc = tc - MPI_Wtime()
          position = 1
-!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z)
          do i=0,jproc-1
-            position = i*KfCntMax/(mytype*2)  + 1 
+            position = i*KfCntMax/(p3dfft_type*2)  + 1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize
@@ -218,29 +218,29 @@
                   enddo
                enddo
             enddo
-            position = (i+1)*KfCntMax/(mytype*2)+1
+            position = (i+1)*KfCntMax/(p3dfft_type*2)+1
          enddo
          tc = tc + MPI_Wtime()
-  
-         t = t - MPI_Wtime() 
+
+         t = t - MPI_Wtime()
          call mpi_alltoall(buf1,KfCntMax,mpi_byte, &
               buf2,KfCntMax,mpi_byte,mpi_comm_col,ierr)
-                  
+
       else
-         t = t - MPI_Wtime() 
+         t = t - MPI_Wtime()
          call mpi_alltoall(source,KfCntMax,mpi_byte, &
               buf2,KfCntMax,mpi_byte,mpi_comm_col,ierr)
       endif
-#else      
- 
+#else
+
 !     Exchange data in columns
-      t = t - MPI_Wtime() 
+      t = t - MPI_Wtime()
       call mpi_alltoallv(source,JrSndCnts, JrSndStrt,mpi_byte, &
            buf2,JrRcvCnts, JrRcvStrt,mpi_byte,mpi_comm_col,ierr)
-#endif      
+#endif
 
 
-      t = t + MPI_Wtime() 
+      t = t + MPI_Wtime()
 
 ! Unpack receive buffers into dest
 
@@ -251,18 +251,18 @@
 
       subroutine unpack_bcomm1(dest,buf2)
 
-      complex(mytype) dest(iisize,ny_fft,kjsize)
-      complex(mytype) buf2(iisize*ny_fft*kjsize)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize)
+      complex(p3dfft_type) buf2(iisize*ny_fft*kjsize)
       integer i,position,pos0,x,y,z,dny
 
       position=1
       dny = ny_fft - nyc
-!$OMP PARALLEL DO private(i,pos0,position,x,y,z) 
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i*KfCntMax/(mytype*2)  + 1 
+         pos0 = i*KfCntMax/(p3dfft_type*2)  + 1
 #else
-         pos0 = KfSndStrt(i)/(mytype*2)+ 1 
+         pos0 = KfSndStrt(i)/(p3dfft_type*2)+ 1
 #endif
 
 ! If clearly in the first half of ny
@@ -286,9 +286,9 @@
                      position = position +1
                   enddo
                enddo
-            enddo         
+            enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)  
+! If spanning the first and second half of nz (i.e. jproc is odd)
          else
 	    do z=1,kjsize
                position = pos0 +(z-1)*jjsz(i)*iisize
@@ -317,8 +317,8 @@
          enddo
 
       enddo
-      
-      
+
+
       return
       end subroutine
 
