@@ -32,10 +32,10 @@
       implicit none
 
       integer(i8) n2
-      complex(mytype) A(n2),C(n2)
-      real(mytype) B(n2*2)
+      complex(p3dfft_type) A(n2),C(n2)
+      real(p3dfft_type) B(n2*2)
 
-      
+
       call init_work(nx_fft,ny_fft,nz_fft)
 
       if(jisize*kjsize .gt. 0) then
@@ -43,19 +43,19 @@
 #ifdef DEBUG
 	print *,taskid,': doing plan_f_r2c'
 #endif
-        call plan_f_r2c(B,nx_fft,A,nxhp,nx_fft,jisize*kjsize) 
+        call plan_f_r2c(B,nx_fft,A,nxhp,nx_fft,jisize*kjsize)
 
 #ifdef DEBUG
 	print *,taskid,': doing plan_b_c2r'
 #endif
-      call plan_b_c2r(A,nxhp,B,nx_fft,nx_fft,jisize*kjsize) 
+      call plan_b_c2r(A,nxhp,B,nx_fft,nx_fft,jisize*kjsize)
 
      endif
 
 #ifdef STRIDE1
 
-     if(iisize*kjsize .gt. 0) then 
-     
+     if(iisize*kjsize .gt. 0) then
+
 #ifdef DEBUG
 	print *,taskid, ': doing plan_f_c1'
 #endif
@@ -65,7 +65,7 @@
 #endif
       call plan_b_c1(A,1,ny_fft,A,1,ny_fft,ny_fft,iisize*kjsize)
 
-     endif	
+     endif
 
      if(jjsize .gt. 0) then
 #ifdef DEBUG

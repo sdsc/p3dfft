@@ -59,7 +59,7 @@
       logical periodic(2),remain_dims(2)
       integer impid, ippid, jmpid, jppid
       integer(i8) n1,n2,pad1,padd
-      real(mytype), allocatable :: R(:)
+      real(p3dfft_type), allocatable :: R(:)
       integer, optional, intent (out) :: memsize (3)
       integer, optional, intent (in) :: nxcut,nycut,nzcut
       logical, optional, intent(in) :: overwrite
@@ -254,17 +254,17 @@
 
 #ifdef USE_EVEN
 
-      IfCntMax = iisz(iproc-1)*jisz(iproc-1)*kjsize*mytype*2
-      KfCntMax = iisize * jjsz(jproc-1) * kjsz(jproc-1)*mytype*2
+      IfCntMax = iisz(iproc-1)*jisz(iproc-1)*kjsize*p3dfft_type*2
+      KfCntMax = iisize * jjsz(jproc-1) * kjsz(jproc-1)*p3dfft_type*2
       if(mod(ny,jproc) .ne. 0 .or. mod(nz,jproc) .ne. 0) then
          KfCntUneven = .true.
       else
          KfCntUneven = .false.
       endif
-    IiCntMax = iiisz (iproc-1) * jisize * kjsize * mytype
-    IJCntMax = ijsz (iproc-1) * jisize * kjsize * mytype
-    JICntMax = jisz (iproc-1) * iiisize * kjsize * mytype
-    KjCntMax = kjsz (iproc-1) * jisize * ijsize * mytype
+    IiCntMax = iiisz (iproc-1) * jisize * kjsize * p3dfft_type
+    IJCntMax = ijsz (iproc-1) * jisize * kjsize * p3dfft_type
+    JICntMax = jisz (iproc-1) * iiisize * kjsize * p3dfft_type
+    KjCntMax = kjsz (iproc-1) * jisize * ijsize * p3dfft_type
 #endif
 
 
@@ -278,25 +278,25 @@
 #ifdef NBL_X
       NBx = NBL_X
 #else
-      NBx=CB/(4*mytype*Ny)
+      NBx=CB/(4*p3dfft_type*Ny)
 #endif
 
 #ifdef NBL_Y1
       NBy1=NBL_Y1
 #else
-      NBy1 = CB/(4*mytype*iisize)
+      NBy1 = CB/(4*p3dfft_type*iisize)
 #endif
 
 #ifdef NBL_Y2
       NBy2=NBL_Y2
 #else
-      NBy2 = CB/(4*mytype*Nz)
+      NBy2 = CB/(4*p3dfft_type*Nz)
 #endif
 
 #ifdef NBL_Z
       NBz=NBL_Z
 #else
-      NBz = (CB/Nx)*(numtasks/(2*mytype*Ny))
+      NBz = (CB/Nx)*(numtasks/(2*p3dfft_type*Ny))
 #endif
 
       if(NBx .eq. 0) then
@@ -367,8 +367,8 @@
      endif
 
 #ifdef USE_EVEN
-      n1 = IfCntMax * iproc /(mytype*2)
-      n2 = KfCntMax * jproc / (mytype*2)
+      n1 = IfCntMax * iproc /(p3dfft_type*2)
+      n2 = KfCntMax * jproc / (p3dfft_type*2)
       n1 = max(n1,n2)
       if(n1 .gt. nm) then
          deallocate(buf1)
@@ -380,8 +380,8 @@
 
 !#ifdef USE_EVEN
 !
-!     n1 = IfCntMax * iproc / (mytype*2)
-!     n2 = KfCntMax * jproc / (mytype*2)
+!     n1 = IfCntMax * iproc / (p3dfft_type*2)
+!     n2 = KfCntMax * jproc / (p3dfft_type*2)
 !     allocate(buf_x(n1))
 !     allocate(buf_z(n2))
 !     n1 = max(n1,n2)
@@ -417,42 +417,42 @@
 
 !   start pointers and types of send  for the 1st forward transpose
       do i=0,iproc-1
-         IfSndStrt(i) = (iist(i) -1)* jisize*kjsize*mytype*2
-         IfSndCnts(i) = iisz(i) * jisize*kjsize*mytype*2
+         IfSndStrt(i) = (iist(i) -1)* jisize*kjsize*p3dfft_type*2
+         IfSndCnts(i) = iisz(i) * jisize*kjsize*p3dfft_type*2
 
 !   start pointers and types of recv for the 1st forward transpose
-         IfRcvStrt(i) = (jist(i) -1) * iisize*kjsize*mytype*2
-         IfRcvCnts(i) = jisz(i) * iisize*kjsize*mytype*2
+         IfRcvStrt(i) = (jist(i) -1) * iisize*kjsize*p3dfft_type*2
+         IfRcvCnts(i) = jisz(i) * iisize*kjsize*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 2nd forward transpose
       do i=0,jproc-1
-         KfSndStrt(i) = (jjst(i) -1)*iisize*kjsize*mytype*2
-         KfSndCnts(i) = iisize*kjsize*jjsz(i)*mytype*2
+         KfSndStrt(i) = (jjst(i) -1)*iisize*kjsize*p3dfft_type*2
+         KfSndCnts(i) = iisize*kjsize*jjsz(i)*p3dfft_type*2
 
 !   start pointers and types of recv for the 2nd forward transpose
-         KfRcvStrt(i) = (kjst(i) -1) * iisize * jjsize*mytype*2
-         KfRcvCnts(i) = iisize*jjsize*kjsz(i)*mytype*2
+         KfRcvStrt(i) = (kjst(i) -1) * iisize * jjsize*p3dfft_type*2
+         KfRcvCnts(i) = iisize*jjsize*kjsz(i)*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 1st inverse transpose
       do i=0,jproc-1
-         JrSndStrt(i) = (kjst(i) -1) * iisize * jjsize*mytype*2
-         JrSndCnts(i) = iisize*jjsize*kjsz(i)*mytype*2
+         JrSndStrt(i) = (kjst(i) -1) * iisize * jjsize*p3dfft_type*2
+         JrSndCnts(i) = iisize*jjsize*kjsz(i)*p3dfft_type*2
 
 !   start pointers and types of recv for the 1st inverse transpose
-         JrRcvStrt(i) = (jjst(i) -1)*iisize*kjsize*mytype*2
-         JrRcvCnts(i) = jjsz(i) * iisize * kjsize*mytype*2
+         JrRcvStrt(i) = (jjst(i) -1)*iisize*kjsize*p3dfft_type*2
+         JrRcvCnts(i) = jjsz(i) * iisize * kjsize*p3dfft_type*2
       end do
 
 !   start pointers and types of send  for the 2nd inverse transpose
       do i=0,iproc-1
-         KrSndStrt(i) = (jist(i) -1) * iisize*kjsize*mytype*2
-         KrSndCnts(i) = jisz(i) * iisize*kjsize*mytype*2
+         KrSndStrt(i) = (jist(i) -1) * iisize*kjsize*p3dfft_type*2
+         KrSndCnts(i) = jisz(i) * iisize*kjsize*p3dfft_type*2
 
 !   start pointers and types of recv for the 2nd inverse transpose
-         KrRcvStrt(i) = (iist(i) -1) * jisize*kjsize*mytype*2
-         KrRcvCnts(i) = jisize*iisz(i)*kjsize*mytype*2
+         KrRcvStrt(i) = (iist(i) -1) * jisize*kjsize*p3dfft_type*2
+         KrRcvCnts(i) = jisize*iisz(i)*kjsize*p3dfft_type*2
       enddo
 
 ! Displacements and buffer counts for mpi_alltoallv in transpose-functions(..)
@@ -469,21 +469,21 @@
 !   start pointers and size for the x<->y transpose
     do i = 0, iproc - 1
 !        x->y
-      IiStrt (i) = (iiist(i)-1) * jisize * kjsize * mytype
-      IiCnts (i) = iiisz (i) * jisize * kjsize * mytype
+      IiStrt (i) = (iiist(i)-1) * jisize * kjsize * p3dfft_type
+      IiCnts (i) = iiisz (i) * jisize * kjsize * p3dfft_type
 
-      JiStrt (i) = (jist(i)-1) * iiisize * kjsize * mytype
-      JiCnts (i) = jisz (i) * iiisize * kjsize * mytype
+      JiStrt (i) = (jist(i)-1) * iiisize * kjsize * p3dfft_type
+      JiCnts (i) = jisz (i) * iiisize * kjsize * p3dfft_type
     end do
 
 !   start pointers and size for the x<->z transpose
     do i = 0, jproc - 1
 !        x->z
-      IjStrt (i) = (ijst(i)-1) * jisize * kjsize * mytype
-      IjCnts (i) = ijsz (i) * jisize * kjsize * mytype
+      IjStrt (i) = (ijst(i)-1) * jisize * kjsize * p3dfft_type
+      IjCnts (i) = ijsz (i) * jisize * kjsize * p3dfft_type
 
-      KjStrt (i) = (kjst(i)-1) * jisize * ijsize * mytype
-      KjCnts (i) = kjsz (i) * jisize * ijsize * mytype
+      KjStrt (i) = (kjst(i)-1) * jisize * ijsize * p3dfft_type
+      KjCnts (i) = kjsz (i) * jisize * ijsize * p3dfft_type
     end do
 
 !   create proc_dims = send information of each pencil-dimensions to all procs

@@ -32,11 +32,11 @@
 
       implicit none
 
-      complex(mytype) source(nxhp,jisize,kjsize,nv)
+      complex(p3dfft_type) source(nxhp,jisize,kjsize,nv)
 #ifdef STRIDE1
-      complex(mytype) dest(ny_fft,iisize,kjsize,nv)
+      complex(p3dfft_type) dest(ny_fft,iisize,kjsize,nv)
 #else
-      complex(mytype) dest(iisize,ny_fft,kjsize,nv)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize,nv)
 #endif
 
       real(r8) t,tc
@@ -49,7 +49,7 @@
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entering fcomm1'
-!        endif	
+!        endif
 !	call print_buf(source,nxhp,jisize,kjsize)
 
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
@@ -58,9 +58,9 @@
 
       do i=0,iproc-1
 #ifdef USE_EVEN
-         position = i*IfCntMax * nv/(mytype*2) + 1 
+         position = i*IfCntMax * nv/(p3dfft_type*2) + 1
 #else
-         position = IfSndStrt(i) *nv/(mytype*2) + 1 
+         position = IfSndStrt(i) *nv/(p3dfft_type*2) + 1
 #endif
 	do j=1,nv
            do z=1,kjsize
@@ -68,7 +68,7 @@
                  do x=iist(i),iien(i)
                     buf1(position) = source(x,y,z,j)
                     position = position +1
-                 enddo               
+                 enddo
               enddo
             enddo
 	 enddo
@@ -79,7 +79,7 @@
 #ifdef USE_EVEN
 
 ! Use MPI_Alltoall
-! Exchange the y-x buffers (in rows of processors) 
+! Exchange the y-x buffers (in rows of processors)
 
       call mpi_alltoall(buf1,IfCntMax*nv, mpi_byte, buf2,IfCntMax*nv, mpi_byte,mpi_comm_row,ierr)
 
@@ -102,19 +102,19 @@
 
 	do j=1,nv
 #ifdef USE_EVEN
-         pos0 = (IfCntMax*nv*i +(j-1) * IfRcvCnts(i))/(mytype*2) +1
+         pos0 = (IfCntMax*nv*i +(j-1) * IfRcvCnts(i))/(p3dfft_type*2) +1
 #else
-         pos0 = (IfRcvStrt(i) * nv + (j-1) * IfRcvCnts(i))/(mytype*2) +1
+         pos0 = (IfRcvStrt(i) * nv + (j-1) * IfRcvCnts(i))/(p3dfft_type*2) +1
 #endif
          do z=1,kjsize
-            pos1 = pos0 + (z-1)*iisize*jisz(i) 
-            
+            pos1 = pos0 + (z-1)*iisize*jisz(i)
+
 #ifdef STRIDE1
             do y=jist(i),jien(i),nby1
                y2 = min(y+nby1-1,jien(i))
                do x=1,iisize,nbx
                   x2 = min(x+nbx-1,iisize)
-                  pos2 = pos1 + x-1 
+                  pos2 = pos1 + x-1
                   do iy = y,y2
                      position = pos2
                      do ix=x,x2
@@ -152,11 +152,11 @@
 
       implicit none
 
-      complex(mytype) source(nxhp,jisize,kjsize)
+      complex(p3dfft_type) source(nxhp,jisize,kjsize)
 #ifdef STRIDE1
-      complex(mytype) dest(ny_fft,iisize,kjsize)
+      complex(p3dfft_type) dest(ny_fft,iisize,kjsize)
 #else
-      complex(mytype) dest(iisize,ny_fft,kjsize)
+      complex(p3dfft_type) dest(iisize,ny_fft,kjsize)
 #endif
 
       real(r8) t,tc
@@ -165,7 +165,7 @@
 
 !	if(taskid .eq. 0) then
 !	  print *,'Entering fcomm1'
-!        endif	
+!        endif
 !	call print_buf(source,nxhp,jisize,kjsize)
 
 ! Pack the send buffer for exchanging y and x (within a given z plane ) into sendbuf
@@ -174,16 +174,16 @@
 
       do i=0,iproc-1
 #ifdef USE_EVEN
-         position = i*IfCntMax/(mytype*2) + 1 
+         position = i*IfCntMax/(p3dfft_type*2) + 1
 #else
-         position = IfSndStrt(i)/(mytype*2) + 1 
+         position = IfSndStrt(i)/(p3dfft_type*2) + 1
 #endif
          do z=1,kjsize
             do y=1,jisize
                do x=iist(i),iien(i)
                   buf1(position) = source(x,y,z)
                   position = position +1
-               enddo               
+               enddo
             enddo
          enddo
       enddo
@@ -193,7 +193,7 @@
 #ifdef USE_EVEN
 
 ! Use MPI_Alltoall
-! Exchange the y-x buffers (in rows of processors) 
+! Exchange the y-x buffers (in rows of processors)
 
       call mpi_alltoall(buf1,IfCntMax, mpi_byte, buf2,IfCntMax, mpi_byte,mpi_comm_row,ierr)
 
@@ -211,20 +211,20 @@
       do i=0,iproc-1
 
 #ifdef USE_EVEN
-         pos0 = i*IfCntMax/(mytype*2)+1
+         pos0 = i*IfCntMax/(p3dfft_type*2)+1
 #else
-         pos0 = IfRcvStrt(i)/(mytype*2)+1
+         pos0 = IfRcvStrt(i)/(p3dfft_type*2)+1
 #endif
 
          do z=1,kjsize
-            pos1 = pos0 + (z-1)*iisize*jisz(i) 
-            
+            pos1 = pos0 + (z-1)*iisize*jisz(i)
+
 #ifdef STRIDE1
             do y=jist(i),jien(i),nby1
                y2 = min(y+nby1-1,jien(i))
                do x=1,iisize,nbx
                   x2 = min(x+nbx-1,iisize)
-                  pos2 = pos1 + x-1 
+                  pos2 = pos1 + x-1
                   do iy = y,y2
                      position = pos2
                      do ix=x,x2

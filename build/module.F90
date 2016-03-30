@@ -35,13 +35,13 @@
 ! Set precision
 
 #ifndef SINGLE_PREC
-       integer, parameter,public :: mytype=KIND(1.0d0)
-       integer, parameter,public:: mpireal = MPI_DOUBLE_PRECISION
-       integer,parameter,public:: mpicomplex = MPI_DOUBLE_COMPLEX
+       integer, parameter,public :: p3dfft_type=KIND(1.0d0)
+       integer, parameter,public:: p3dfft_mpireal = MPI_DOUBLE_PRECISION
+       integer,parameter,public:: p3dfft_mpicomplex = MPI_DOUBLE_COMPLEX
 #else
-       integer, parameter,public :: mytype=KIND(1.0)
-       integer, parameter,public:: mpireal = MPI_REAL
-       integer,parameter,public:: mpicomplex = MPI_COMPLEX
+       integer, parameter,public :: p3dfft_type=KIND(1.0)
+       integer, parameter,public:: p3dfft_mpireal = MPI_REAL
+       integer,parameter,public:: p3dfft_mpicomplex = MPI_COMPLEX
 #endif
 
 ! global variables
@@ -85,7 +85,7 @@
       integer,save,dimension(:),allocatable:: KrSndCnts,KrSndStrt
       integer,save,dimension(:),allocatable:: KrRcvCnts,KrRcvStrt
       integer,save,dimension(:,:),allocatable:: status
-      complex(mytype), save, allocatable :: buf(:),buf1(:),buf2(:)
+      complex(p3dfft_type), save, allocatable :: buf(:),buf1(:),buf2(:)
       logical :: OW = .false.
       integer, save, dimension (:), allocatable :: IiCnts, IiStrt
       integer, save, dimension (:), allocatable :: IjCnts, IjStrt
@@ -359,7 +359,7 @@
 
       integer(i8) nar,i
       integer dim_a,dim_b,nv,j
-      complex(mytype) A(dim_a,nv),B(dim_b,nv)
+      complex(p3dfft_type) A(dim_a,nv),B(dim_b,nv)
 
       do j=1,nv
          call ar_copy(A(1,j),B(1,j),nar)
@@ -374,7 +374,7 @@
 !========================================================
 
       integer(i8) nar,i
-      complex(mytype) A(nar,1,1),B(nar,1,1)
+      complex(p3dfft_type) A(nar,1,1),B(nar,1,1)
 
       do i=1,nar
          B(i,1,1)=A(i,1,1)
@@ -389,7 +389,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,x1,x2,nv,j,dim
-      complex(mytype) A(xdim,ydim,zdim,nv)
+      complex(p3dfft_type) A(xdim,ydim,zdim,nv)
 
       do j=1,nv
          call seg_zero_x(A(1,1,1,j),x1,x2,xdim,ydim,zdim)
@@ -404,7 +404,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,y1,y2,nv,j,dim
-      complex(mytype) A(xdim,ydim,zdim,nv)
+      complex(p3dfft_type) A(xdim,ydim,zdim,nv)
 
       do j=1,nv
          call seg_zero_y(A(1,1,1,j),y1,y2,xdim,ydim,zdim)
@@ -419,7 +419,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,z1,z2,nv,j,dim
-      complex(mytype) A(dim,nv)
+      complex(p3dfft_type) A(dim,nv)
 
       do j=1,nv
          call seg_zero_z(A(1,j),xdim,ydim,z1,z2,zdim)
@@ -434,7 +434,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,z1,z2
-      complex(mytype) A(xdim,ydim,zdim)
+      complex(p3dfft_type) A(xdim,ydim,zdim)
 
       do z=z1,z2
          do y=1,ydim
@@ -453,7 +453,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,y1,y2
-      complex(mytype) A(xdim,ydim,zdim)
+      complex(p3dfft_type) A(xdim,ydim,zdim)
 
       do z=1,zdim
          do y=y1,y2
@@ -472,7 +472,7 @@
 
       implicit none
       integer x,y,z,xdim,ydim,zdim,x1,x2
-      complex(mytype) A(xdim,ydim,zdim)
+      complex(p3dfft_type) A(xdim,ydim,zdim)
 
       do z=1,zdim
          do y=1,ydim
@@ -491,10 +491,10 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z,nv,j,dim
-    complex(mytype) in(xdim1,ydim,zdim,nv), out(dim,nv)
+    complex(p3dfft_type) in(xdim1,ydim,zdim,nv), out(dim,nv)
 
     do j=1,nv
-      call seg_copy_x(in(1,1,1,j),out(1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)    
+      call seg_copy_x(in(1,1,1,j),out(1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)
     enddo
 
     return
@@ -506,10 +506,10 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z,nv,j,dim
-    complex(mytype) out(xdim2,ydim,zdim,nv), in(dim,nv)
+    complex(p3dfft_type) out(xdim2,ydim,zdim,nv), in(dim,nv)
 
     do j=1,nv
-      call seg_copy_x(in(1,j),out(1,1,1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)    
+      call seg_copy_x(in(1,j),out(1,1,1,j),x1,x2,shift_x,xdim1,xdim2,ydim,zdim)
     enddo
 
     return
@@ -521,10 +521,10 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z,nv,j,dim
-    complex(mytype) in(xdim,ydim1,zdim,nv), out(dim,nv)
+    complex(p3dfft_type) in(xdim,ydim1,zdim,nv), out(dim,nv)
 
     do j=1,nv
-      call seg_copy_y(in(1,1,1,j),out(1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)    
+      call seg_copy_y(in(1,1,1,j),out(1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)
     enddo
 
     return
@@ -536,10 +536,10 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z,nv,j,dim
-    complex(mytype) out(xdim,ydim2,zdim,nv), in(dim,nv)
+    complex(p3dfft_type) out(xdim,ydim2,zdim,nv), in(dim,nv)
 
     do j=1,nv
-      call seg_copy_y(in(1,j),out(1,1,1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)    
+      call seg_copy_y(in(1,j),out(1,1,1,j),y1,y2,shift_y,xdim,ydim1,ydim2,zdim)
     enddo
 
     return
@@ -551,7 +551,7 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim,zdim,shift_z,x,y,z,nv,j,dim
-    complex(mytype) in(xdim,ydim,zdim,nv), out(dim,nv)
+    complex(p3dfft_type) in(xdim,ydim,zdim,nv), out(dim,nv)
 
     do j=1,nv
       call seg_copy_z(in(1,1,1,j),out(1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
@@ -566,7 +566,7 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim,zdim,shift_z,x,y,z,nv,j,dim
-    complex(mytype) out(xdim,ydim,zdim,nv), in(dim,nv)
+    complex(p3dfft_type) out(xdim,ydim,zdim,nv), in(dim,nv)
 
     do j=1,nv
       call seg_copy_z(in(1,j),out(1,1,1,j),x1,x2,y1,y2,z1,z2,shift_z,xdim,ydim,zdim)
@@ -581,7 +581,7 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim,zdim,shift_z,x,y,z
-    complex(mytype) in(xdim,ydim,zdim), out(xdim,ydim,zdim)
+    complex(p3dfft_type) in(xdim,ydim,zdim), out(xdim,ydim,zdim)
 
 
     do z=z1,z2
@@ -601,15 +601,15 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim,ydim1,ydim2,zdim,shift_y,x,y,z
-    complex(mytype) in(xdim,ydim1,zdim), out(xdim,ydim2,zdim)
+    complex(p3dfft_type) in(xdim,ydim1,zdim), out(xdim,ydim2,zdim)
 
 
     do z=1,zdim
        do y=y1,y2
           do x=1,xdim
 	     out(x,y,z) = in(x,y+shift_y,z)
-	  enddo	
-        enddo	
+	  enddo
+        enddo
     enddo
 
     return
@@ -621,15 +621,15 @@
 
     implicit none
     integer x1,x2,y1,y2,z1,z2,xdim1,xdim2,ydim,zdim,shift_x,x,y,z
-    complex(mytype) in(xdim1,ydim,zdim), out(xdim2,ydim,zdim)
+    complex(p3dfft_type) in(xdim1,ydim,zdim), out(xdim2,ydim,zdim)
 
 
     do z=1,zdim
        do y=1,ydim
           do x=x1,x2
 	     out(x,y,z) = in(x+shift_x,y,z)
-	  enddo	
-        enddo	
+	  enddo
+        enddo
     enddo
 
     return
@@ -678,7 +678,7 @@
       subroutine print_buf(A,lx,ly,lz)
 !========================================================
 
-      complex(mytype) A(lx,ly,lz)
+      complex(p3dfft_type) A(lx,ly,lz)
       integer lx,ly,lz,i,j,k
 
       do k=1,lz
@@ -696,7 +696,7 @@
       subroutine print_buf_real(A,lx,ly,lz)
 !========================================================
 
-      real(mytype) A(lx,ly,lz)
+      real(p3dfft_type) A(lx,ly,lz)
       integer lx,ly,lz,i,j,k
 
       do k=1,lz
@@ -992,9 +992,9 @@ end subroutine get_proc_parts
 subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
 
-  real (mytype), intent (in) :: source (NX_fft, jisize, kjsize)
-  real (mytype), intent (out) :: dest (iiisize, NY_fft, kjsize)
-  real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
+  real (p3dfft_type), intent (in) :: source (NX_fft, jisize, kjsize)
+  real (p3dfft_type), intent (out) :: dest (iiisize, NY_fft, kjsize)
+  real (p3dfft_type), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
 
   real (8) :: t
@@ -1015,7 +1015,7 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * IiCntMax / (mytype) + 1
+    position = (i+1) * IiCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1043,7 +1043,7 @@ subroutine rtran_x2y (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * IiCntMax / (mytype) + 1
+    position = (i+1) * IiCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1068,9 +1068,9 @@ end subroutine
 subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
 
-  real (mytype), intent (in) :: source (iiisize, NY_fft, kjsize)
-  real (mytype), intent (out) :: dest (NX_fft, jisize, kjsize)
-  real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
+  real (p3dfft_type), intent (in) :: source (iiisize, NY_fft, kjsize)
+  real (p3dfft_type), intent (out) :: dest (NX_fft, jisize, kjsize)
+  real (p3dfft_type), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
 
   real (8) :: t
@@ -1090,7 +1090,7 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * JICntMax / (mytype) + 1
+    position = (i+1) * JICntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1120,7 +1120,7 @@ subroutine rtran_y2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * JICntMax / (mytype) + 1
+    position = (i+1) * JICntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1145,9 +1145,9 @@ end subroutine
 subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
 
-  real (mytype), intent (in) :: source (NX_fft, jisize, kjsize)
-  real (mytype), intent (out) :: dest (ijsize, jisize, NZ_fft)
-  real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
+  real (p3dfft_type), intent (in) :: source (NX_fft, jisize, kjsize)
+  real (p3dfft_type), intent (out) :: dest (ijsize, jisize, NZ_fft)
+  real (p3dfft_type), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
 
   real (8) :: t
@@ -1168,7 +1168,7 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * IJCntMax / (mytype) + 1
+    position = (i+1) * IJCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1198,7 +1198,7 @@ subroutine rtran_x2z (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * IJCntMax / (mytype) + 1
+    position = (i+1) * IJCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1223,9 +1223,9 @@ end subroutine
 subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
   implicit none
 
-  real (mytype), intent (in) :: source (ijsize, jisize, NZ_fft)
-  real (mytype), intent (out) :: dest (NX_fft, jisize, kjsize)
-  real (mytype), intent (inout) :: rbuf1 (*), rbuf2 (*)
+  real (p3dfft_type), intent (in) :: source (ijsize, jisize, NZ_fft)
+  real (p3dfft_type), intent (out) :: dest (NX_fft, jisize, kjsize)
+  real (p3dfft_type), intent (inout) :: rbuf1 (*), rbuf2 (*)
   integer, intent (out) :: dstart (3), dend (3), dsize (3)
 
   real (8) :: t
@@ -1246,7 +1246,7 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * KjCntMax / (mytype) + 1
+    position = (i+1) * KjCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1274,7 +1274,7 @@ subroutine rtran_z2x (source, dest, rbuf1, rbuf2, dstart, dend, dsize, t)
       end do
     end do
 #ifdef USE_EVEN
-    position = (i+1) * KjCntMax / (mytype) + 1
+    position = (i+1) * KjCntMax / (p3dfft_type) + 1
 #endif
   end do
 
@@ -1308,7 +1308,7 @@ end subroutine
 !      use fft_spec
 !      implicit none
 !
-!      complex(mytype), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nz_fft)
+!      complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nz_fft)
 !
 !
 !      integer x,y,z,i,k,nx,ny,nz

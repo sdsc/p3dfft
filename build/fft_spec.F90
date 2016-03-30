@@ -35,7 +35,7 @@
       integer(i8) plan_ctrans_same, plan_strans_same, &
          plan_ctrans_dif, plan_strans_dif
       integer(i8) plan2_bc_same,plan2_fc_same,plan2_bc_dif,plan2_fc_dif
-!      integer(i8) plan1,plan2,plan3      
+!      integer(i8) plan1,plan2,plan3
       integer fftw_flag,NULL
 #ifdef ESTIMATE
       parameter(fftw_flag = FFTW_ESTIMATE,NULL=0)
@@ -51,6 +51,6 @@
       integer :: cnaux,rnaux1,rnaux2
       real(r8),save,allocatable :: caux1(:),caux2(:),raux1(:),raux2(:)
       real(r8),save :: raux3(1)
-#endif         
-      
+#endif
+
       end module

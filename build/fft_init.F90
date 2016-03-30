@@ -27,7 +27,7 @@
 ! This file contains routines intended for initializing 1D FFT oprations
 ! as well as one-time initialization and clean-up
 
-! Initialize backward complex-to-complex FFT 
+! Initialize backward complex-to-complex FFT
 
       subroutine plan_b_c1(X,stride_x1,stride_x2,Y,stride_y1, &
           stride_y2,N,m)
@@ -37,7 +37,7 @@
       implicit none
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
@@ -60,13 +60,13 @@
       implicit none
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
 #ifndef SINGLE_PREC
       call dfftw_plan_many_dft(plan2_bc_same,1,N,m,X,NULL,stride_x1,stride_x2, &
-           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag) 
+           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag)
 #else
       call sfftw_plan_many_dft(plan2_bc_same,1,N,m,X,NULL,stride_x1,stride_x2, &
            Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag )
@@ -83,13 +83,13 @@
       implicit none
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
 #ifndef SINGLE_PREC
       call dfftw_plan_many_dft(plan2_bc_dif,1,N,m,X,NULL,stride_x1,stride_x2, &
-           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag) 
+           Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag)
 #else
       call sfftw_plan_many_dft(plan2_bc_dif,1,N,m,X,NULL,stride_x1,stride_x2, &
            Y,NULL,stride_y1,stride_y2, FFTW_BACKWARD,fftw_flag )
@@ -109,17 +109,17 @@
 
 
       integer stride_x1,stride_x2,stride_y1,stride_y2,N,m,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 
 #ifdef ESSL
 
 #ifndef SINGLE_PREC
       call dcft (1,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0d0, &
-              caux1,cnaux,caux2,cnaux)  
+              caux1,cnaux,caux2,cnaux)
 #else
       call scft (1,X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m,-1,1.0, &
-              caux1,cnaux,caux2,cnaux)  
+              caux1,cnaux,caux2,cnaux)
 #endif
 
 #endif
@@ -128,7 +128,7 @@
 
 
 !!--------------------------------------------------------------
-! Initialize backward complex-to-real FFT 
+! Initialize backward complex-to-real FFT
 
       subroutine plan_b_c2r(X,dimx,Y,dimy,N,m)
 
@@ -137,8 +137,8 @@
       implicit none
 
       integer dimx,dimy,N,m,fflag
-      complex(mytype) X((N/2+1)*m)
-      real(mytype) Y(N*m)
+      complex(p3dfft_type) X((N/2+1)*m)
+      real(p3dfft_type) Y(N*m)
 
 #ifdef FFTW
 
@@ -161,17 +161,17 @@
       implicit none
 
       integer dimx,dimy,N,m,fflag
-      complex(mytype) X((N/2+1)*m)
-      real(mytype) Y(N*m)
+      complex(p3dfft_type) X((N/2+1)*m)
+      real(p3dfft_type) Y(N*m)
 
 #ifdef ESSL
 
 #ifndef SINGLE_PREC
       call dcrft(1,X,dimx,Y,dimy,N,m,-1,1.0d0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)  
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #else
       call scrft(1,X,dimx,Y,dimy,N,m,-1,1.0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)  
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #endif
 #endif
 
@@ -179,20 +179,20 @@
       end
 
 !!--------------------------------------------------------------
-! Initialize forward complex-to-complex FFT 
+! Initialize forward complex-to-complex FFT
 
-      subroutine plan_f_c1(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
-      
+      subroutine plan_f_c1(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
+
       use p3dfft
       use fft_spec
       implicit none
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
-      fflag = fftw_flag 
+      fflag = fftw_flag
 
 #ifndef SINGLE_PREC
       call dfftw_plan_many_dft(plan1_fc,1,N,m, X,NULL,stride_x1,stride_x2, &
@@ -206,14 +206,14 @@
       end
 
 
-      subroutine plan_f_c2_same(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
-      
+      subroutine plan_f_c2_same(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
+
       use p3dfft
       use fft_spec
       implicit none
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
@@ -230,14 +230,14 @@
       return
       end
 
-      subroutine plan_f_c2_dif(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
-      
+      subroutine plan_f_c2_dif(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
+
       use p3dfft
       use fft_spec
       implicit none
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef FFTW
 
@@ -255,14 +255,14 @@
       end
 
 
-      subroutine init_f_c(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m) 
-      
+      subroutine init_f_c(X,stride_x1,stride_x2,Y,stride_y1,stride_y2,N,m)
+
       use p3dfft
       use fft_spec
       implicit none
 
       integer N,m,stride_x1,stride_x2,stride_y1,stride_y2,fflag
-      complex(mytype) X(N*m),Y(N*m)
+      complex(p3dfft_type) X(N*m),Y(N*m)
 
 #ifdef ESSL
 
@@ -281,7 +281,7 @@
 
 
 !!--------------------------------------------------------------
-! Initialize forward real-to-complex FFT 
+! Initialize forward real-to-complex FFT
 
       subroutine plan_f_r2c(X,dimx,Y,dimy,N,m)
 
@@ -289,8 +289,8 @@
       use fft_spec
 
       integer dimx,dimy,N,m,fflag
-      real(mytype) X(N*m)
-      complex(mytype) Y((N/2+1)*m)
+      real(p3dfft_type) X(N*m)
+      complex(p3dfft_type) Y((N/2+1)*m)
 
 #ifdef FFTW
 
@@ -312,17 +312,17 @@
       use fft_spec
 
       integer dimx,dimy,N,m,fflag
-      real(mytype) X(N*m)
-      complex(mytype) Y((N/2+1)*m)
+      real(p3dfft_type) X(N*m)
+      complex(p3dfft_type) Y((N/2+1)*m)
 
 #ifdef ESSL
 
 #ifndef SINGLE_PREC
       call drcft(1,X,dimx,Y,dimy,N,m,1,1.0d0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)           
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #else
       call srcft(1,X,dimx,Y,dimy,N,m,1,1.0, &
-            raux1, rnaux1,raux2,rnaux2,raux3,1)           
+            raux1, rnaux1,raux2,rnaux2,raux3,1)
 #endif
 
 #endif
@@ -335,7 +335,7 @@
 ! Initialize work arrays for ESSL
 
       subroutine init_work(nx,ny,nz)
-      
+
       use fft_spec
       integer nx,ny,nz,err
 
@@ -346,7 +346,7 @@
       nyz = max(ny,nz)
       if(nyz .le. 2048) then
          cnaux = 20000
-      else 
+      else
          cnaux = 20000+2.28*nyz
       endif
       if(nyz .ge. 252) then
@@ -364,7 +364,7 @@
       nyz = max(ny,nz)
       if(nyz .le. 8192) then
          cnaux = 20000
-      else 
+      else
          cnaux = 20000+1.14*nyz
       endif
       if(nyz .ge. 252) then
@@ -410,12 +410,12 @@
       use fft_spec
 #ifdef FFTW
 #ifndef SINGLE_PREC
-      call dfftw_destroy_plan(plan1)      
+      call dfftw_destroy_plan(plan1)
 #else
-      call sfftw_destroy_plan(plan1)      
+      call sfftw_destroy_plan(plan1)
 #endif
 #endif
-      
+
       return
       end
 
@@ -427,12 +427,12 @@
 
 #ifdef FFTW
 #ifndef SINGLE_PREC
-      call dfftw_destroy_plan(plan2)      
+      call dfftw_destroy_plan(plan2)
 #else
-      call sfftw_destroy_plan(plan2)      
+      call sfftw_destroy_plan(plan2)
 #endif
 #endif
-      
+
       return
       end
 
@@ -443,12 +443,12 @@
 #ifdef FFTW
       use fft_spec
 #ifndef SINGLE_PREC
-      call dfftw_destroy_plan(plan3)      
+      call dfftw_destroy_plan(plan3)
 #else
-      call sfftw_destroy_plan(plan3)      
+      call sfftw_destroy_plan(plan3)
 #endif
 #endif
-      
+
       return
       end
 
@@ -456,11 +456,11 @@
 ! Release work arrays for ESSL
 
       subroutine free_work
-      
+
       use fft_spec
 
 #ifdef ESSL
-      deallocate(caux1)      
+      deallocate(caux1)
       deallocate(caux2)
       deallocate(raux1)
       deallocate(raux2)
@@ -478,11 +478,11 @@ subroutine init_ctrans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: N, m, stride_x1, stride_x2, stride_y1, stride_y2, fflag
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2
- 
+
 #ifdef ESSL
     nm2 = (N-1) * 2
 #ifndef SINGLE_PREC
@@ -494,9 +494,9 @@ subroutine init_ctrans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #endif
- 
+
     return
 end
 
@@ -510,12 +510,12 @@ subroutine plan_ctrans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
- 
+    real (p3dfft_type) :: X (N*m), Y (N*m)
+
 #ifdef FFTW
- 
+
 #ifndef SINGLE_PREC
     call dfftw_plan_many_r2r (plan_ctrans_same, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
@@ -533,12 +533,12 @@ subroutine plan_ctrans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
- 
+    real (p3dfft_type) :: X (N*m), Y (N*m)
+
 #ifdef FFTW
- 
+
 #ifndef SINGLE_PREC
     call dfftw_plan_many_r2r (plan_ctrans_dif, 1, N, m, &
                               X, NULL, stride_x1, stride_x2, &
@@ -561,11 +561,11 @@ subroutine init_strans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: N, m, stride_x1, stride_x2, stride_y1, stride_y2, fflag
-    real (mytype) :: X (N*m), Y (N*m)
+    real (p3dfft_type) :: X (N*m), Y (N*m)
     integer :: nm2
- 
+
 #ifdef ESSL
     nm2 = (N-1) * 2
 #ifndef SINGLE_PREC
@@ -577,9 +577,9 @@ subroutine init_strans_r2 (X, stride_x1, stride_x2, Y, stride_y1, stride_y2, N, 
                    Y, stride_y1, stride_y2, &
                    nm2, m, 2.0, caux1, cnaux, caux2, cnaux)
 #endif
- 
+
 #endif
- 
+
     return
 end
 
@@ -592,12 +592,12 @@ subroutine plan_strans_r2_same (X, stride_x1, stride_x2, Y, stride_y1, stride_y2
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
- 
+    real (p3dfft_type) :: X (N*m), Y (N*m)
+
 #ifdef FFTW
- 
+
 #ifndef SINGLE_PREC
 !! ccccccc http://www.fftw.org/doc/1d-Real_002dodd-DFTs-_0028DSTs_0029.html
     call dfftw_plan_many_r2r (plan_strans_same, 1, N, m, &
@@ -616,12 +616,12 @@ subroutine plan_strans_r2_dif (X, stride_x1, stride_x2, Y, stride_y1, stride_y2,
     use p3dfft
     use fft_spec
     implicit none
- 
+
     integer :: stride_x1, stride_x2, stride_y1, stride_y2, N, m
-    real (mytype) :: X (N*m), Y (N*m)
- 
+    real (p3dfft_type) :: X (N*m), Y (N*m)
+
 #ifdef FFTW
- 
+
 #ifndef SINGLE_PREC
 !! ccccccc http://www.fftw.org/doc/1d-Real_002dodd-DFTs-_0028DSTs_0029.html
     call dfftw_plan_many_r2r (plan_strans_dif, 1, N, m, &
