@@ -2,8 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([P3DFFT], [2.7.4], [dmitry@sdsc.edu])
+AC_INIT([P3DFFT], [2.7.5], [dmitry@sdsc.edu])
 AM_INIT_AUTOMAKE([no-dependencies])
+LT_INIT
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
 
