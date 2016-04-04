@@ -51,6 +51,10 @@
 
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 extern void FORT_MOD_NAME(p3dfft_setup)(int *dims,int *nx,int *ny,int *nz, int * comm, int *nxc, int *nyc, int *nzc, int *ow, int *memsize);
 extern void FORT_MOD_NAME(p3dfft_get_dims)(int *,int *,int *,int *);
@@ -136,3 +140,6 @@ inline void Cp3dfft_btran_c2r(float *A,float *B, unsigned char *op)
 }
 #endif
 
+#ifdef __cplusplus
+}
+#endif
