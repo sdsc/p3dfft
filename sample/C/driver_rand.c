@@ -219,7 +219,7 @@ int main(int argc,char **argv)
         printf("Result of forward transform\n");
 
      print_all(B,Ntot,proc_id,Nglob);
-     */     
+     */
 /* normalize */
      mult_array(B,Ntot,factor);
 

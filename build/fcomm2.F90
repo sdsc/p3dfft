@@ -93,15 +93,18 @@
       integer nv,j,i,position,pos0,pos1,x,y,z,dny
 
       dny = ny_fft-nyc
+      position = 1
+
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
       do j=1,nv
 
       do i=0,jproc-1
 #ifdef USE_EVEN
-         pos0 = i * nv * KfCntMax/(p3dfft_type*2)
+        pos0 = i * nv * KfCntMax/(p3dfft_type*2)
 #else
-         pos0 = nv * KfSndStrt(i)/(p3dfft_type*2)
+        pos0 = nv * KfSndStrt(i) /(p3dfft_type*2)
 #endif
-	pos0 = pos0 + (j-1)*KfSndCnts(i)/(p3dfft_type*2)+ 1
+ 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(p3dfft_type*2)+ 1
 
 
 ! If clearly in the first half of ny
@@ -164,9 +167,10 @@
       complex(p3dfft_type) dest(iisize,jjsize,nz_fft)
 
 
+!$OMP PARALLEL DO private(i,position,x,y,z)
          do i=0,jproc-1
 #ifdef USE_EVEN
-            position = i*nv*KfCntMax/(p3dfft_type*2)+1
+            position = i*KfCntMax*nv/(p3dfft_type*2)+1
 #else
             position = KfRcvStrt(i)*nv/(p3dfft_type*2)+1
 #endif
@@ -194,15 +198,17 @@
       complex(p3dfft_type) dest(iisize,jjsize,nz_fft)
 
       real(r8) t,tc
-      integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,dny
+      integer x,z,y,i,j,ierr,xs,ys,y2,z2,iy,iz,dny
       integer(i8) position,pos1,pos0
 
 
 
 ! Pack send buffers for exchanging y and z for all x at once
+
      call pack_fcomm2(buf1,source)
 
 ! Exchange y-z buffers in columns of processors
+
 
       t = t - MPI_Wtime()
 
@@ -219,7 +225,9 @@
          tc = tc - MPI_Wtime()
 
          position = 1
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z)
          do i=0,jproc-1
+	    position = i*KfCntMax/(p3dfft_type*2)  + 1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize
@@ -228,7 +236,7 @@
                   enddo
                enddo
             enddo
-            position = (i+1)*KfCntMax/(p3dfft_type*2)+1
+!            position = (i+1)*KfCntMax/(p3dfft_type*2)+1
          enddo
 
          tc = tc + MPI_Wtime()
@@ -260,6 +268,7 @@
 
       dny = ny_fft-nyc
       position = 1
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(p3dfft_type*2)  + 1

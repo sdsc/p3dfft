@@ -259,34 +259,46 @@
 ! Clean-up routines for FFTW
 
       use fft_spec
+      integer tid
 
 #ifdef FFTW
+	do tid=0,num_thr-1
 #ifndef SINGLE_PREC
-      call dfftw_destroy_plan(plan1_frc)
-      call dfftw_destroy_plan(plan1_bcr)
-      call dfftw_destroy_plan(plan1_fc)
-      call dfftw_destroy_plan(plan2_fc_same)
-      call dfftw_destroy_plan(plan2_fc_dif)
-      call dfftw_destroy_plan(plan1_bc)
-      call dfftw_destroy_plan(plan2_bc_same)
-      call dfftw_destroy_plan(plan2_bc_dif)
-      call dfftw_destroy_plan(plan_ctrans_same)
-      call dfftw_destroy_plan(plan_ctrans_dif)
-      call dfftw_destroy_plan(plan_strans_same)
-      call dfftw_destroy_plan(plan_strans_dif)
+      call dfftw_destroy_plan(plan1_frc(tid))
+      call dfftw_destroy_plan(plan1_bcr(tid))
+      call dfftw_destroy_plan(plan1_fc(tid))
+      call dfftw_destroy_plan(plan2_fc_same(tid))
+      call dfftw_destroy_plan(plan1_bc(tid))
+      call dfftw_destroy_plan(plan2_bc_same(tid))
+      call dfftw_destroy_plan(plan_ctrans_same(tid))
+      call dfftw_destroy_plan(plan_strans_same(tid))
+#ifdef STRIDE1
+      call dfftw_destroy_plan(plan_strans_dif(tid))
+      call dfftw_destroy_plan(plan_ctrans_dif(tid))
+      call dfftw_destroy_plan(plan2_fc_dif(tid))
+      call dfftw_destroy_plan(plan2_bc_dif(tid))
+#endif
 #else
-      call sfftw_destroy_plan(plan1_frc)
-      call sfftw_destroy_plan(plan1_bcr)
-      call sfftw_destroy_plan(plan1_fc)
-      call sfftw_destroy_plan(plan1_bc)
-      call sfftw_destroy_plan(plan2_fc_same)
-      call sfftw_destroy_plan(plan2_fc_dif)
-      call sfftw_destroy_plan(plan2_bc_same)
-      call sfftw_destroy_plan(plan2_bc_dif)
-      call sfftw_destroy_plan(plan_ctrans_same)
-      call sfftw_destroy_plan(plan_ctrans_dif)
-      call sfftw_destroy_plan(plan_strans_same)
-      call sfftw_destroy_plan(plan_strans_dif)
+      call sfftw_destroy_plan(plan1_frc(tid))
+      call sfftw_destroy_plan(plan1_bcr(tid))
+      call sfftw_destroy_plan(plan1_fc(tid))
+      call sfftw_destroy_plan(plan1_bc(tid))
+      call sfftw_destroy_plan(plan2_fc_same(tid))
+      call sfftw_destroy_plan(plan2_bc_same(tid))
+      call sfftw_destroy_plan(plan_ctrans_same(tid))
+      call sfftw_destroy_plan(plan_strans_same(tid))
+#ifdef STRIDE1
+      call sfftw_destroy_plan(plan2_fc_dif(tid))
+      call sfftw_destroy_plan(plan2_bc_dif(tid))
+      call sfftw_destroy_plan(plan_ctrans_dif(tid))
+      call sfftw_destroy_plan(plan_strans_dif(tid))
+#endif
+#endif
+      enddo
+
+      deallocate(plan1_frc,plan1_bcr,plan1_fc,plan2_fc_same,plan1_bc,plan2_bc_same,plan_ctrans_same,plan_strans_same)
+#ifdef STRIDE1
+      deallocate(plan_ctrans_dif,plan_strans_dif,plan2_fc_dif,plan2_bc_dif)
 #endif
 
 #elif defined ESSL
@@ -299,10 +311,6 @@
       deallocate(buf1)
       deallocate(buf2)
       deallocate(buf)
-
-    ! modified, bugfix. these variables were not freed and therefore causing
-    ! an error if setup is called, then free is called, then again setup
-    deallocate(iiist,iiisz,iiien,ijst,ijsz,ijen)
 
     deallocate (iist)
     deallocate (iisz)
@@ -634,7 +642,6 @@
 
     return
     end subroutine seg_copy_x
-
 
 !========================================================
       subroutine get_timers_w(timer) BIND(C,name='get_timers')
@@ -1344,3 +1351,5 @@ end subroutine
 !      end subroutine p3dfft_rot_x180
 
       end module
+
+

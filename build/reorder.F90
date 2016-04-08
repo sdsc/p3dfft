@@ -66,6 +66,7 @@
       dnz = nz_fft - nzc
       if(op(1:1) == '0' .or. op(1:1) == 'n') then
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
             do y=1,nyhc,NBy2
                y2 = min(y+NBy2-1,nyhc)
@@ -122,9 +123,9 @@
                 enddo
              enddo
           enddo
-
 	else
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
            do x=1,iisize
 	      do y=1,nyc
 	         do z=1,nzhc
@@ -139,7 +140,7 @@
 	      enddo
 
 	      if(op(1:1) == 't' .or. op(1:1) == 'f') then
-                 call exec_b_c2_same(C, 1,nz_fft, &
+                 call exec_b_c2_same_serial(C, 1,nz_fft, &
 				  C, 1,nz_fft,nz_fft,nyc)
  	      else if(op(1:1) == 'c') then
                  call exec_ctrans_r2_complex_same(C, 2,2*nz_fft, &
@@ -199,11 +200,10 @@
 
       complex(p3dfft_type) B(nxhp,ny_fft,kjsize,nv)
       complex(p3dfft_type) A(ny_fft,nxhpc,kjsize,nv)
+      complex(p3dfft_type) tmp(nxhpc,ny_fft)
       integer x,y,z,iy,x2,ix,y2,nv,j
-      complex(p3dfft_type), allocatable :: tmp(:,:)
 
-
-      allocate(tmp(nxhpc,ny_fft))
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) collapse(2)
 
       do j=1,nv
       do z=1,kjsize
@@ -230,8 +230,6 @@
       enddo
       enddo
 
-      deallocate(tmp)
-
       return
       end subroutine
 
@@ -252,8 +250,9 @@
 
 !      allocate(tmp(ny_fft,nxhpc))
 
+!!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp) collapse(2)
        do j=1,nv
-      do z=1,kjsize
+       do z=1,kjsize
          do y=1,ny_fft,nby1
             y2 = min(y+nby1-1,ny_fft)
             do x=1,nxhpc,nbx
@@ -291,7 +290,7 @@
       integer x,y,z,iy,iz,y2,z2,ierr,dnz,dny,nv,j,dim
       complex(p3dfft_type) B(dim,nv)
       complex(p3dfft_type) A(ny_fft,iisize,nz_fft,nv)
-      complex(p3dfft_type) C(nz_fft,ny_fft)
+      complex(p3dfft_type) C(nz_fft,nyc)
       character(len=3) op
 
       do j=1,nv
@@ -301,7 +300,9 @@
       return
       end subroutine
 
+!=============================================================
       subroutine reorder_trans_f2(A,B,C,op)
+!=============================================================
 
       use fft_spec
       implicit none
@@ -309,13 +310,14 @@
       integer x,y,z,iy,iz,y2,z2,ierr,dnz,dny
       complex(p3dfft_type) A(ny_fft,iisize,nz_fft)
       complex(p3dfft_type) B(nzc,nyc,iisize)
-      complex(p3dfft_type) C(nz_fft,ny_fft)
+      complex(p3dfft_type) C(nz_fft,nyc)
       character(len=3) op
 
       dnz = nz_fft - nzc
       dny = ny_fft - nyc
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
             do z=1,nzhc,NBz
 	       z2 = min(z+NBz-1,nzhc)
@@ -329,31 +331,31 @@
                   enddo
                enddo
 
-               do y=nyhc+dny+1,ny_fft,NBy2
+               do y=nyhc+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-  		        B(iz,iy,x) = A(iy-dny,x,iz)
+  		        B(iz,iy,x) = A(iy+dny,x,iz)
                      enddo
                   enddo
                enddo
             enddo
-            do z=nzhc+dnz+1,nz_fft,NBz
+            do z=nzhc+1,nzc,NBz
 	       z2 = min(z+NBz-1,nz_fft)
 
                do y=1,nyhc,NBy2
                   y2 = min(y+NBy2-1,nyhc)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy,x,iz-dnz)
+		        B(iz,iy,x) = A(iy,x,iz+dnz)
                      enddo
                   enddo
                enddo
-               do y=nyhc+dny+1,ny_fft,NBy2
+               do y=nyhc+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
-		        B(iz,iy,x) = A(iy-dny,x,iz-dnz)
+		        B(iz,iy,x) = A(iy+dny,x,iz+dnz)
                      enddo
                   enddo
                enddo
@@ -362,6 +364,7 @@
 
 	else
 
+!$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
            do x=1,iisize
               do z=1,nz_fft,NBz
 	         z2 = min(z+NBz-1,nz_fft)
@@ -374,11 +377,11 @@
                         enddo
                      enddo
                   enddo
-                 do y=nyhc+dny+1,ny_fft,NBy2
-                    y2 = min(y+NBy2-1,ny_fft)
+                 do y=nyhc+1,nyc,NBy2
+                    y2 = min(y+NBy2-1,nyc)
                     do iz=z,z2
                         do iy=y,y2
-			   C(iz,iy) = A(iy-dny,x,iz)
+			   C(iz,iy) = A(iy+dny,x,iz)
                         enddo
                      enddo
                   enddo
@@ -442,11 +445,9 @@
       complex(p3dfft_type) B(nxhp,ny_fft,kjsize)
       complex(p3dfft_type) A(ny_fft,nxhpc,kjsize)
       integer x,y,z,iy,x2,ix,y2
-      complex(p3dfft_type), allocatable :: tmp(:,:)
+      complex(p3dfft_type) tmp(nxhpc,ny_fft)
 
-
-      allocate(tmp(nxhpc,ny_fft))
-
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp)
       do z=1,kjsize
          do x=1,nxhpc,nbx
             x2 = min(x+nbx-1,nxhpc)
@@ -470,9 +471,6 @@
          enddo
       enddo
 
-
-      deallocate(tmp)
-
       return
       end subroutine
 
@@ -494,6 +492,7 @@
 !      allocate(tmp(ny_fft,nxhpc))
 
 
+!$OMP parallel do private(x,y,z,y2,x2,iy,ix,tmp)
       do z=1,kjsize
          do y=1,ny_fft,nby1
             y2 = min(y+nby1-1,ny_fft)

@@ -31,7 +31,7 @@
       use, intrinsic :: iso_c_binding
       real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(p3dfft_type), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -242,11 +242,11 @@
             call seg_copy_z_f_many(buf1,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz,dim_out,nv)
 	else
 
-!         call ar_copy_many(buf,iisize*jjsize*nz,XYZg,dim_out,Nl,nv)
 	    dny = ny - nyc
 	    call seg_copy_y_f_many(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
 	    call seg_copy_y_f_many(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
-	 call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
+
+	    call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
         endif
 #endif
 
@@ -256,7 +256,9 @@
 
 !      deallocate(buf)
 
-      return
+      call mpi_barrier(mpi_comm_world,ierr)
+
+     return
       end subroutine
 
 ! This is a C wrapper routine
@@ -266,7 +268,7 @@
 
       real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(p3dfft_type), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -414,7 +416,7 @@
       use, intrinsic :: iso_c_binding
       real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(p3dfft_type), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -437,7 +439,7 @@
 
       real(p3dfft_type), TARGET :: XgYZ(nx_fft,jistart:jiend,kjstart:kjend)
 #ifdef STRIDE1
-      complex(p3dfft_type), TARGET :: XYZg(nzc,iistart:iiend,jjstart:jjend)
+      complex(p3dfft_type), TARGET :: XYZg(nzc,jjstart:jjend,iistart:iiend)
 #else
       complex(p3dfft_type), TARGET :: XYZg(iistart:iiend,jjstart:jjend,nzc)
 #endif
@@ -491,7 +493,7 @@
 #ifdef STRIDE1
          call reorder_f1(buf2,buf,buf1)
 #else
-	call seg_copy_x(buf2,buf,1,nxhpc,0,nxhpc,nxhp,jisize,kjsize)
+	call seg_copy_x(buf2,buf,1,nxhpc,0,nxhp,nxhpc,jisize,kjsize)
 #endif
       endif
 
@@ -676,7 +678,7 @@
 	    dny = ny - nyc
 	    call seg_copy_y(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz)
 	    call seg_copy_y(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
-!         call ar_copy(buf,XYZg,Nl)
+
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
 
@@ -709,6 +711,12 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+#ifdef DEBUG
+      print *,taskid,': Waiting at barrier'
+#endif
+
+      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine

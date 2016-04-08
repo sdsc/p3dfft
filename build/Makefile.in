@@ -134,7 +134,7 @@ libp3dfft_la_OBJECTS = $(am_libp3dfft_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
-am__v_lt_1 = 
+am__v_lt_1 =
 libp3dfft_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) \
 	$(libp3dfft_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -145,11 +145,11 @@ am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
+am__v_GEN_1 =
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
-am__v_at_1 = 
+am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -162,7 +162,7 @@ LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
 AM_V_PPFC = $(am__v_PPFC_@AM_V@)
 am__v_PPFC_ = $(am__v_PPFC_@AM_DEFAULT_V@)
 am__v_PPFC_0 = @echo "  PPFC    " $@;
-am__v_PPFC_1 = 
+am__v_PPFC_1 =
 FCLD = $(FC)
 FCLINK = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) \
@@ -170,7 +170,7 @@ FCLINK = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
 AM_V_FCLD = $(am__v_FCLD_@AM_V@)
 am__v_FCLD_ = $(am__v_FCLD_@AM_DEFAULT_V@)
 am__v_FCLD_0 = @echo "  FCLD    " $@;
-am__v_FCLD_1 = 
+am__v_FCLD_1 =
 SOURCES = $(libp3dfft_la_SOURCES)
 DIST_SOURCES = $(libp3dfft_la_SOURCES)
 am__can_run_installinfo = \
@@ -399,7 +399,7 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libp3dfft.la: $(libp3dfft_la_OBJECTS) $(libp3dfft_la_DEPENDENCIES) $(EXTRA_libp3dfft_la_DEPENDENCIES) 
+libp3dfft.la: $(libp3dfft_la_OBJECTS) $(libp3dfft_la_DEPENDENCIES) $(EXTRA_libp3dfft_la_DEPENDENCIES)
 	$(AM_V_FCLD)$(libp3dfft_la_LINK) -rpath $(libdir) $(libp3dfft_la_OBJECTS) $(libp3dfft_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

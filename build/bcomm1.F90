@@ -87,11 +87,20 @@
 
       position=1
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z) collapse(2)
+      do j=1,nv
       do i=0,jproc-1
+#ifdef USE_EVEN
+         pos0 = i * nv * KfCntMax/(p3dfft_type*2)
+#else
+         pos0 = nv * KfSndStrt(i)/(p3dfft_type*2)
+#endif
+ 	pos0 = pos0 + (j-1)*KfSndCnts(i)/(p3dfft_type*2)+ 1
+
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
-	    do j=1,nv
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),jjen(i)
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -99,12 +108,11 @@
                   enddo
                enddo
 	    enddo
-            enddo
 
 ! If clearly in the second half of ny
          else if (jjst(i) .ge. nyhc+1) then
-	    do j=1,nv
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i)+dny,jjen(i)+dny
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -112,12 +120,11 @@
                   enddo
                enddo
             enddo
-            enddo
 
 ! If spanning the first and second half of nz (i.e. jproc is odd)
          else
-	    do j=1,nv
 	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),nyhc
                   do x=1,iisize
                      dest(x,y,z,j) = buf2(position)
@@ -131,11 +138,9 @@
                   enddo
                enddo
             enddo
-            enddo
          endif
 
 ! Fill center with zeros
-         do j=1,nv
          do z=1,kjsize
             do y=nyhc+1,ny_fft-nyhc
                do x=1,iisize
@@ -144,10 +149,6 @@
             enddo
          enddo
          enddo
-
-#ifdef USE_EVEN
-         position = (i+1)*KfCntMax*nv/(p3dfft_type*2)+1
-#endif
       enddo
 
       end subroutine
@@ -166,9 +167,10 @@
       integer sndstrt(0:jproc-1)
       integer rcvstrt(0:jproc-1)
 
+!$OMP PARALLEL DO private(i,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
-         position = (i*nv)*KfCntMax/(p3dfft_type*2)+1
+         position = i*KfCntMax*nv/(p3dfft_type*2)+1
 #else
          position = JrSndStrt(i)*nv/(p3dfft_type*2)+1
 #endif
@@ -195,8 +197,8 @@
       complex(p3dfft_type) source(iisize,jjsize,nz_fft)
       complex(p3dfft_type) dest(iisize,ny_fft,kjsize)
       real(r8) t,tc
-      integer x,y,z,i,ierr,xs,ys,iy,iz,y2,z2,dny
-      integer(i8) position,pos1
+      integer x,y,z,i,j,ierr,xs,ys,iy,iz,y2,z2,dny
+      integer(i8) position,pos1,pos0
 
 !     Pack the data for sending
 
@@ -205,7 +207,9 @@
       if(KfCntUneven) then
          tc = tc - MPI_Wtime()
          position = 1
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z)
          do i=0,jproc-1
+            position = i*KfCntMax/(p3dfft_type*2)  + 1
             do z=kjst(i),kjen(i)
                do y=1,jjsize
                   do x=1,iisize
@@ -253,10 +257,18 @@
 
       position=1
       dny = ny_fft - nyc
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
       do i=0,jproc-1
+#ifdef USE_EVEN
+         pos0 = i*KfCntMax/(p3dfft_type*2)  + 1
+#else
+         pos0 = KfSndStrt(i)/(p3dfft_type*2)+ 1
+#endif
+
 ! If clearly in the first half of ny
          if(jjen(i) .le. nyhc) then
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),jjen(i)
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -267,6 +279,7 @@
 ! If clearly in the second half of ny
          else if (jjst(i) .ge. nyhc+1) then
             do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i)+dny,jjen(i)+dny
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -278,6 +291,7 @@
 ! If spanning the first and second half of nz (i.e. jproc is odd)
          else
 	    do z=1,kjsize
+               position = pos0 +(z-1)*jjsz(i)*iisize
                do y=jjst(i),nyhc
                   do x=1,iisize
                      dest(x,y,z) = buf2(position)
@@ -302,9 +316,6 @@
             enddo
          enddo
 
-#ifdef USE_EVEN
-         position = (i+1)*KfCntMax/(p3dfft_type*2)+1
-#endif
       enddo
 
 

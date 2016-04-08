@@ -50,6 +50,7 @@
 
 ! Pack and exchange x-z buffers in rows
 
+!$OMP PARALLEL DO private(i,j,pos0,pos1,pos2,ix,iy,x2,y2,position,x,y,z) collapse(2)
       do i=0,iproc-1
 
 	do j=1,nv
@@ -115,6 +116,7 @@
 
 ! Unpack receive buffers into dest
 
+!$OMP PARALLEL DO private(i,j,pos0,position,x,y,z)
       do i=0,iproc-1
 
 #ifdef USE_EVEN
@@ -170,19 +172,16 @@
 
 ! Pack and exchange x-z buffers in rows
 
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,ix,iy,x2,y2,position,x,y,z) collapse(2)
       do i=0,iproc-1
-
-
-#ifdef USE_EVEN
-         pos0 = i*IfCntMax/(p3dfft_type*2)+1
-#else
-         pos0 = IfRcvStrt(i)/(p3dfft_type*2)+1
-#endif
-
          do z=1,kjsize
 
 #ifdef STRIDE1
-            pos1 = pos0
+#ifdef USE_EVEN
+         pos1 = i*IfCntMax/(p3dfft_type*2)+1 +(z-1)*iisize*jisz(i)
+#else
+         pos1 = IfRcvStrt(i)/(p3dfft_type*2)+1 +(z-1)*iisize*jisz(i)
+#endif
             do y=jist(i),jien(i),nby1
                y2 = min(y+nby1-1,jien(i))
                do x=1,iisize,nbx
@@ -201,7 +200,11 @@
             enddo
 
 #else
-            position = pos0
+#ifdef USE_EVEN
+         position = i*IfCntMax/(p3dfft_type*2)+1 + (z-1)*iisize*jisz(i)
+#else
+         position = IfRcvStrt(i)/(p3dfft_type*2)+1+(z-1)*iisize*jisz(i)
+#endif
             do y=jist(i),jien(i)
                do x=1,iisize
                   buf1(position) = source(x,y,z)
@@ -209,8 +212,6 @@
                enddo
             enddo
 #endif
-
-            pos0 = pos0 + iisize*jisz(i)
          enddo
       enddo
 
@@ -228,6 +229,7 @@
 
 ! Unpack receive buffers into dest
 
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
       do i=0,iproc-1
 #ifdef USE_EVEN
          pos0 = i*IfCntMax/(p3dfft_type*2) + 1

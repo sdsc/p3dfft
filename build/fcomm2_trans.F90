@@ -100,6 +100,7 @@
       integer nv,j,i,x,y,z,pos0,position,dny,pos1
 
       dny = ny_fft-nyc
+!$OMP PARALLEL DO private(i,j,pos0,pos1,position,x,y,z)
       do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i * nv *KfCntMax/(p3dfft_type*2)  + 1
@@ -183,15 +184,15 @@
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
-	pos0 = (x-1)*jjsize
 
          do i=0,jproc-1
 
 #ifdef USE_EVEN
- 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+ 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i) +(x-1)*jjsize
 #endif
 
            if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
@@ -273,6 +274,7 @@
 
      else
 
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) collapse(2)
        do x=1,iisize
 
          do i=0,jproc-1
@@ -335,15 +337,15 @@
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
-         pos0 = (x-1)*jjsize
 
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #endif
 
             do z=kjst(i),kjen(i),NBz
@@ -371,15 +373,15 @@
 
       else
 
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
-         pos0 = (x-1)*jjsize
 
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-            pos1 = pos0 + i * nv *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+            pos1 = pos0 + i * nv *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #else
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
 #endif
 
             do z=kjst(i),kjen(i),NBz
@@ -449,7 +451,8 @@
 
       tc = tc - MPI_Wtime()
 
-      do i=0,jproc-1
+!$OMP PARALLEL DO private(i,pos0,position,x,y,z)
+     do i=0,jproc-1
 #ifdef USE_EVEN
          pos0 = i*KfCntMax/(p3dfft_type*2)  + 1
 #else
