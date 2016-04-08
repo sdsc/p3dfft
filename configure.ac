@@ -155,6 +155,17 @@ if test "$ok" = "yes"; then
         ;;
         *)
     esac
+else
+    case $compiler in
+        cray)
+            if test "$ok" = "no"; then
+                eval "ARRAY${N}='-h noomp'"
+                N=`expr $N + 1`
+                CFLAGS=$CFLAGS" -h noomp"
+            fi
+        ;;
+        *)
+    esac
 fi
 
 # check whether to enable single precision
