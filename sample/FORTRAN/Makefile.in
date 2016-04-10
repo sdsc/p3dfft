@@ -86,8 +86,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = @build@
-host_triplet = @host@
 fsample_PROGRAMS = test_sine_many_f.x$(EXEEXT) test_sine_f.x$(EXEEXT) \
 	test_sine_pruned_f.x$(EXEEXT) test_sine_inplace_f.x$(EXEEXT) \
 	test_rand_f.x$(EXEEXT) test_spec_f.x$(EXEEXT) \
@@ -110,48 +108,44 @@ am_test_cheby_f_x_OBJECTS = driver_cheby.$(OBJEXT)
 test_cheby_f_x_OBJECTS = $(am_test_cheby_f_x_OBJECTS)
 test_cheby_f_x_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-test_cheby_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_cheby_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 =
 am_test_inverse_f_x_OBJECTS = driver_inverse.$(OBJEXT)
 test_inverse_f_x_OBJECTS = $(am_test_inverse_f_x_OBJECTS)
 test_inverse_f_x_LDADD = $(LDADD)
-test_inverse_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_inverse_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_noop_f_x_OBJECTS = driver_noop.$(OBJEXT)
 test_noop_f_x_OBJECTS = $(am_test_noop_f_x_OBJECTS)
 test_noop_f_x_LDADD = $(LDADD)
-test_noop_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_noop_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_rand_f_x_OBJECTS = driver_rand.$(OBJEXT)
 test_rand_f_x_OBJECTS = $(am_test_rand_f_x_OBJECTS)
 test_rand_f_x_LDADD = $(LDADD)
-test_rand_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_rand_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_rand_many_f_x_OBJECTS = driver_rand_many.$(OBJEXT)
 test_rand_many_f_x_OBJECTS = $(am_test_rand_many_f_x_OBJECTS)
 test_rand_many_f_x_LDADD = $(LDADD)
-test_rand_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_rand_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_sine_f_x_OBJECTS = driver_sine.$(OBJEXT)
 test_sine_f_x_OBJECTS = $(am_test_sine_f_x_OBJECTS)
 test_sine_f_x_LDADD = $(LDADD)
-test_sine_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_sine_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_sine_inplace_f_x_OBJECTS = driver_sine_inplace.$(OBJEXT)
 test_sine_inplace_f_x_OBJECTS = $(am_test_sine_inplace_f_x_OBJECTS)
 test_sine_inplace_f_x_LDADD = $(LDADD)
 test_sine_inplace_f_x_DEPENDENCIES =  \
-	$(top_builddir)/build/libp3dfft.la $(am__DEPENDENCIES_1) \
+	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_inplace_many_f_x_OBJECTS =  \
 	driver_sine_inplace_many.$(OBJEXT)
@@ -159,12 +153,12 @@ test_sine_inplace_many_f_x_OBJECTS =  \
 	$(am_test_sine_inplace_many_f_x_OBJECTS)
 test_sine_inplace_many_f_x_LDADD = $(LDADD)
 test_sine_inplace_many_f_x_DEPENDENCIES =  \
-	$(top_builddir)/build/libp3dfft.la $(am__DEPENDENCIES_1) \
+	$(top_builddir)/build/libp3dfft.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_test_sine_many_f_x_OBJECTS = driver_sine_many.$(OBJEXT)
 test_sine_many_f_x_OBJECTS = $(am_test_sine_many_f_x_OBJECTS)
 test_sine_many_f_x_LDADD = $(LDADD)
-test_sine_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_sine_many_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_test_sine_pruned_f_x_OBJECTS = driver_sine_pruned.$(OBJEXT)
@@ -176,7 +170,7 @@ test_sine_pruned_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 am_test_spec_f_x_OBJECTS = driver_spec.$(OBJEXT)
 test_spec_f_x_OBJECTS = $(am_test_spec_f_x_OBJECTS)
 test_spec_f_x_LDADD = $(LDADD)
-test_spec_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.la \
+test_spec_f_x_DEPENDENCIES = $(top_builddir)/build/libp3dfft.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -186,32 +180,27 @@ am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 =
+am__v_GEN_1 = 
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
-am__v_at_1 =
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
 PPFCCOMPILE = $(FC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
-LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(FC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_FCFLAGS) $(FCFLAGS)
 AM_V_PPFC = $(am__v_PPFC_@AM_V@)
 am__v_PPFC_ = $(am__v_PPFC_@AM_DEFAULT_V@)
 am__v_PPFC_0 = @echo "  PPFC    " $@;
-am__v_PPFC_1 =
+am__v_PPFC_1 = 
 FCLD = $(FC)
-FCLINK = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+FCLINK = $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 AM_V_FCLD = $(am__v_FCLD_@AM_V@)
 am__v_FCLD_ = $(am__v_FCLD_@AM_DEFAULT_V@)
 am__v_FCLD_0 = @echo "  FCLD    " $@;
-am__v_FCLD_1 =
+am__v_FCLD_1 = 
 SOURCES = $(test_cheby_f_x_SOURCES) $(test_inverse_f_x_SOURCES) \
 	$(test_noop_f_x_SOURCES) $(test_rand_f_x_SOURCES) \
 	$(test_rand_many_f_x_SOURCES) $(test_sine_f_x_SOURCES) \
@@ -255,7 +244,6 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -268,9 +256,6 @@ CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -284,7 +269,6 @@ FDFLAGS = @FDFLAGS@
 FFTWF = @FFTWF@
 FFTW_INC = @FFTW_INC@
 FFTW_LIB = @FFTW_LIB@
-FGREP = @FGREP@
 FORTRAN_LIB = @FORTRAN_LIB@
 GREP = @GREP@
 INSTALL = @INSTALL@
@@ -292,24 +276,13 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-NM = @NM@
-NMEDIT = @NMEDIT@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -319,7 +292,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -330,30 +302,20 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 ac_ct_FC = @ac_ct_FC@
 am__leading_dot = @am__leading_dot@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
-build = @build@
 build_alias = @build_alias@
-build_cpu = @build_cpu@
-build_os = @build_os@
-build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-host = @host@
 host_alias = @host_alias@
-host_cpu = @host_cpu@
-host_os = @host_os@
-host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -377,9 +339,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_FCFLAGS = $(FDFLAGS) $(INCLUDES)
+AM_FCFLAGS = $(FDFLAGS) $(INCLUDES) 
 INCLUDES = -I$(top_builddir)/include/
-LDADD = $(top_builddir)/build/libp3dfft.la $(FFTW_LIB) $(FFTWF) $(ESSL_LIB)
+LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF) $(ESSL_LIB) 
 fsampledir = $(datadir)/p3dfft-samples/
 test_sine_many_f_x_SOURCES = driver_sine_many.F90
 test_sine_f_x_SOURCES = driver_sine.F90
@@ -395,7 +357,7 @@ test_noop_f_x_SOURCES = driver_noop.F90
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .F90 .lo .o .obj
+.SUFFIXES: .F90 .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -435,7 +397,6 @@ install-fsamplePROGRAMS: $(fsample_PROGRAMS)
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
 	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
 	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' \
@@ -450,8 +411,8 @@ install-fsamplePROGRAMS: $(fsample_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(fsampledir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(fsampledir)$$dir" || exit $$?; \
+	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(fsampledir)$$dir'"; \
+	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(fsampledir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -467,53 +428,49 @@ uninstall-fsamplePROGRAMS:
 	cd "$(DESTDIR)$(fsampledir)" && rm -f $$files
 
 clean-fsamplePROGRAMS:
-	@list='$(fsample_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
+	-test -z "$(fsample_PROGRAMS)" || rm -f $(fsample_PROGRAMS)
 
-test_cheby_f.x$(EXEEXT): $(test_cheby_f_x_OBJECTS) $(test_cheby_f_x_DEPENDENCIES) $(EXTRA_test_cheby_f_x_DEPENDENCIES)
+test_cheby_f.x$(EXEEXT): $(test_cheby_f_x_OBJECTS) $(test_cheby_f_x_DEPENDENCIES) $(EXTRA_test_cheby_f_x_DEPENDENCIES) 
 	@rm -f test_cheby_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_cheby_f_x_OBJECTS) $(test_cheby_f_x_LDADD) $(LIBS)
 
-test_inverse_f.x$(EXEEXT): $(test_inverse_f_x_OBJECTS) $(test_inverse_f_x_DEPENDENCIES) $(EXTRA_test_inverse_f_x_DEPENDENCIES)
+test_inverse_f.x$(EXEEXT): $(test_inverse_f_x_OBJECTS) $(test_inverse_f_x_DEPENDENCIES) $(EXTRA_test_inverse_f_x_DEPENDENCIES) 
 	@rm -f test_inverse_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_inverse_f_x_OBJECTS) $(test_inverse_f_x_LDADD) $(LIBS)
 
-test_noop_f.x$(EXEEXT): $(test_noop_f_x_OBJECTS) $(test_noop_f_x_DEPENDENCIES) $(EXTRA_test_noop_f_x_DEPENDENCIES)
+test_noop_f.x$(EXEEXT): $(test_noop_f_x_OBJECTS) $(test_noop_f_x_DEPENDENCIES) $(EXTRA_test_noop_f_x_DEPENDENCIES) 
 	@rm -f test_noop_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_noop_f_x_OBJECTS) $(test_noop_f_x_LDADD) $(LIBS)
 
-test_rand_f.x$(EXEEXT): $(test_rand_f_x_OBJECTS) $(test_rand_f_x_DEPENDENCIES) $(EXTRA_test_rand_f_x_DEPENDENCIES)
+test_rand_f.x$(EXEEXT): $(test_rand_f_x_OBJECTS) $(test_rand_f_x_DEPENDENCIES) $(EXTRA_test_rand_f_x_DEPENDENCIES) 
 	@rm -f test_rand_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_rand_f_x_OBJECTS) $(test_rand_f_x_LDADD) $(LIBS)
 
-test_rand_many_f.x$(EXEEXT): $(test_rand_many_f_x_OBJECTS) $(test_rand_many_f_x_DEPENDENCIES) $(EXTRA_test_rand_many_f_x_DEPENDENCIES)
+test_rand_many_f.x$(EXEEXT): $(test_rand_many_f_x_OBJECTS) $(test_rand_many_f_x_DEPENDENCIES) $(EXTRA_test_rand_many_f_x_DEPENDENCIES) 
 	@rm -f test_rand_many_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_rand_many_f_x_OBJECTS) $(test_rand_many_f_x_LDADD) $(LIBS)
 
-test_sine_f.x$(EXEEXT): $(test_sine_f_x_OBJECTS) $(test_sine_f_x_DEPENDENCIES) $(EXTRA_test_sine_f_x_DEPENDENCIES)
+test_sine_f.x$(EXEEXT): $(test_sine_f_x_OBJECTS) $(test_sine_f_x_DEPENDENCIES) $(EXTRA_test_sine_f_x_DEPENDENCIES) 
 	@rm -f test_sine_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_sine_f_x_OBJECTS) $(test_sine_f_x_LDADD) $(LIBS)
 
-test_sine_inplace_f.x$(EXEEXT): $(test_sine_inplace_f_x_OBJECTS) $(test_sine_inplace_f_x_DEPENDENCIES) $(EXTRA_test_sine_inplace_f_x_DEPENDENCIES)
+test_sine_inplace_f.x$(EXEEXT): $(test_sine_inplace_f_x_OBJECTS) $(test_sine_inplace_f_x_DEPENDENCIES) $(EXTRA_test_sine_inplace_f_x_DEPENDENCIES) 
 	@rm -f test_sine_inplace_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_sine_inplace_f_x_OBJECTS) $(test_sine_inplace_f_x_LDADD) $(LIBS)
 
-test_sine_inplace_many_f.x$(EXEEXT): $(test_sine_inplace_many_f_x_OBJECTS) $(test_sine_inplace_many_f_x_DEPENDENCIES) $(EXTRA_test_sine_inplace_many_f_x_DEPENDENCIES)
+test_sine_inplace_many_f.x$(EXEEXT): $(test_sine_inplace_many_f_x_OBJECTS) $(test_sine_inplace_many_f_x_DEPENDENCIES) $(EXTRA_test_sine_inplace_many_f_x_DEPENDENCIES) 
 	@rm -f test_sine_inplace_many_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_sine_inplace_many_f_x_OBJECTS) $(test_sine_inplace_many_f_x_LDADD) $(LIBS)
 
-test_sine_many_f.x$(EXEEXT): $(test_sine_many_f_x_OBJECTS) $(test_sine_many_f_x_DEPENDENCIES) $(EXTRA_test_sine_many_f_x_DEPENDENCIES)
+test_sine_many_f.x$(EXEEXT): $(test_sine_many_f_x_OBJECTS) $(test_sine_many_f_x_DEPENDENCIES) $(EXTRA_test_sine_many_f_x_DEPENDENCIES) 
 	@rm -f test_sine_many_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_sine_many_f_x_OBJECTS) $(test_sine_many_f_x_LDADD) $(LIBS)
-test_sine_pruned_f.x$(EXEEXT): $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_DEPENDENCIES)
+
+test_sine_pruned_f.x$(EXEEXT): $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_DEPENDENCIES) $(EXTRA_test_sine_pruned_f_x_DEPENDENCIES) 
 	@rm -f test_sine_pruned_f.x$(EXEEXT)
-	$(FCLINK) $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_LDADD) $(LIBS)
-test_spec_f.x$(EXEEXT): $(test_spec_f_x_OBJECTS) $(test_spec_f_x_DEPENDENCIES) $(EXTRA_test_spec_f_x_DEPENDENCIES)
+	$(AM_V_FCLD)$(FCLINK) $(test_sine_pruned_f_x_OBJECTS) $(test_sine_pruned_f_x_LDADD) $(LIBS)
+
+test_spec_f.x$(EXEEXT): $(test_spec_f_x_OBJECTS) $(test_spec_f_x_DEPENDENCIES) $(EXTRA_test_spec_f_x_DEPENDENCIES) 
 	@rm -f test_spec_f.x$(EXEEXT)
 	$(AM_V_FCLD)$(FCLINK) $(test_spec_f_x_OBJECTS) $(test_spec_f_x_LDADD) $(LIBS)
 
@@ -528,15 +485,6 @@ distclean-compile:
 
 .F90.obj:
 	$(AM_V_PPFC)$(PPFCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.F90.lo:
-	$(AM_V_PPFC)$(LTPPFCCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -659,8 +607,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-fsamplePROGRAMS clean-generic clean-libtool \
-	clean-local mostlyclean-am
+clean-am: clean-fsamplePROGRAMS clean-generic clean-local \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -713,8 +661,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -729,18 +676,17 @@ uninstall-am: uninstall-fsamplePROGRAMS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
-	clean-fsamplePROGRAMS clean-generic clean-libtool clean-local \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-fsamplePROGRAMS \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
+	clean-fsamplePROGRAMS clean-generic clean-local cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am \
+	install-fsamplePROGRAMS install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-fsamplePROGRAMS
 
 .PRECIOUS: Makefile
