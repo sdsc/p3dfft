@@ -274,7 +274,7 @@
 
      else
 
-!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3) collapse(2)
+!$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
        do x=1,iisize
 
          do i=0,jproc-1
@@ -337,6 +337,7 @@
 
       if(op(3:3) == '0' .or. op(3:3) == 'n') then
 
+
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
 
@@ -373,6 +374,8 @@
 
       else
 
+!      print *,taskid,': unpack_fcomm2_trans: starting loop; nz=nzc'
+
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
 
@@ -405,6 +408,8 @@
                pos1 = pos1 + jjsize*iisize*NBz
             enddo
          enddo
+
+!	 print *,taskid,': x=',x
 
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
              call exec_f_c2_dif(buf3, 1,nz_fft, &

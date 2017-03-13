@@ -9,6 +9,7 @@ AC_CONFIG_HEADER([config.h])
 
 # initialize array index
 N="0"
+N1="0"
 
 # save arguments passed in as a string
 AC_DEFINE_UNQUOTED([CONFIGURE_ARGS],["$ac_configure_args"],[arguments passed to configure script])
@@ -124,8 +125,8 @@ if test "$ok" = "yes"; then
     case $compiler in
         ibm)
             if test "$ok" = "yes"; then
-                eval "ARRAY${N}='-qsmp=omp'"
-                N=`expr $N + 1`
+                eval "ARRAY1${N1}='-qsmp=omp'"
+                N1=`expr $N1 + 1`
                 CFLAGS=$CFLAGS" -qsmp=omp"
             fi
         ;;
@@ -393,6 +394,10 @@ else
 	for i in $(seq 0 $N)
 	do
 		eval TMP1="\$TMP1','\$ARRAY${i}"
+	done
+	for i in $(seq 0 $N1)
+	do
+		eval TMP1="\$TMP1' '\$ARRAY1${i}"
 	done
 	AC_SUBST(FDFLAGS, $TMP1)
 fi
