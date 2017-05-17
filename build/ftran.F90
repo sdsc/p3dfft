@@ -181,7 +181,7 @@
 
 #ifdef STRIDE1
 ! For stride1 option combine second transpose with transform in Z
-         call init_f_c(buf,1,nz, XYZg,1,nz,nz,jjsize,op)
+         call init_f_c(buf,1,nz, XYZg,1,nz,nz,jjsize)
          call fcomm2_trans_many(buf,XYZg,buf,dim_out,nv,op,timers(2),timers(8))
 #else
 
@@ -492,6 +492,9 @@
       else
 
 #ifdef STRIDE1
+#ifdef DEBUG
+	print *,taskid,': Calling reorder_f1'
+#endif
          call reorder_f1(buf2,buf,buf1)
 #else
 	call seg_copy_x(buf2,buf,1,nxhpc,0,nxhp,nxhpc,jisize,kjsize)
@@ -539,7 +542,7 @@
 
 #ifdef STRIDE1
 ! For stride1 option combine second transpose with transform in Z
-         call init_f_c(buf,1,nz, XYZg,1,nz,nz,jjsize,op)
+         call init_f_c(buf,1,nz, XYZg,1,nz,nz,jjsize)
          call fcomm2_trans(buf,XYZg,buf,op,timers(2),timers(8))
 #else
 

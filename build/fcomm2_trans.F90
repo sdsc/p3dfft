@@ -187,14 +187,14 @@
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
 
-	pos0 = (x-1)*jjsize
-
          do i=0,jproc-1
 
+	      pos0 = (x-1)*jjsize
+
 #ifdef USE_EVEN
- 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+ 	      pos1 = pos0 + i * nv * KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else
- 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i) +(x-1)*jjsize
+ 	      pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif
 
            if(kjen(i) .lt. nzhc .or. kjst(i) .gt. nzhc+1) then
@@ -344,14 +344,14 @@
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
 
-         pos0 = (x-1)*jjsize
-
          do i=0,jproc-1
 
+	   pos0 = (x-1)*jjsize
+
 #ifdef USE_EVEN
-           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+           pos1 = pos0 + (i * nv +j-1)*KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif
 
             do z=kjst(i),kjen(i),NBz
@@ -379,8 +379,6 @@
 
       else
 
-!      print *,taskid,': unpack_fcomm2_trans: starting loop; nz=nzc'
-
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
 
@@ -389,9 +387,9 @@
          do i=0,jproc-1
 
 #ifdef USE_EVEN
-            pos1 = pos0 + i * nv *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+            pos1 = pos0 + i * nv *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #else
-	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)+(x-1)*jjsize
+	   pos1 = pos0 + nv * KfRcvStrt(i) / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
 #endif
 
             do z=kjst(i),kjen(i),NBz
@@ -415,8 +413,6 @@
                pos1 = pos1 + jjsize*iisize*NBz
             enddo
          enddo
-
-!	 print *,taskid,': x=',x
 
 	if(op(3:3) == 't' .or. op(3:3) == 'f') then
              call exec_f_c2_dif(buf3, 1,nz_fft, &

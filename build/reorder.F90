@@ -486,7 +486,7 @@
       complex(p3dfft_type) A(nxhp,ny_fft,kjsize)
       complex(p3dfft_type) B(ny_fft,nxhpc,kjsize)
       integer x,y,z,iy,x2,ix,y2,dnx
-      complex(p3dfft_type) tmp(ny_fft,nxhpc,kjsize)
+      complex(p3dfft_type) tmp(ny_fft,nxhpc)
 !      complex(p3dfft_type), allocatable :: tmp(:,:)
 
 !      allocate(tmp(ny_fft,nxhpc))
@@ -500,7 +500,7 @@
                x2 = min(x+nbx-1,nxhpc)
                do iy = y,y2
                   do ix=x,x2
-                     tmp(iy,ix,z) = A(ix,iy,z)
+                     tmp(iy,ix) = A(ix,iy,z)
                   enddo
                enddo
             enddo
@@ -508,7 +508,7 @@
 
          do x=1,nxhpc
             do y=1,ny_fft
-               B(y,x,z) = tmp(y,x,z)
+               B(y,x,z) = tmp(y,x)
             enddo
          enddo
       enddo
