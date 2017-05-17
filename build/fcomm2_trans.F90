@@ -187,6 +187,8 @@
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
 
+	pos0 = (x-1)*jjsize
+
          do i=0,jproc-1
 
 #ifdef USE_EVEN
@@ -277,8 +279,9 @@
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
        do x=1,iisize
 
+	pos0 = (x-1)*jjsize
+
          do i=0,jproc-1
-	    pos0 = (x-1)*jjsize
 
 #ifdef USE_EVEN
             pos1 = pos0 + (i * nv +j-1) *KfCntMax / (p3dfft_type*2) + (j-1)*iisize*jjsize*kjsz(i)
@@ -341,6 +344,8 @@
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2) collapse(2)
       do x=1,iisize
 
+         pos0 = (x-1)*jjsize
+
          do i=0,jproc-1
 
 #ifdef USE_EVEN
@@ -378,6 +383,8 @@
 
 !$OMP PARALLEL DO private(i,pos0,pos1,pos2,position,x,y,z,iy,y2,iz,z2,buf3)
       do x=1,iisize
+
+         pos0 = (x-1)*jjsize
 
          do i=0,jproc-1
 
