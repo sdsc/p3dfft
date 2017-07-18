@@ -86,6 +86,7 @@
 
       if(nv .gt. nv_preset) then
         nv_preset = nv
+	if(allocated(buf)) deallocate(buf)
         allocate(buf(nxhp*jisize*(kjsize+padi)*nv))
         deallocate(buf1,buf2)
 #ifdef USE_EVEN
