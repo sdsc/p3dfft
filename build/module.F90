@@ -312,6 +312,13 @@
       deallocate(buf2)
       deallocate(buf)
 
+    deallocate( iiist, iiisz, iiien, ijst, ijsz, ijen, startx_frc, startx_bcr, &
+    startx_f_c1, startx_b_c1, startx_ctrans_same, startx_strans_same, startx_ctrans_dif,&
+    startx_strans_dif, startx_b_c2_same, startx_f_c2_same, startx_b_c2_dif,startx_f_c2_dif,&
+    starty_frc,starty_bcr,starty_f_c1,starty_b_c1,starty_ctrans_same,starty_strans_same,&
+    starty_ctrans_dif,starty_strans_dif,starty_b_c2_same,starty_f_c2_same,starty_b_c2_dif,&
+    starty_f_c2_dif) 
+
     deallocate (iist)
     deallocate (iisz)
     deallocate (iien)
@@ -1351,5 +1358,3 @@ end subroutine
 !      end subroutine p3dfft_rot_x180
 
       end module
-
-
