@@ -11,6 +11,7 @@ fcomm2_trans.F90 bcomm1_trans.F90 fcomm2.F90 bcomm1.F90 bcomm2.F90
 
 all-local:
 	-@[ -e "p3dfft.mod" ] && mv -f p3dfft.mod ../include
+	-@[ -e ".libs/libp3dfft.a" ] && ln -s .libs/libp3dfft.a libp3dfft.a
 
 clean-local:
 	-test -z "*.mod" || rm -f *.mod
