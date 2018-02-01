@@ -272,10 +272,12 @@
       call dfftw_destroy_plan(plan2_bc_same(tid))
       call dfftw_destroy_plan(plan_ctrans_same(tid))
       call dfftw_destroy_plan(plan_strans_same(tid))
+#ifdef STRIDE1
       call dfftw_destroy_plan(plan_strans_dif(tid))
       call dfftw_destroy_plan(plan_ctrans_dif(tid))
       call dfftw_destroy_plan(plan2_fc_dif(tid))
       call dfftw_destroy_plan(plan2_bc_dif(tid))
+#endif
 #else
       call sfftw_destroy_plan(plan1_frc(tid))
       call sfftw_destroy_plan(plan1_bcr(tid))
@@ -285,10 +287,12 @@
       call sfftw_destroy_plan(plan2_bc_same(tid))
       call sfftw_destroy_plan(plan_ctrans_same(tid))
       call sfftw_destroy_plan(plan_strans_same(tid))
+#ifdef STRIDE1
       call sfftw_destroy_plan(plan2_fc_dif(tid))
       call sfftw_destroy_plan(plan2_bc_dif(tid))
       call sfftw_destroy_plan(plan_ctrans_dif(tid))
       call sfftw_destroy_plan(plan_strans_dif(tid))
+#endif
 #endif
       enddo
 
