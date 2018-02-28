@@ -169,7 +169,7 @@
 #ifdef USE_EVEN
       complex(p3dfft_type) sendbuf(KfCntMax*nv*jproc/(p3dfft_type*2))
 #else
-      complex(p3dfft_type) sendbuf(nzc*jjsize*iisize*nv)
+      complex(p3dfft_type) sendbuf(nz_fft*jjsize*iisize*nv)
 #endif
       complex(p3dfft_type) buf3(nz_fft,jjsize)
       integer nz,dnz,i,j,x,y,z,iz,iy,z2,y2,ierr,nv

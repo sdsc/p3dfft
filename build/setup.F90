@@ -266,9 +266,9 @@
          KfCntUneven = .false.
       endif
     IiCntMax = iiisz (iproc-1) * jisize * kjsize * p3dfft_type
-    IJCntMax = ijsz (iproc-1) * jisize * kjsize * p3dfft_type
+    IJCntMax = ijsz (jproc-1) * jisize * kjsize * p3dfft_type
     JICntMax = jisz (iproc-1) * iiisize * kjsize * p3dfft_type
-    KjCntMax = kjsz (iproc-1) * jisize * ijsize * p3dfft_type
+    KjCntMax = kjsz (jproc-1) * jisize * ijsize * p3dfft_type
 #endif
 
 

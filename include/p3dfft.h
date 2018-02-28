@@ -67,12 +67,14 @@ extern void FORT_MOD_NAME(p3dfft_ftran_r2c_many)(double *A, int dim_in, double *
 extern void FORT_MOD_NAME(p3dfft_btran_c2r)(double *A,double *B, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_btran_c2r_many)(double *A, int dim_in, double *B, int dim_out, int nv, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_cheby)(double *A,double *B, double Lz);
+extern void FORT_MOD_NAME(p3dfft_cheby_many)(double *A, int dim_in, double *B, int dim_out, int nv, double Lz);
 #else
 extern void FORT_MOD_NAME(p3dfft_ftran_r2c)(float *A,float *B, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_ftran_r2c_many)(float *A, int dim_in, float *B, int dim_out, int nv, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_btran_c2r)(float *A,float *B, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_btran_c2r_many)(float *A, int dim_in, float *B, int dim_out, int nv, unsigned char *op);
 extern void FORT_MOD_NAME(p3dfft_cheby)(float *A,float *B, float Lz);
+extern void FORT_MOD_NAME(p3dfft_cheby_many)(float *A, int dim_in, float *B, int dim_out, int nv, float Lz);
 #endif
 
 extern void FORT_MOD_NAME(p3dfft_clean)();
@@ -86,9 +88,13 @@ extern void Cp3dfft_get_dims(int *,int *,int *,int );
 #ifndef SINGLE_PREC
 extern void Cp3dfft_ftran_r2c(double *A,double *B, unsigned char *op);
 extern void Cp3dfft_btran_c2r(double *A,double *B, unsigned char *op);
+extern void Cp3dfft_ftran_r2c_many(double *A,int dim_in,double *B, int dim_out,int nv, unsigned char *op);
+extern void Cp3dfft_btran_c2r_many(double *A,int dim_in,double *B, int dim_out,int nv, unsigned char *op);
 #else
 extern void Cp3dfft_ftran_r2c(float *A,float *B, unsigned char *op);
 extern void Cp3dfft_btran_c2r(float *A,float *B, unsigned char *op);
+extern void Cp3dfft_ftran_r2c_many(float *A,float *B, unsigned char *op);
+extern void Cp3dfft_btran_c2r_many(float *A,float *B, unsigned char *op);
 #endif
 
 extern void Cget_timers(double *timers);
@@ -134,6 +140,7 @@ inline void Cp3dfft_ftran_r2c(float *A,float *B, unsigned char *op)
 
 #endif
 
+
 #ifndef SINGLE_PREC
 inline void Cp3dfft_btran_c2r(double *A,double *B, unsigned char *op)
 {
@@ -146,6 +153,7 @@ inline void Cp3dfft_btran_c2r(float *A,float *B, unsigned char *op)
 }
 #endif
 
+
 #ifndef SINGLE_PREC
 inline void Cp3dfft_cheby(double *A,double *B, double Lz)
 {
@@ -155,6 +163,18 @@ inline void Cp3dfft_cheby(double *A,double *B, double Lz)
 inline void Cp3dfft_cheby(float *A,float *B, float Lz)
 {
   FORT_MOD_NAME(p3dfft_cheby)(A,B,Lz);
+}
+#endif
+
+#ifndef SINGLE_PREC
+  inline void Cp3dfft_cheby_many(double *A,int dim_in,double *B, int dim_out, int nv, double Lz)
+{
+  FORT_MOD_NAME(p3dfft_cheby_many)(A,dim_in,B,dim_out,nv,Lz);
+}
+#else
+  inline void Cp3dfft_cheby_many(float *A, int dim_in, float *B, int dim_out, int nv, float Lz)
+{
+  FORT_MOD_NAME(p3dfft_cheby_many)(A,dim_in,B,dim_out,nv,Lz);
 }
 #endif
 

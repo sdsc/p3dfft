@@ -90,9 +90,9 @@ case $compiler in
     ;;
     intel)
         if test "$ok" = "yes"; then
-	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore")
+	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore") 
         else
-	        AC_SUBST(FORTRAN_LIB,"-lmpichf90 -limf -lifcore")
+	        AC_SUBST(FORTRAN_LIB,"-limf -lifcore") #-lmpichf90 
         fi
     ;;
     pgi)
@@ -132,9 +132,9 @@ if test "$ok" = "yes"; then
         ;;
         intel)
             if test "$ok" = "yes"; then
-                eval "ARRAY${N}='-openmp'"
+                eval "ARRAY${N}='-qopenmp'"
                 N=`expr $N + 1`
-                CFLAGS=$CFLAGS" -openmp"
+                CFLAGS=$CFLAGS" -qopenmp"
             fi
         ;;
         pgi)

@@ -171,7 +171,7 @@
 #ifdef USE_EVEN
       complex(p3dfft_type) recvbuf(KfCntMax*nv*jproc/(p3dfft_type*2))
 #else
-      complex(p3dfft_type) recvbuf(nzc*jjsize*iisize*nv)
+      complex(p3dfft_type) recvbuf(nz_fft*jjsize*iisize*nv)
 #endif
       integer x,z,y,i,ierr,xs,ys,y2,z2,iy,iz,ix,x2,n,sz,l,dny,dnz,nv,j,nz,dim_out
       integer(i8) position,pos1,pos0,pos2
