@@ -173,11 +173,11 @@ int main(int argc,char **argv)
     p = A;
     for(j=0; j < nv; j++) {
         for(z=0;z < isize[2];z++)
-            sinz[nz*j + z] = sin(j*(z+istart[2]-1)*twopi/nz);
+	  sinz[nz*j + z] = sin((j+1)*(z+istart[2]-1)*twopi/nz);
         for(y=0;y < isize[1];y++)
-            siny[ny*j + y] = sin(j*(y+istart[1]-1)*twopi/ny);
+	  siny[ny*j + y] = sin((j+1)*(y+istart[1]-1)*twopi/ny);
         for(x=0;x < isize[0];x++)
-            sinx[nx*j + x] = sin(j*(x+istart[0]-1)*twopi/nx);
+	  sinx[nx*j + x] = sin((j+1)*(x+istart[0]-1)*twopi/nx);
 
         for(z=0;z < isize[2];z++)
             for(y=0;y < isize[1];y++) {
@@ -201,7 +201,7 @@ int main(int argc,char **argv)
         MPI_Barrier(MPI_COMM_WORLD);
         rtime1 = rtime1 - MPI_Wtime();
         /* compute forward Fourier transform on A, store results in B */
-        Cp3dfft_ftran_r2c_many(A,isize[0]*isize[1]*isize[2],B,fsize[0]*fsize[1]*fsize[2]*2,nv,op_f);
+        Cp3dfft_ftran_r2c_many(A,isize[0]*isize[1]*isize[2],B,fsize[0]*fsize[1]*fsize[2],nv,op_f);
         rtime1 = rtime1 + MPI_Wtime();
 
         for(j=0; j < nv; j++) {
@@ -216,7 +216,7 @@ int main(int argc,char **argv)
         /* Compute backward transform on B, store results in C */
         MPI_Barrier(MPI_COMM_WORLD);
         rtime1 = rtime1 - MPI_Wtime();
-        Cp3dfft_btran_c2r_many(B,fsize[0]*fsize[1]*fsize[2]*2,C,isize[0]*isize[1]*isize[2],nv,op_b);
+        Cp3dfft_btran_c2r_many(B,fsize[0]*fsize[1]*fsize[2],C,isize[0]*isize[1]*isize[2],nv,op_b);
         rtime1 = rtime1 + MPI_Wtime();
 
     }
