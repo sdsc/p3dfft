@@ -69,14 +69,14 @@
 
       if(nx .le. 0 .or. ny .le. 0 .or. nz .le. 0) then
          print *,'Invalid dimensions :',nx,ny,nz
-         call MPI_ABORT(MPI_COMM_WORLD, 0)
+         call MPI_ABORT(mpicomm, 0)
       endif
 
       if(mpi_set) then
          print *,'P3DFFT Setup error: the problem is already initialized. '
          print *,'Currently multiple setups not supported.'
          print *,'Quit the library using p3dfft_clean before initializing another setup'
-         call MPI_ABORT(MPI_COMM_WORLD, 0)
+         call MPI_ABORT(mpicomm, 0)
       endif
 
       if(present(overwrite)) then
@@ -125,7 +125,7 @@
 
       if(dims(1) .le. 0 .or. dims(2) .le. 0 .or.  dims(1)*dims(2) .ne. numtasks) then
          print *,'Invalid processor geometry: ',dims,' for ',numtasks, 'tasks'
-         call MPI_ABORT(MPI_COMM_WORLD, 0)
+         call MPI_ABORT(mpicomm, 0)
       endif
 
 #ifdef STRIDE1

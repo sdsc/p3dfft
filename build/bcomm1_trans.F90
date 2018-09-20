@@ -304,7 +304,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(MPI_COMM_WORLD,ierr)
+		   call MPI_abort(mpicomm,ierr)
 	       endif
 
 	    else
@@ -320,7 +320,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(MPI_COMM_WORLD,ierr)
+		   call MPI_abort(mpicomm,ierr)
 	       endif
 
 	    endif

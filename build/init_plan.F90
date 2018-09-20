@@ -136,7 +136,6 @@
 
 #ifdef DEBUG
 	print *,taskid, ': doing plan_f_c1'
-	call mpi_barrier(mpi_comm_world,ierr)
 #endif
 
      if(iisize*kjsize .gt. 0) then
