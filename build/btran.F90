@@ -242,7 +242,7 @@
 !        call print_buf_real(XgYZ(1,j),nx,jisize,kjsize)
 !      enddo
 
-      call mpi_barrier(mpi_comm_world,ierr)
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -284,7 +284,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_ctrans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_ctrans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
 	      enddo
               timers(8) = timers(8) + MPI_Wtime()
 
@@ -293,7 +293,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_strans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_strans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
               enddo
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(1:1) .ne. 'n' .and. op(1:1) .ne. '0') then
@@ -393,14 +393,14 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	           call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_ctrans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
  		else if(op(1:1) == 's') then
 	           call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_strans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -434,14 +434,14 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	           call init_ctrans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2_same (buf, 2*iisize*jjsize, 1, &
+                   call exec_ctrans_r2_complex_same (buf, 2*iisize*jjsize, 1, &
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 		 else if(op(1:1) == 's') then
 	           call init_strans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2_same (buf, 2*iisize*jjsize, 1, &
+                   call exec_strans_r2_complex_same (buf, 2*iisize*jjsize, 1, &
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 	         else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -477,14 +477,14 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	       call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
 			            XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-               call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+               call exec_ctrans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	    else if(op(1:1) == 's') then
 	       call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 		    	            XYZg, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-               call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+               call exec_strans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
 				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
 	    else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -510,14 +510,14 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	            call init_ctrans_r2 (buf1, 2*iisize*jjsize, 1, &
 			            buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-                    call exec_ctrans_r2_same (buf1, 2*iisize*jjsize, 1, &
+                    call exec_ctrans_r2_complex_same (buf1, 2*iisize*jjsize, 1, &
  				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	         else if(op(1:1) == 's') then
 	            call init_strans_r2 (buf1, 2*iisize*jjsize, 1, &
 		    	            buf1, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-                    call exec_strans_r2_same (buf1, 2*iisize*jjsize, 1, &
+                    call exec_strans_r2_complex_same (buf1, 2*iisize*jjsize, 1, &
 				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
                  else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
@@ -617,7 +617,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
 #endif
 
-      call mpi_barrier(mpi_comm_world,ierr)
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
