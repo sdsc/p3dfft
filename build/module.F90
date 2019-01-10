@@ -54,7 +54,7 @@
        integer, public :: real_size,complex_size
 
       integer,save :: NX_fft,NY_fft,NZ_fft,nxh,nxhp,nv_preset
-      integer,save :: nxc,nyc,nzc,nxhc,nxhpc,nyh,nzh,nyhc,nzhc,nyhcp,nzhcp
+      integer,save :: nxc,nyc,nzc,nxhc,nxhpc,nyh,nzh,nyhc,nzhc,nycph,nzcph
       integer,save :: ipid,jpid,taskid,numtasks,iproc,jproc
       integer,save :: iistart,iiend,iisize,jjstart,jjsize,jjend
       integer,save ::jistart,kjstart,jisize,kjsize,jiend,kjend
