@@ -113,50 +113,23 @@
 ! Pack the sendbuf, omitting the center ny-nyc elements in Y dimension
 
 ! If clearly in the first half of ny
-        pos1 = pos0 + (j-1)*jjsz(i)*iisize*kjsize
-         if(jjen(i) .le. nyhc) then
-     	    do z=1,kjsize
-               position = pos1 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i),jjen(i)
-                     sndbuf(position) = source(y,x,z,j)
-                     position = position+1
-                  enddo
-               enddo
-            enddo
-
-! If clearly in the second half of ny
-         else if (jjst(i) .ge. nyhc+1) then
-     	    do z=1,kjsize
-               position = pos1 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     sndbuf(position) = source(y,x,z,j)
-                     position = position+1
-                  enddo
-               enddo
-            enddo
-
-
-
-! If spanning the first and second half of ny (e.g. iproc is odd)
-         else
-     	    do z=1,kjsize
-               position = pos1 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i),nyhc
-                     sndbuf(position) = source(y,x,z,j)
-                     position = position+1
-                  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     sndbuf(position) = source(y,x,z,j)
-                     position = position+1
-                  enddo
-               enddo
-            enddo
-         endif
-
-      enddo
+           pos1 = pos0 + (j-1)*jjsz(i)*iisize*kjsize
+   	   do z=1,kjsize
+              position = pos1 +(z-1)*jjsz(i)*iisize
+              do x=1,iisize
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+                 do y=jjst(i),min(jjen(i),nycph)
+                    sndbuf(position) = source(y,x,z,j)
+                    position = position+1
+                 enddo
+! Second set of Fourier modes (negative)
+                 do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                    sndbuf(position) = source(y,x,z,j)
+                    position = position+1
+                 enddo
+              enddo
+           enddo
+         enddo
       enddo
 
       end subroutine
@@ -322,7 +295,7 @@
 		          buf3, 2,2*nz_fft,nz_fft,jjsize)
  	else
 	   print *,taskid,'Unknown transform type: ',op(3:3)
-	   call MPI_abort(mpicomm,ierr)
+	   call MPI_abort(MPI_COMM_WORLD,ierr)
 	endif
 
 	do y=1,jjsize
@@ -425,7 +398,7 @@
 		          dest(1,1,x), 2,2*nz_fft,nz_fft,jjsize)
  	else
 	   print *,taskid,'Unknown transform type: ',op(3:3)
-	   call MPI_abort(mpicomm,ierr)
+	   call MPI_abort(MPI_COMM_WORLD,ierr)
 	endif
 
       enddo
@@ -469,52 +442,24 @@
 
 ! Pack the sendbuf, omitting the center ny-nyc elements in Y dimension
 
-! If clearly in the first half of ny
-
-         if(jjen(i) .le. nyhc) then
-     	    do z=1,kjsize
-               position = pos0 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i),jjen(i)
-                     buf1(position) = source(y,x,z)
-                     position = position+1
-                  enddo
+         do z=1,kjsize
+            position = pos0 +(z-1)*jjsz(i)*iisize
+            do x=1,iisize
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+               do y=jjst(i),min(jjen(i),nycph)
+                  buf1(position) = source(y,x,z)
+                  position = position+1
                enddo
-            enddo
-
-! If clearly in the second half of ny
-         else if (jjst(i) .ge. nyhc+1) then
-     	    do z=1,kjsize
-               position = pos0 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     buf1(position) = source(y,x,z)
-                     position = position+1
-                  enddo
+! Second set of Fourier modes (negative)
+               do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                  buf1(position) = source(y,x,z)
+                  position = position+1
                enddo
+
             enddo
+         enddo
 
-
-
-! If spanning the first and second half of ny (e.g. iproc is odd)
-         else
-     	    do z=1,kjsize
-               position = pos0 +(z-1)*jjsz(i)*iisize
-               do x=1,iisize
-                  do y=jjst(i),nyhc
-                     buf1(position) = source(y,x,z)
-                     position = position+1
-                  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     buf1(position) = source(y,x,z)
-                     position = position+1
-                  enddo
-               enddo
-            enddo
-         endif
-
-      enddo
-
+      enddo	    
 
       tc = tc + MPI_Wtime()
       t = t - MPI_Wtime()

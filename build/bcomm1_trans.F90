@@ -112,44 +112,31 @@
             pos1 = pos0
             do x=1,iisize
                position = pos1
-! If clearly in the first half of ny
-               if(jjen(i) .le. nyhc) then
-                  do y=jjst(i),jjen(i)
-                     dest(y,x,z,j) = buf2(position)
-                     position = position+1
-                  enddo
-! If clearly in the second half of ny
-               else if (jjst(i) .ge. nyhc+1) then
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-                  enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)
-              else
-                  do y=jjst(i),nyhc
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-   		  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-                  enddo
-               endif
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+               do y=jjst(i),min(jjen(i),nycph)
+                  dest(y,x,z,j) = buf2(position)
+                  position = position+1
+               enddo
+! Second set of Fourier modes (negative)
+               do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                  dest(y,x,z,j) = buf2(position)	
+                  position = position +1
+               enddo
+
                pos1 = pos1 + jjsz(i)
             enddo
             pos0 = pos0 + jjsz(i)*iisize
          enddo
-	 enddo
       enddo
-
+      enddo 
 
 ! Fill center in Y with zeros
       if(dny .ne. 0) then
         do j=1,nv
          do z=1,kjsize
             do x=1,iisize
-               do y=nyhc+1,ny_fft-nyhc
+               do y=nycph+1,ny_fft-nyhc
 	          dest(y,x,z,j) = 0.0
                enddo
             enddo
@@ -304,7 +291,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 	       endif
 
 	    else
@@ -320,7 +307,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 	       endif
 
 	    endif
@@ -437,30 +424,18 @@
             pos1 = pos0
             do x=1,iisize
                position = pos1
-! If clearly in the first half of ny
-               if(jjen(i) .le. nyhc) then
-                  do y=jjst(i),jjen(i)
-                     dest(y,x,z) = buf2(position)
-                     position = position+1
-                  enddo
-! If clearly in the second half of ny
-               else if (jjst(i) .ge. nyhc+1) then
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-                  enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)
-              else
-                  do y=jjst(i),nyhc
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-   		  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-                  enddo
-               endif
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+               do y=jjst(i),min(jjen(i),nycph)
+                  dest(y,x,z) = buf2(position)
+                  position = position+1
+               enddo
+! Second set of Fourier modes (negative)
+               do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                  dest(y,x,z) = buf2(position)	
+                  position = position +1
+               enddo
+
                pos1 = pos1 + jjsz(i)
             enddo
             pos0 = pos0 + jjsz(i)*iisize
@@ -471,7 +446,7 @@
       if(dny .ne. 0) then
          do z=1,kjsize
             do x=1,iisize
-               do y=nyhc+1,ny_fft-nyhc
+               do y=nycph+1,ny_fft-nyhc
 	          dest(y,x,z) = 0.0
                enddo
             enddo
