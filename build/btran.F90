@@ -235,17 +235,6 @@
           timers(12) = timers(12) + MPI_Wtime()
        endif
 
-<<<<<<< HEAD
-!	deallocate(buf)
-
-!      do j=1,nv
-!        print *,'Exiting btran: j=',j
-!        call print_buf_real(XgYZ(1,j),nx,jisize,kjsize)
-!      enddo
-
-!      call mpi_barrier(mpi_comm_world,ierr)
-=======
->>>>>>> a106994c941340996fde607d3a1e739ef1960ca6
 
       return
       end subroutine
@@ -620,11 +609,6 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
 #endif
 
-<<<<<<< HEAD
-!      call mpi_barrier(mpi_comm_world,ierr)
-
-=======
->>>>>>> a106994c941340996fde607d3a1e739ef1960ca6
       return
       end subroutine
 

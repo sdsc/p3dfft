@@ -117,8 +117,8 @@
 	nzh = nz/2
 	nyhc = nyc / 2
 	nzhc = nzc / 2
-	nyhcp = nyhc + 1
-	nzhcp = nzhc + 1
+	nycph = (nyc + 1)/2
+	nzcph = (nzc + 1)/2
 
       call MPI_COMM_SIZE (mpicomm,numtasks,ierr)
       call MPI_COMM_RANK (mpicomm,taskid,ierr)

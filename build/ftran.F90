@@ -255,13 +255,6 @@
 
       endif
 
-<<<<<<< HEAD
-!      deallocate(buf)
-
-!      call mpi_barrier(mpi_comm_world,ierr)
-
-=======
->>>>>>> a106994c941340996fde607d3a1e739ef1960ca6
      return
       end subroutine
 
@@ -719,15 +712,6 @@
 
       endif
 
-<<<<<<< HEAD
-!#ifdef DEBUG
-!      print *,taskid,': Waiting at barrier'
-!#endif
-!
-!      call mpi_barrier(mpi_comm_world,ierr)
-
-=======
->>>>>>> a106994c941340996fde607d3a1e739ef1960ca6
       return
       end subroutine
 
