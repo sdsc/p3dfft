@@ -166,9 +166,9 @@
 		call ztran_b_same_many(buf,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
 
 	        dny = ny - nyc
-	        call seg_copy_y_b_many(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
-		call seg_copy_y_b_many(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
-		call seg_zero_y_many(buf,nyhc+1,ny-nyhc,iisize,ny,nz,nv)
+	        call seg_copy_y_b_many(buf1,buf,1,nycph,0,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_copy_y_b_many(buf1,buf,ny-nycph+1,ny,-dny,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_zero_y_many(buf,nycph+1,ny-nycph,iisize,ny,nz,nv)
 
               endif
 	    endif
@@ -235,6 +235,14 @@
           timers(12) = timers(12) + MPI_Wtime()
        endif
 
+!	deallocate(buf)
+
+!      do j=1,nv
+!        print *,'Exiting btran: j=',j
+!        call print_buf_real(XgYZ(1,j),nx,jisize,kjsize)
+!      enddo
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -290,7 +298,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(1:1) .ne. 'n' .and. op(1:1) .ne. '0') then
 		print *,'Unknown transform type: ',op(1:1)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 	    return
@@ -397,7 +405,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 					nz, 2*iisize*jjsize)
 	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 		endif
             endif
             call bcomm1(XYZg,buf,timers(3),timers(9))
@@ -410,9 +418,9 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	      else
 
 	        dnz = nz - nzc
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
-		call seg_zero_z(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzcph+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf,iisize,jjsize,nzcph+1,nz-nzcph,nz)
 
 		 if(op(1:1) == 't' .or. op(1:1) == 'f') then
                    call init_b_c(buf, iisize*jjsize, 1, &
@@ -438,7 +446,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 					nz, 2*iisize*jjsize)
 	         else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 		 endif
 
                  call bcomm1(buf,buf,timers(3),timers(9))
@@ -481,7 +489,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 				    nz, 2*iisize*jjsize)
 	    else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		print *,taskid,'Unknown transform type: ',op(1:1)
-   	        call MPI_abort(mpicomm,ierr)
+   	        call MPI_abort(MPI_COMM_WORLD,ierr)
 	    endif
             call ar_copy(XYZg,buf,Nl)
 
@@ -489,9 +497,9 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
            if(iisize*jjsize .gt. 0) then
 
 	        dnz = nz - nzc
-		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
-		call seg_zero_z(buf1,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,nz-nzcph+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf1,iisize,jjsize,nzcph+1,nz-nzcph,nz)
 
     	         if(op(1:1) == 't' .or. op(1:1) == 'f') then
                     call init_b_c(buf1, iisize*jjsize, 1,  &
@@ -514,13 +522,13 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 				    nz, 2*iisize*jjsize)
                  else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		    print *,taskid,'Unknown transform type: ',op(1:1)
-	            call MPI_abort(mpicomm,ierr)
+	            call MPI_abort(MPI_COMM_WORLD,ierr)
  	         endif
 
  		 dny = ny - nyc
-		 call seg_copy_y(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz)
-		 call seg_copy_y(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz)
-		 call seg_zero_y(buf,nyhc+1,ny-nyhc,iisize,ny,nz)
+		 call seg_copy_y(buf1,buf,1,nycph,0,iisize,nyc,ny,nz)
+		 call seg_copy_y(buf1,buf,ny-nycph+1,ny,-dny,iisize,nyc,ny,nz)
+		 call seg_zero_y(buf,nycph+1,ny-nycph,iisize,ny,nz)
 	    endif
          endif
 #endif
@@ -608,6 +616,8 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
        endif
 
 #endif
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine

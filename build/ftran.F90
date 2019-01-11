@@ -236,7 +236,7 @@
 
 	    dny = ny - nyc
 	    call seg_copy_y_f_many(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
-	    call seg_copy_y_f_many(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,buf1,nycph+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
 
 	    call ztran_f_same_many(buf1,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
             call seg_copy_z_f_many(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz,dim_out,nv)
@@ -244,8 +244,8 @@
 	else
 
 	    dny = ny - nyc
-	    call seg_copy_y_f_many(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
-	    call seg_copy_y_f_many(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,XYZg,1,nycph,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,XYZg,nycph+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
 
 	    call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
         endif
@@ -254,6 +254,10 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+!      deallocate(buf)
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
      return
       end subroutine
@@ -581,11 +585,11 @@
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
-	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
+	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzcph+1,nzc,dnz,iisize,jjsize,nz)
 
 	endif
       else
@@ -621,7 +625,7 @@
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(mpicomm,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
         endif
@@ -642,8 +646,8 @@
 	 if(dnz .gt. 0) then
 
 	    dny = ny - nyc
-	    call seg_copy_y(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz)
-	    call seg_copy_y(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,buf1,1,nycph,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,buf1,nycph+1,nyc,dny,iisize,ny,nyc,nz)
 
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
@@ -667,17 +671,17 @@
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
-	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,nzcph+1,nzc,dnz,iisize,jjsize,nz)
 
 	else
 
 	    dny = ny - nyc
-	    call seg_copy_y(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz)
-	    call seg_copy_y(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,XYZg,1,nycph,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,XYZg,nycph+1,nyc,dny,iisize,ny,nyc,nz)
 
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
@@ -701,7 +705,7 @@
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(mpicomm,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 
@@ -711,6 +715,12 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+!#ifdef DEBUG
+!      print *,taskid,': Waiting at barrier'
+!#endif
+!
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -810,7 +820,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 	    return

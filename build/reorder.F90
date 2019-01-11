@@ -68,11 +68,11 @@
 
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
-            do y=1,nyhc,NBy2
-               y2 = min(y+NBy2-1,nyhc)
+            do y=1,nycph,NBy2
+               y2 = min(y+NBy2-1,nycph)
 
-   	       do z=1,nzhc,NBz
-	          z2 = min(z+NBz-1,nzhc)
+   	       do z=1,nzcph,NBz
+	          z2 = min(z+NBz-1,nzcph)
                     do iy=y,y2
                         do iz=z,z2
 			   B(iy,x,iz) = A(iz,iy,x)
@@ -80,7 +80,7 @@
                      enddo
                 enddo
 
-   	       do z=nzhc+dnz+1,nz_fft,NBz
+   	       do z=nzcph+dnz+1,nz_fft,NBz
 	          z2 = min(z+NBz-1,nz_fft)
                     do iy=y,y2
                         do iz=z,z2
@@ -91,11 +91,11 @@
 
               enddo
 
-            do y=nyhc+1,nyc,NBy2
+            do y=nycph+1,nyc,NBy2
                y2 = min(y+NBy2-1,nyc)
 
-   	       do z=1,nzhc,NBz
-	          z2 = min(z+NBz-1,nzhc)
+   	       do z=1,nzcph,NBz
+	          z2 = min(z+NBz-1,nzcph)
                     do iy=y,y2
                         do iz=z,z2
 			   B(iy+dny,x,iz) = A(iz,iy,x)
@@ -103,7 +103,7 @@
                      enddo
                 enddo
 
-   	       do z=nzhc+dnz+1,nz_fft,NBz
+   	       do z=nzcph+dnz+1,nz_fft,NBz
 	          z2 = min(z+NBz-1,nz_fft)
                     do iy=y,y2
                         do iz=z,z2
@@ -116,7 +116,7 @@
 
           enddo
 
-	  do z=nzhc+1,nzhc+dnz
+	  do z=nzcph+1,nzcph+dnz
 	     do x=1,iisize
                 do y=1,ny_fft
 	 	   B(y,x,z) = 0
@@ -128,13 +128,13 @@
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
            do x=1,iisize
 	      do y=1,nyc
-	         do z=1,nzhc
+	         do z=1,nzcph
 		    C(z,y) = A(z,y,x)
 		 enddo
-	         do z=nzhc+1,nzhc+dnz
+	         do z=nzcph+1,nzcph+dnz
 		    C(z,y) = 0.
 		 enddo
-	         do z=nzhc+dnz+1,nz_fft
+	         do z=nzcph+dnz+1,nz_fft
 		    C(z,y) = A(z-dnz,y,x)
 		 enddo
 	      enddo
@@ -150,11 +150,11 @@
 				  C, 2,2*nz_fft,nz_fft,nyc)
               else
 	         print *,taskid,'Unknown transform type: ',op(1:1)
-	         call MPI_abort(mpicomm,ierr)
+	         call MPI_abort(MPI_COMM_WORLD,ierr)
 	      endif
 
-              do y=1,nyhc,NBy2
-                 y2 = min(y+NBy2-1,nyhc)
+              do y=1,nycph,NBy2
+                 y2 = min(y+NBy2-1,nycph)
      	         do z=1,nz_fft,NBz
 	            z2 = min(z+NBz-1,nz_fft)
                        do iy=y,y2
@@ -164,7 +164,7 @@
                        enddo
                   enddo
               enddo
-              do y=nyhc+1,nyc,NBy2
+              do y=nycph+1,nyc,NBy2
                  y2 = min(y+NBy2-1,nyc)
      	         do z=1,nz_fft,NBz
 	            z2 = min(z+NBz-1,nz_fft)
@@ -180,7 +180,7 @@
 
      do z=1,nz_fft
         do x=1,iisize
-           do y=nyhc+1,nyhc+dny
+           do y=nycph+1,nycph+dny
    	      B(y,x,z) = 0.
 	   enddo
         enddo
@@ -319,11 +319,11 @@
 
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
-            do z=1,nzhc,NBz
-	       z2 = min(z+NBz-1,nzhc)
+            do z=1,nzcph,NBz
+	       z2 = min(z+NBz-1,nzcph)
 
-               do y=1,nyhc,NBy2
-                  y2 = min(y+NBy2-1,nyhc)
+               do y=1,nycph,NBy2
+                  y2 = min(y+NBy2-1,nycph)
                   do iz=z,z2
                      do iy=y,y2
   		        B(iz,iy,x) = A(iy,x,iz)
@@ -331,7 +331,7 @@
                   enddo
                enddo
 
-               do y=nyhc+1,nyc,NBy2
+               do y=nycph+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
@@ -340,18 +340,18 @@
                   enddo
                enddo
             enddo
-            do z=nzhc+1,nzc,NBz
+            do z=nzcph+1,nzc,NBz
 	       z2 = min(z+NBz-1,nz_fft)
 
-               do y=1,nyhc,NBy2
-                  y2 = min(y+NBy2-1,nyhc)
+               do y=1,nycph,NBy2
+                  y2 = min(y+NBy2-1,nycph)
                   do iz=z,z2
                      do iy=y,y2
 		        B(iz,iy,x) = A(iy,x,iz+dnz)
                      enddo
                   enddo
                enddo
-               do y=nyhc+1,nyc,NBy2
+               do y=nycph+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
@@ -369,15 +369,15 @@
               do z=1,nz_fft,NBz
 	         z2 = min(z+NBz-1,nz_fft)
 
-                 do y=1,nyhc,NBy2
-                    y2 = min(y+NBy2-1,nyhc)
+                 do y=1,nycph,NBy2
+                    y2 = min(y+NBy2-1,nycph)
                     do iz=z,z2
                         do iy=y,y2
 			   C(iz,iy) = A(iy,x,iz)
                         enddo
                      enddo
                   enddo
-                 do y=nyhc+1,nyc,NBy2
+                 do y=nycph+1,nyc,NBy2
                     y2 = min(y+NBy2-1,nyc)
                     do iz=z,z2
                         do iy=y,y2
@@ -400,13 +400,13 @@
 				  C, 2,2*nz_fft,nz_fft,nyc)
                  else
 	           print *,taskid,'Unknown transform type: ',op(3:3)
-	           call MPI_abort(mpicomm,ierr)
+	           call MPI_abort(MPI_COMM_WORLD,ierr)
 	         endif
 	 	   do y=1,nyc
-		      do z=1,nzhc
+		      do z=1,nzcph
 			B(z,y,x) = C(z,y)
 		      enddo
-		      do z=nzhc+1,nzc
+		      do z=nzcph+1,nzc
 			B(z,y,x) = C(z+dnz,y)
 		      enddo
 		   enddo
@@ -422,7 +422,7 @@
 				  B(1,1,x), 2,2*nz_fft,nz_fft,nyc)
                  else
 	           print *,taskid,'Unknown transform type: ',op(3:3)
-	           call MPI_abort(mpicomm,ierr)
+	           call MPI_abort(MPI_COMM_WORLD,ierr)
 	         endif
 	      endif
          enddo
