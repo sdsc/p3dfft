@@ -93,8 +93,8 @@ extern void Cp3dfft_btran_c2r_many(double *A,int dim_in,double *B, int dim_out,i
 #else
 extern void Cp3dfft_ftran_r2c(float *A,float *B, unsigned char *op);
 extern void Cp3dfft_btran_c2r(float *A,float *B, unsigned char *op);
-extern void Cp3dfft_ftran_r2c_many(float *A,float *B, unsigned char *op);
-extern void Cp3dfft_btran_c2r_many(float *A,float *B, unsigned char *op);
+  extern void Cp3dfft_ftran_r2c_many(float *A,int dim_in,float *B, int dim_out,int nv,unsigned char *op);
+  extern void Cp3dfft_btran_c2r_many(float *A,int dim_in,float *B, int dim_out,int nv, unsigned char *op);
 #endif
 
 extern void Cget_timers(double *timers);
