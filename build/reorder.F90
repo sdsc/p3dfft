@@ -1,28 +1,83 @@
 ! This file is part of P3DFFT library
-!
-!    P3DFFT
-!
-!    Software Framework for Scalable Fourier Transforms in Three Dimensions
-!
-!    Copyright (C) 2006-2014 Dmitry Pekurovsky
-!    Copyright (C) 2006-2014 University of California
-!    Copyright (C) 2010-2011 Jens Henrik Goebbert
-!
-!    This program is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
-!
-!    This program is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
-!
-!    You should have received a copy of the GNU General Public License
-!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!
-!----------------------------------------------------------------------------
+
+! Title: P3DFFT library
+
+! Authors: Dmitry Pekurovsky
+
+! Copyright (c) 2006-2019 
+
+! The Regents of the University of California.
+
+! All Rights Reserved.                        
+
+ 
+
+!    Permission to use, copy, modify and  distribute  any part
+
+!    of this software for  educational,  research  and  non-profit
+
+!    purposes, by individuals or non-profit organizations,
+
+!    without fee,  and  without a written  agreement is
+
+!    hereby granted,  provided  that the  above  copyright notice,
+
+!    this paragraph  and the following  three  paragraphs appear in
+
+!    all copies.       
+
+ 
+
+!    For-profit organizations desiring to use this software and others
+
+!    wishing to incorporate this  software into commercial
+
+!    products or use it for  commercial  purposes should contact the:    
+
+!          Office of Innovation & Commercialization 
+
+!          University of California San Diego
+
+!          9500 Gilman Drive,  La Jolla,  California, 92093-0910        
+
+!          Phone: (858) 534-5815
+
+!          E-mail: innovation@ucsd.edu
+
+ 
+
+!    IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE
+
+!    TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR    
+
+!    CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT
+
+!    OF THE USE OF THIS SOFTWARE, EVEN IF THE UNIVERSITY OF
+
+!    CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+
+!    DAMAGE.
+
+ 
+
+!    THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
+
+!    THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE        
+
+!    MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+
+!    THE UNIVERSITY OF CALIFORNIA MAKES NO REPRESENTATIONS AND    
+
+!    EXTENDS NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR
+
+!    IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+
+!    OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR
+
+!    THAT THE USE OF THE MATERIAL WILL NOT INFRINGE ANY PATENT,        
+
+!    TRADEMARK OR OTHER RIGHTS.
+!----------------------------------------------------------------------
 
 ! This file contains routines for transposing data locally in memory
 ! They are used then either iproc=1 or jproc=1 (or both)
@@ -68,11 +123,11 @@
 
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
-            do y=1,nyhc,NBy2
-               y2 = min(y+NBy2-1,nyhc)
+            do y=1,nycph,NBy2
+               y2 = min(y+NBy2-1,nycph)
 
-   	       do z=1,nzhc,NBz
-	          z2 = min(z+NBz-1,nzhc)
+   	       do z=1,nzcph,NBz
+	          z2 = min(z+NBz-1,nzcph)
                     do iy=y,y2
                         do iz=z,z2
 			   B(iy,x,iz) = A(iz,iy,x)
@@ -80,7 +135,7 @@
                      enddo
                 enddo
 
-   	       do z=nzhc+dnz+1,nz_fft,NBz
+   	       do z=nzcph+dnz+1,nz_fft,NBz
 	          z2 = min(z+NBz-1,nz_fft)
                     do iy=y,y2
                         do iz=z,z2
@@ -91,11 +146,11 @@
 
               enddo
 
-            do y=nyhc+1,nyc,NBy2
+            do y=nycph+1,nyc,NBy2
                y2 = min(y+NBy2-1,nyc)
 
-   	       do z=1,nzhc,NBz
-	          z2 = min(z+NBz-1,nzhc)
+   	       do z=1,nzcph,NBz
+	          z2 = min(z+NBz-1,nzcph)
                     do iy=y,y2
                         do iz=z,z2
 			   B(iy+dny,x,iz) = A(iz,iy,x)
@@ -103,7 +158,7 @@
                      enddo
                 enddo
 
-   	       do z=nzhc+dnz+1,nz_fft,NBz
+   	       do z=nzcph+dnz+1,nz_fft,NBz
 	          z2 = min(z+NBz-1,nz_fft)
                     do iy=y,y2
                         do iz=z,z2
@@ -116,7 +171,7 @@
 
           enddo
 
-	  do z=nzhc+1,nzhc+dnz
+	  do z=nzcph+1,nzcph+dnz
 	     do x=1,iisize
                 do y=1,ny_fft
 	 	   B(y,x,z) = 0
@@ -128,13 +183,13 @@
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
            do x=1,iisize
 	      do y=1,nyc
-	         do z=1,nzhc
+	         do z=1,nzcph
 		    C(z,y) = A(z,y,x)
 		 enddo
-	         do z=nzhc+1,nzhc+dnz
+	         do z=nzcph+1,nzcph+dnz
 		    C(z,y) = 0.
 		 enddo
-	         do z=nzhc+dnz+1,nz_fft
+	         do z=nzcph+dnz+1,nz_fft
 		    C(z,y) = A(z-dnz,y,x)
 		 enddo
 	      enddo
@@ -150,11 +205,11 @@
 				  C, 2,2*nz_fft,nz_fft,nyc)
               else
 	         print *,taskid,'Unknown transform type: ',op(1:1)
-	         call MPI_abort(mpicomm,ierr)
+	         call MPI_abort(MPI_COMM_WORLD,ierr)
 	      endif
 
-              do y=1,nyhc,NBy2
-                 y2 = min(y+NBy2-1,nyhc)
+              do y=1,nycph,NBy2
+                 y2 = min(y+NBy2-1,nycph)
      	         do z=1,nz_fft,NBz
 	            z2 = min(z+NBz-1,nz_fft)
                        do iy=y,y2
@@ -164,7 +219,7 @@
                        enddo
                   enddo
               enddo
-              do y=nyhc+1,nyc,NBy2
+              do y=nycph+1,nyc,NBy2
                  y2 = min(y+NBy2-1,nyc)
      	         do z=1,nz_fft,NBz
 	            z2 = min(z+NBz-1,nz_fft)
@@ -180,7 +235,7 @@
 
      do z=1,nz_fft
         do x=1,iisize
-           do y=nyhc+1,nyhc+dny
+           do y=nycph+1,nycph+dny
    	      B(y,x,z) = 0.
 	   enddo
         enddo
@@ -319,11 +374,11 @@
 
 !$OMP parallel do private(x,y,z,y2,z2,iy,iz,C)
          do x=1,iisize
-            do z=1,nzhc,NBz
-	       z2 = min(z+NBz-1,nzhc)
+            do z=1,nzcph,NBz
+	       z2 = min(z+NBz-1,nzcph)
 
-               do y=1,nyhc,NBy2
-                  y2 = min(y+NBy2-1,nyhc)
+               do y=1,nycph,NBy2
+                  y2 = min(y+NBy2-1,nycph)
                   do iz=z,z2
                      do iy=y,y2
   		        B(iz,iy,x) = A(iy,x,iz)
@@ -331,7 +386,7 @@
                   enddo
                enddo
 
-               do y=nyhc+1,nyc,NBy2
+               do y=nycph+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
@@ -340,18 +395,18 @@
                   enddo
                enddo
             enddo
-            do z=nzhc+1,nzc,NBz
+            do z=nzcph+1,nzc,NBz
 	       z2 = min(z+NBz-1,nz_fft)
 
-               do y=1,nyhc,NBy2
-                  y2 = min(y+NBy2-1,nyhc)
+               do y=1,nycph,NBy2
+                  y2 = min(y+NBy2-1,nycph)
                   do iz=z,z2
                      do iy=y,y2
 		        B(iz,iy,x) = A(iy,x,iz+dnz)
                      enddo
                   enddo
                enddo
-               do y=nyhc+1,nyc,NBy2
+               do y=nycph+1,nyc,NBy2
                   y2 = min(y+NBy2-1,ny_fft)
                   do iz=z,z2
                      do iy=y,y2
@@ -369,15 +424,15 @@
               do z=1,nz_fft,NBz
 	         z2 = min(z+NBz-1,nz_fft)
 
-                 do y=1,nyhc,NBy2
-                    y2 = min(y+NBy2-1,nyhc)
+                 do y=1,nycph,NBy2
+                    y2 = min(y+NBy2-1,nycph)
                     do iz=z,z2
                         do iy=y,y2
 			   C(iz,iy) = A(iy,x,iz)
                         enddo
                      enddo
                   enddo
-                 do y=nyhc+1,nyc,NBy2
+                 do y=nycph+1,nyc,NBy2
                     y2 = min(y+NBy2-1,nyc)
                     do iz=z,z2
                         do iy=y,y2
@@ -400,13 +455,13 @@
 				  C, 2,2*nz_fft,nz_fft,nyc)
                  else
 	           print *,taskid,'Unknown transform type: ',op(3:3)
-	           call MPI_abort(mpicomm,ierr)
+	           call MPI_abort(MPI_COMM_WORLD,ierr)
 	         endif
 	 	   do y=1,nyc
-		      do z=1,nzhc
+		      do z=1,nzcph
 			B(z,y,x) = C(z,y)
 		      enddo
-		      do z=nzhc+1,nzc
+		      do z=nzcph+1,nzc
 			B(z,y,x) = C(z+dnz,y)
 		      enddo
 		   enddo
@@ -422,7 +477,7 @@
 				  B(1,1,x), 2,2*nz_fft,nz_fft,nyc)
                  else
 	           print *,taskid,'Unknown transform type: ',op(3:3)
-	           call MPI_abort(mpicomm,ierr)
+	           call MPI_abort(MPI_COMM_WORLD,ierr)
 	         endif
 	      endif
          enddo

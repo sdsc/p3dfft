@@ -1,28 +1,82 @@
 ! This file is part of P3DFFT library
-!
-!    P3DFFT
-!
-!    Software Framework for Scalable Fourier Transforms in Three Dimensions
-!
-!    Copyright (C) 2006-2014 Dmitry Pekurovsky
-!    Copyright (C) 2006-2014 University of California
-!    Copyright (C) 2010-2011 Jens Henrik Goebbert
-!
-!    This program is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
-!
-!    This program is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
-!
-!    You should have received a copy of the GNU General Public License
-!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!
-!----------------------------------------------------------------------------
+
+! Title: P3DFFT library
+
+! Authors: Dmitry Pekurovsky
+
+! Copyright (c) 2006-2019 
+
+! The Regents of the University of California.
+
+! All Rights Reserved.                        
+
+ 
+
+!    Permission to use, copy, modify and  distribute  any part
+
+!    of this software for  educational,  research  and  non-profit
+
+!    purposes, by individuals or non-profit organizations,
+
+!    without fee,  and  without a written  agreement is
+
+!    hereby granted,  provided  that the  above  copyright notice,
+
+!    this paragraph  and the following  three  paragraphs appear in
+
+!    all copies.       
+
+ 
+
+!    For-profit organizations desiring to use this software and others
+
+!    wishing to incorporate this  software into commercial
+
+!    products or use it for  commercial  purposes should contact the:    
+
+!          Office of Innovation & Commercialization 
+
+!          University of California San Diego
+
+!          9500 Gilman Drive,  La Jolla,  California, 92093-0910        
+
+!          Phone: (858) 534-5815
+
+!          E-mail: innovation@ucsd.edu
+
+ 
+
+!    IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE
+
+!    TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR    
+
+!    CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT
+
+!    OF THE USE OF THIS SOFTWARE, EVEN IF THE UNIVERSITY OF
+
+!    CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+
+!    DAMAGE.
+
+ 
+
+!    THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
+
+!    THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE        
+
+!    MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+
+!    THE UNIVERSITY OF CALIFORNIA MAKES NO REPRESENTATIONS AND    
+
+!    EXTENDS NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR
+
+!    IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+
+!    OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR
+
+!    THAT THE USE OF THE MATERIAL WILL NOT INFRINGE ANY PATENT,        
+
+!    TRADEMARK OR OTHER RIGHTS.
 
 
 ! This is a C wrapper routine
@@ -236,7 +290,7 @@
 
 	    dny = ny - nyc
 	    call seg_copy_y_f_many(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
-	    call seg_copy_y_f_many(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,buf1,nycph+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
 
 	    call ztran_f_same_many(buf1,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
             call seg_copy_z_f_many(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz,dim_out,nv)
@@ -244,8 +298,8 @@
 	else
 
 	    dny = ny - nyc
-	    call seg_copy_y_f_many(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
-	    call seg_copy_y_f_many(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,XYZg,1,nycph,0,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
+	    call seg_copy_y_f_many(buf,XYZg,nycph+1,nyc,dny,iisize,ny,nyc,nz,iisize*nyc*nz,nv)
 
 	    call ztran_f_same_many(XYZg,iisize*jjsize,1,nz,iisize*jjsize,dim_out,nv,op)
         endif
@@ -254,6 +308,10 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+!      deallocate(buf)
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
      return
       end subroutine
@@ -570,22 +628,22 @@
                call init_ctrans_r2(buf,2*iisize*jjsize, 1, buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_ctrans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_ctrans_r2_complex_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 's') then
                call init_strans_r2(buf,2*iisize*jjsize, 1, buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_strans_r2_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_strans_r2_complex_same(buf,2*iisize*jjsize, 1,buf,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
-	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
+	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,nzcph+1,nzc,dnz,iisize,jjsize,nz)
 
 	endif
       else
@@ -610,18 +668,18 @@
                call init_ctrans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_ctrans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_ctrans_r2_complex_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 's') then
                call init_strans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_strans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_strans_r2_complex_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(mpicomm,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
         endif
@@ -642,8 +700,8 @@
 	 if(dnz .gt. 0) then
 
 	    dny = ny - nyc
-	    call seg_copy_y(buf,buf1,1,nyhc,0,iisize,ny,nyc,nz)
-	    call seg_copy_y(buf,buf1,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,buf1,1,nycph,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,buf1,nycph+1,nyc,dny,iisize,ny,nyc,nz)
 
 	    if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(buf1,iisize*jjsize, 1,buf1,iisize*jjsize, 1,nz,iisize*jjsize)
@@ -656,28 +714,28 @@
                call init_ctrans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_ctrans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_ctrans_r2_complex_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
 	    else if(op(3:3) == 's') then
                call init_strans_r2(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_strans_r2_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_strans_r2_complex_same(buf1,2*iisize*jjsize, 1,buf1,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
-	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,nzhc+1,nzc,dnz,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,nzcph+1,nzc,dnz,iisize,jjsize,nz)
 
 	else
 
 	    dny = ny - nyc
-	    call seg_copy_y(buf,XYZg,1,nyhc,0,iisize,ny,nyc,nz)
-	    call seg_copy_y(buf,XYZg,nyhc+1,nyc,dny,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,XYZg,1,nycph,0,iisize,ny,nyc,nz)
+	    call seg_copy_y(buf,XYZg,nycph+1,nyc,dny,iisize,ny,nyc,nz)
 
             if(op(3:3) == 't' .or. op(3:3) == 'f') then
                call init_f_c(XYZg,iisize*jjsize, 1, XYZg,iisize*jjsize, 1,nz,iisize*jjsize)
@@ -690,18 +748,18 @@
                call init_ctrans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_ctrans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_ctrans_r2_complex_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
 
             else if(op(3:3) == 's') then
                call init_strans_r2(XYZg,2*iisize*jjsize, 1, XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
 
               timers(8) = timers(8) - MPI_Wtime()
-              call exec_strans_r2_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
+              call exec_strans_r2_complex_same(XYZg,2*iisize*jjsize, 1,XYZg,2*iisize*jjsize, 1,nz,2*iisize*jjsize)
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(mpicomm,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 
@@ -711,6 +769,12 @@
         timers(8) = timers(8) + MPI_Wtime()
 
       endif
+
+!#ifdef DEBUG
+!      print *,taskid,': Waiting at barrier'
+!#endif
+!
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -796,7 +860,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_ctrans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_ctrans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
 	      enddo
               timers(8) = timers(8) + MPI_Wtime()
 
@@ -805,12 +869,12 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_strans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_strans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
               enddo
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 	    return

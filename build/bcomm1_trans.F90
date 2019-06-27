@@ -1,25 +1,82 @@
 ! This file is part of P3DFFT library
-!
-!    P3DFFT
-!
-!    Software Framework for Scalable Fourier Transforms in Three Dimensions
-!
-!    Copyright (C) 2006-2010 Dmitry Pekurovsky
-!    Copyright (C) 2006-2010 University of California
-!    Copyright (C) 2010-2011 Jens Henrik Goebbert
-!
-!    This program is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
-!
-!    This program is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
-!
-!    You should have received a copy of the GNU General Public License
-!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+! Title: P3DFFT library
+
+! Authors: Dmitry Pekurovsky
+
+! Copyright (c) 2006-2019 
+
+! The Regents of the University of California.
+
+! All Rights Reserved.                        
+
+ 
+
+!    Permission to use, copy, modify and  distribute  any part
+
+!    of this software for  educational,  research  and  non-profit
+
+!    purposes, by individuals or non-profit organizations,
+
+!    without fee,  and  without a written  agreement is
+
+!    hereby granted,  provided  that the  above  copyright notice,
+
+!    this paragraph  and the following  three  paragraphs appear in
+
+!    all copies.       
+
+ 
+
+!    For-profit organizations desiring to use this software and others
+
+!    wishing to incorporate this  software into commercial
+
+!    products or use it for  commercial  purposes should contact the:    
+
+!          Office of Innovation & Commercialization 
+
+!          University of California San Diego
+
+!          9500 Gilman Drive,  La Jolla,  California, 92093-0910        
+
+!          Phone: (858) 534-5815
+
+!          E-mail: innovation@ucsd.edu
+
+ 
+
+!    IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE
+
+!    TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR    
+
+!    CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT
+
+!    OF THE USE OF THIS SOFTWARE, EVEN IF THE UNIVERSITY OF
+
+!    CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+
+!    DAMAGE.
+
+ 
+
+!    THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
+
+!    THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE        
+
+!    MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+
+!    THE UNIVERSITY OF CALIFORNIA MAKES NO REPRESENTATIONS AND    
+
+!    EXTENDS NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR
+
+!    IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+
+!    OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR
+
+!    THAT THE USE OF THE MATERIAL WILL NOT INFRINGE ANY PATENT,        
+
+!    TRADEMARK OR OTHER RIGHTS.
 !
 !
 !----------------------------------------------------------------------------
@@ -112,44 +169,31 @@
             pos1 = pos0
             do x=1,iisize
                position = pos1
-! If clearly in the first half of ny
-               if(jjen(i) .le. nyhc) then
-                  do y=jjst(i),jjen(i)
-                     dest(y,x,z,j) = buf2(position)
-                     position = position+1
-                  enddo
-! If clearly in the second half of ny
-               else if (jjst(i) .ge. nyhc+1) then
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-                  enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)
-              else
-                  do y=jjst(i),nyhc
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-   		  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     dest(y,x,z,j) = buf2(position)
-                     position = position +1
-                  enddo
-               endif
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+               do y=jjst(i),min(jjen(i),nycph)
+                  dest(y,x,z,j) = buf2(position)
+                  position = position+1
+               enddo
+! Second set of Fourier modes (negative)
+               do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                  dest(y,x,z,j) = buf2(position)	
+                  position = position +1
+               enddo
+
                pos1 = pos1 + jjsz(i)
             enddo
             pos0 = pos0 + jjsz(i)*iisize
          enddo
-	 enddo
       enddo
-
+      enddo 
 
 ! Fill center in Y with zeros
       if(dny .ne. 0) then
         do j=1,nv
          do z=1,kjsize
             do x=1,iisize
-               do y=nyhc+1,ny_fft-nyhc
+               do y=nycph+1,ny_fft-nyhc
 	          dest(y,x,z,j) = 0.0
                enddo
             enddo
@@ -304,7 +348,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 	       endif
 
 	    else
@@ -320,7 +364,7 @@
 				  buf3, 2,2*nz_fft,nz_fft,jjsize)
 	       else
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 	       endif
 
 	    endif
@@ -437,30 +481,18 @@
             pos1 = pos0
             do x=1,iisize
                position = pos1
-! If clearly in the first half of ny
-               if(jjen(i) .le. nyhc) then
-                  do y=jjst(i),jjen(i)
-                     dest(y,x,z) = buf2(position)
-                     position = position+1
-                  enddo
-! If clearly in the second half of ny
-               else if (jjst(i) .ge. nyhc+1) then
-                  do y=jjst(i)+dny,jjen(i)+dny
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-                  enddo
 
-! If spanning the first and second half of nz (i.e. jproc is odd)
-              else
-                  do y=jjst(i),nyhc
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-   		  enddo
-                  do y=ny_fft-nyhc+1,jjen(i)+dny
-                     dest(y,x,z) = buf2(position)
-                     position = position +1
-                  enddo
-               endif
+! First set of significant Fourier modes (zero and positive, total a little more than half)
+               do y=jjst(i),min(jjen(i),nycph)
+                  dest(y,x,z) = buf2(position)
+                  position = position+1
+               enddo
+! Second set of Fourier modes (negative)
+               do y=max(jjst(i)+dny,ny_fft-nyhc+1),jjen(i)+dny
+                  dest(y,x,z) = buf2(position)	
+                  position = position +1
+               enddo
+
                pos1 = pos1 + jjsz(i)
             enddo
             pos0 = pos0 + jjsz(i)*iisize
@@ -471,7 +503,7 @@
       if(dny .ne. 0) then
          do z=1,kjsize
             do x=1,iisize
-               do y=nyhc+1,ny_fft-nyhc
+               do y=nycph+1,ny_fft-nyhc
 	          dest(y,x,z) = 0.0
                enddo
             enddo

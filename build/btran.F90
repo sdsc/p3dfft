@@ -1,27 +1,83 @@
 ! This file is part of P3DFFT library
-!
-!    P3DFFT
-!
-!    Software Framework for Scalable Fourier Transforms in Three Dimensions
-!
-!    Copyright (C) 2006-2014 Dmitry Pekurovsky
-!    Copyright (C) 2006-2014 University of California
-!    Copyright (C) 2010-2011 Jens Henrik Goebbert
-!
-!    This program is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
-!
-!    This program is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
-!
-!    You should have received a copy of the GNU General Public License
-!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!
+
+! Title: P3DFFT library
+
+! Authors: Dmitry Pekurovsky
+
+! Copyright (c) 2006-2019 
+
+! The Regents of the University of California.
+
+! All Rights Reserved.                        
+
+ 
+
+!    Permission to use, copy, modify and  distribute  any part
+
+!    of this software for  educational,  research  and  non-profit
+
+!    purposes, by individuals or non-profit organizations,
+
+!    without fee,  and  without a written  agreement is
+
+!    hereby granted,  provided  that the  above  copyright notice,
+
+!    this paragraph  and the following  three  paragraphs appear in
+
+!    all copies.       
+
+ 
+
+!    For-profit organizations desiring to use this software and others
+
+!    wishing to incorporate this  software into commercial
+
+!    products or use it for  commercial  purposes should contact the:    
+
+!          Office of Innovation & Commercialization 
+
+!          University of California San Diego
+
+!          9500 Gilman Drive,  La Jolla,  California, 92093-0910        
+
+!          Phone: (858) 534-5815
+
+!          E-mail: innovation@ucsd.edu
+
+ 
+
+!    IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE
+
+!    TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR    
+
+!    CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT
+
+!    OF THE USE OF THIS SOFTWARE, EVEN IF THE UNIVERSITY OF
+
+!    CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+
+!    DAMAGE.
+
+ 
+
+!    THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
+
+!    THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE        
+
+!    MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+
+!    THE UNIVERSITY OF CALIFORNIA MAKES NO REPRESENTATIONS AND    
+
+!    EXTENDS NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR
+
+!    IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+
+!    OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR
+
+!    THAT THE USE OF THE MATERIAL WILL NOT INFRINGE ANY PATENT,        
+
+!    TRADEMARK OR OTHER RIGHTS.
+
 
 ! this is a C wrapper routine
 !========================================================
@@ -166,9 +222,9 @@
 		call ztran_b_same_many(buf,iisize*jjsize,1,nz,iisize*jjsize,iisize*jjsize*nz,nv,op)
 
 	        dny = ny - nyc
-	        call seg_copy_y_b_many(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
-		call seg_copy_y_b_many(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
-		call seg_zero_y_many(buf,nyhc+1,ny-nyhc,iisize,ny,nz,nv)
+	        call seg_copy_y_b_many(buf1,buf,1,nycph,0,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_copy_y_b_many(buf1,buf,ny-nycph+1,ny,-dny,iisize,nyc,ny,nz,iisize*nyc*nz,nv)
+		call seg_zero_y_many(buf,nycph+1,ny-nycph,iisize,ny,nz,nv)
 
               endif
 	    endif
@@ -235,6 +291,14 @@
           timers(12) = timers(12) + MPI_Wtime()
        endif
 
+!	deallocate(buf)
+
+!      do j=1,nv
+!        print *,'Exiting btran: j=',j
+!        call print_buf_real(XgYZ(1,j),nx,jisize,kjsize)
+!      enddo
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
@@ -276,7 +340,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_ctrans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_ctrans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
 	      enddo
               timers(8) = timers(8) + MPI_Wtime()
 
@@ -285,12 +349,12 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 
               timers(8) = timers(8) - MPI_Wtime()
 	      do j=1,nv
-                 call exec_strans_r2_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
+                 call exec_strans_r2_complex_same(A(1,j),2*str1,str2,A(1,j),2*str1,str2,n,2*m)
               enddo
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(1:1) .ne. 'n' .and. op(1:1) .ne. '0') then
 		print *,'Unknown transform type: ',op(1:1)
-		call MPI_Abort(mpicomm,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,ierr)
             endif
 
 	    return
@@ -385,19 +449,19 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	           call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_ctrans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
  		else if(op(1:1) == 's') then
 	           call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+                   call exec_strans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  					XYZg, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 		endif
             endif
             call bcomm1(XYZg,buf,timers(3),timers(9))
@@ -410,9 +474,9 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	      else
 
 	        dnz = nz - nzc
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
-		call seg_zero_z(buf,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf,1,iisize,1,jjsize,nz-nzcph+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf,iisize,jjsize,nzcph+1,nz-nzcph,nz)
 
 		 if(op(1:1) == 't' .or. op(1:1) == 'f') then
                    call init_b_c(buf, iisize*jjsize, 1, &
@@ -426,19 +490,19 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	           call init_ctrans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_ctrans_r2_same (buf, 2*iisize*jjsize, 1, &
+                   call exec_ctrans_r2_complex_same (buf, 2*iisize*jjsize, 1, &
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 		 else if(op(1:1) == 's') then
 	           call init_strans_r2 (buf, 2*iisize*jjsize, 1, &
 					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
-                   call exec_strans_r2_same (buf, 2*iisize*jjsize, 1, &
+                   call exec_strans_r2_complex_same (buf, 2*iisize*jjsize, 1, &
  					buf, 2*iisize*jjsize, 1, &
 					nz, 2*iisize*jjsize)
 	         else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(mpicomm,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,ierr)
 		 endif
 
                  call bcomm1(buf,buf,timers(3),timers(9))
@@ -469,19 +533,19 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	       call init_ctrans_r2 (XYZg, 2*iisize*jjsize, 1, &
 			            XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-               call exec_ctrans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+               call exec_ctrans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
  				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	    else if(op(1:1) == 's') then
 	       call init_strans_r2 (XYZg, 2*iisize*jjsize, 1, &
 		    	            XYZg, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-               call exec_strans_r2_same (XYZg, 2*iisize*jjsize, 1, &
+               call exec_strans_r2_complex_same (XYZg, 2*iisize*jjsize, 1, &
 				    XYZg, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
 	    else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		print *,taskid,'Unknown transform type: ',op(1:1)
-   	        call MPI_abort(mpicomm,ierr)
+   	        call MPI_abort(MPI_COMM_WORLD,ierr)
 	    endif
             call ar_copy(XYZg,buf,Nl)
 
@@ -489,9 +553,9 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
            if(iisize*jjsize .gt. 0) then
 
 	        dnz = nz - nzc
-		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,1,nzhc,0,iisize,jjsize,nz)
-		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,nz-nzhc+1,nz,-dnz,iisize,jjsize,nz)
-		call seg_zero_z(buf1,iisize,jjsize,nzhc+1,nz-nzhc,nz)
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
+		call seg_copy_z(XYZg,buf1,1,iisize,1,jjsize,nz-nzcph+1,nz,-dnz,iisize,jjsize,nz)
+		call seg_zero_z(buf1,iisize,jjsize,nzcph+1,nz-nzcph,nz)
 
     	         if(op(1:1) == 't' .or. op(1:1) == 'f') then
                     call init_b_c(buf1, iisize*jjsize, 1,  &
@@ -502,25 +566,25 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 	            call init_ctrans_r2 (buf1, 2*iisize*jjsize, 1, &
 			            buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
-                    call exec_ctrans_r2_same (buf1, 2*iisize*jjsize, 1, &
+                    call exec_ctrans_r2_complex_same (buf1, 2*iisize*jjsize, 1, &
  				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
      	         else if(op(1:1) == 's') then
 	            call init_strans_r2 (buf1, 2*iisize*jjsize, 1, &
 		    	            buf1, 2*iisize*jjsize, 1, &
 			            nz, 2*iisize*jjsize)
-                    call exec_strans_r2_same (buf1, 2*iisize*jjsize, 1, &
+                    call exec_strans_r2_complex_same (buf1, 2*iisize*jjsize, 1, &
 				    buf1, 2*iisize*jjsize, 1, &
 				    nz, 2*iisize*jjsize)
                  else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		    print *,taskid,'Unknown transform type: ',op(1:1)
-	            call MPI_abort(mpicomm,ierr)
+	            call MPI_abort(MPI_COMM_WORLD,ierr)
  	         endif
 
  		 dny = ny - nyc
-		 call seg_copy_y(buf1,buf,1,nyhc,0,iisize,nyc,ny,nz)
-		 call seg_copy_y(buf1,buf,ny-nyhc+1,ny,-dny,iisize,nyc,ny,nz)
-		 call seg_zero_y(buf,nyhc+1,ny-nyhc,iisize,ny,nz)
+		 call seg_copy_y(buf1,buf,1,nycph,0,iisize,nyc,ny,nz)
+		 call seg_copy_y(buf1,buf,ny-nycph+1,ny,-dny,iisize,nyc,ny,nz)
+		 call seg_zero_y(buf,nycph+1,ny-nycph,iisize,ny,nz)
 	    endif
          endif
 #endif
@@ -608,6 +672,8 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
        endif
 
 #endif
+
+!      call mpi_barrier(mpi_comm_world,ierr)
 
       return
       end subroutine
