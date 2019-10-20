@@ -108,7 +108,7 @@ case $compiler in
         if test "$ok" = "yes"; then
 	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -lgfortran")
         else
-	        AC_SUBST(FORTRAN_LIB,"-lgfortran -lmpichf90")
+	        AC_SUBST(FORTRAN_LIB,"-lgfortran")
         fi
     ;;
     *)
