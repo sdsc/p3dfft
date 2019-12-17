@@ -2872,8 +2872,8 @@ case $compiler in
             FORTRAN_LIB="-lmpi_mpifh -pgf90libs"
 
         else
-            FORTRAN_LIB="-lmpichf90 -pgf90libs"
-
+            FORTRAN_LIB="-pgf90libs"
+ #-lmpichf90
         fi
     ;;
     cray)
@@ -2883,7 +2883,7 @@ case $compiler in
 	        FORTRAN_LIB="-lmpi_mpifh -lgfortran"
 
         else
-	        FORTRAN_LIB="-lgfortran -lmpichf90"
+	        FORTRAN_LIB="-lgfortran"
 
         fi
     ;;

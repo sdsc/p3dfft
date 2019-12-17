@@ -99,7 +99,7 @@ case $compiler in
         if test "$ok" = "yes"; then
             AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -pgf90libs")
         else
-            AC_SUBST(FORTRAN_LIB,"-lmpichf90 -pgf90libs")
+            AC_SUBST(FORTRAN_LIB,"-pgf90libs") #-lmpichf90
         fi
     ;;
     cray)
