@@ -354,7 +354,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(1:1) .ne. 'n' .and. op(1:1) .ne. '0') then
 		print *,'Unknown transform type: ',op(1:1)
-		call MPI_Abort(MPI_COMM_WORLD,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
 	    return
@@ -461,7 +461,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 					nz, 2*iisize*jjsize)
 	        else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(MPI_COMM_WORLD,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,0,ierr)
 		endif
             endif
             call bcomm1(XYZg,buf,timers(3),timers(9))
@@ -502,7 +502,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 					nz, 2*iisize*jjsize)
 	         else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		   print *,taskid,'Unknown transform type: ',op(1:1)
-		   call MPI_abort(MPI_COMM_WORLD,ierr)
+		   call MPI_abort(MPI_COMM_WORLD,0,ierr)
 		 endif
 
                  call bcomm1(buf,buf,timers(3),timers(9))
@@ -545,7 +545,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 				    nz, 2*iisize*jjsize)
 	    else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		print *,taskid,'Unknown transform type: ',op(1:1)
-   	        call MPI_abort(MPI_COMM_WORLD,ierr)
+   	        call MPI_abort(MPI_COMM_WORLD,0,ierr)
 	    endif
             call ar_copy(XYZg,buf,Nl)
 
@@ -578,7 +578,7 @@ subroutine ztran_b_same_many(A,str1,str2,n,m,dim,nv,op)
 				    nz, 2*iisize*jjsize)
                  else if(op(1:1) /= 'n' .and. op(1:1) /= '0') then
 		    print *,taskid,'Unknown transform type: ',op(1:1)
-	            call MPI_abort(MPI_COMM_WORLD,ierr)
+	            call MPI_abort(MPI_COMM_WORLD,0,ierr)
  	         endif
 
  		 dny = ny - nyc

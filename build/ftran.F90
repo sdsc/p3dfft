@@ -639,7 +639,7 @@
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(MPI_COMM_WORLD,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
 	    call seg_copy_z(buf,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
@@ -679,7 +679,7 @@
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(MPI_COMM_WORLD,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
         endif
@@ -725,7 +725,7 @@
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(MPI_COMM_WORLD,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
 	   call seg_copy_z(buf1,XYZg,1,iisize,1,jjsize,1,nzcph,0,iisize,jjsize,nz)
@@ -759,7 +759,7 @@
               timers(8) = timers(8) + MPI_Wtime()
             else if(op(3:3) /= 'n' .and. op(3:3) /= '0') then
                 print *,'Unknown transform type: ',op(3:3)
-                call MPI_Abort(MPI_COMM_WORLD,ierr)
+                call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
 
@@ -874,7 +874,7 @@ subroutine f_r2c_many(source,str1,dest,str2,n,m,dim,nv)
               timers(8) = timers(8) + MPI_Wtime()
 	    else if(op(3:3) .ne. 'n' .and. op(3:3) .ne. '0') then
 		print *,'Unknown transform type: ',op(3:3)
-		call MPI_Abort(MPI_COMM_WORLD,ierr)
+		call MPI_Abort(MPI_COMM_WORLD,0,ierr)
             endif
 
 	    return
