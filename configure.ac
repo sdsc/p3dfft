@@ -409,7 +409,6 @@ AC_SUBST(SUCCESS, "Build successful!")
 # Checks for programs.
 AC_PROG_FC(mpif90)
 AC_CHECK_PROGS(CC, mpicc, $CC)
-AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
@@ -434,3 +433,4 @@ AC_SUBST(TESTLIBS, $TESTLIBS)
 AC_OUTPUT()
 cp config.h include/config.h
 AC_MSG_NOTICE([configure script complete!])
+AC_CONFIG_MACRO_DIRS([m4])

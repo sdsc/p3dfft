@@ -1,5 +1,4 @@
-AM_CPPFLAGS = $(CDFLAGS) -g
-INCLUDES = -I$(top_builddir)/include/
+AM_CPPFLAGS = $(CDFLAGS) -g -I$(top_builddir)/include/
 LDADD = $(top_builddir)/build/libp3dfft.a $(FFTW_LIB) $(FFTWF)  $(FORTRAN_LIB) $(ESSL_LIB)
 
 csampledir = $(datadir)/p3dfft-samples/

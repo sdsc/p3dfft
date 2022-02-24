@@ -24,6 +24,9 @@
 /* Define if you want to compile P3DFFT using GNU compiler */
 #undef GNU
 
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -60,6 +63,9 @@
 
 /* Define if you want to compile P3DFFT using Intel compiler */
 #undef INTEL
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
 
 /* Define if you want to enable the measure algorithm */
 #undef MEASURE
