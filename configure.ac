@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.59])
 AC_INIT([P3DFFT], [2.7.4], [dmitry@sdsc.edu])
+LT_INIT
 AM_INIT_AUTOMAKE([no-dependencies])
 AC_CONFIG_SRCDIR([build/module.F90])
 AC_CONFIG_HEADER([config.h])
@@ -90,9 +91,9 @@ case $compiler in
     ;;
     intel)
         if test "$ok" = "yes"; then
-	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore") 
+	        AC_SUBST(FORTRAN_LIB,"-lmpi_mpifh -limf -lifcore")
         else
-	        AC_SUBST(FORTRAN_LIB,"-limf -lifcore") #-lmpichf90 
+	        AC_SUBST(FORTRAN_LIB,"-limf -lifcore") #-lmpichf90
         fi
     ;;
     pgi)
@@ -433,4 +434,3 @@ AC_SUBST(TESTLIBS, $TESTLIBS)
 AC_OUTPUT()
 cp config.h include/config.h
 AC_MSG_NOTICE([configure script complete!])
-
